@@ -15,9 +15,9 @@ static bool animation_flg = false;
 Title::Title()
 {
 
-	if ((background_image = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1)
+	if ((background_image = LoadGraph("Resource/Images/Stage/TitleBackImage.png")) == -1)
 	{
-		throw "Resource/Images/Stage/BackImage1.png";
+		throw "Resource/Images/Stage/TitleBackImage.png";
 	}
 
 	if ((background_music = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {

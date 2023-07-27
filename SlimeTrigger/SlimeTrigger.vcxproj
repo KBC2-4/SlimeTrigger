@@ -24,6 +24,7 @@
     <ProjectGuid>{1d180c34-21d6-4f8d-8493-75d90eaca6f7}</ProjectGuid>
     <RootNamespace>GFF2_4A</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SlimeTrigger</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
