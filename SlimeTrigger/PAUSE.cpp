@@ -1,4 +1,4 @@
-#include "PAUSE.h"
+#include "Pause.h"
 #include "DxLib.h"
 #include "PadInput.h"
 #include "Title.h"

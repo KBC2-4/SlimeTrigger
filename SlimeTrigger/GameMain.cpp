@@ -1,5 +1,5 @@
 #include "GameMain.h"
-#include "GAMEMAIN_Restart.h"
+#include "GameMainRestart.h"
 #include "Title.h"
 #include <vector>
 #include "Option.h"

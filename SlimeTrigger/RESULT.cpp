@@ -1,4 +1,4 @@
-#include "RESULT.h"
+#include "Result.h"
 #include "GameMain.h"
 #include "DxLib.h"
 #include "StageSelect.h"

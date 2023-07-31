@@ -2,7 +2,7 @@
 
 #define BULLETRADIUS 5
 
-#include "STAGE.h"
+#include "Stage.h"
 class TOMATO;
 
 class ThrowSlime

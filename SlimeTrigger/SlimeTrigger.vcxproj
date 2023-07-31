@@ -162,10 +162,10 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="GameMain.cpp" />
-    <ClCompile Include="GAMEMAIN_Restart.cpp" />
+    <ClCompile Include="GameMainRestart.cpp" />
     <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="GrapeFruit.cpp" />
-    <ClCompile Include="ITEMBALL.cpp" />
+    <ClCompile Include="ItemBall.cpp" />
     <ClCompile Include="Lemon.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\PG\dxlib</AdditionalIncludeDirectories>
@@ -175,12 +175,12 @@
     </ClCompile>
     <ClCompile Include="Option.cpp" />
     <ClCompile Include="PadInput.cpp" />
-    <ClCompile Include="PAUSE.cpp" />
-    <ClCompile Include="PLAYER.cpp" />
+    <ClCompile Include="Pause.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Ranking.cpp" />
-    <ClCompile Include="RESULT.cpp" />
+    <ClCompile Include="Result.cpp" />
     <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="STAGE.cpp" />
+    <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageSelect.cpp" />
     <ClCompile Include="ThrowSlime.cpp" />
     <ClCompile Include="Title.cpp" />
@@ -193,19 +193,19 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="GameMain.h" />
-    <ClInclude Include="GAMEMAIN_Restart.h" />
+    <ClInclude Include="GameMainRestart.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GrapeFruit.h" />
-    <ClInclude Include="ITEMBALL.h" />
+    <ClInclude Include="ItemBall.h" />
     <ClInclude Include="Lemon.h" />
     <ClInclude Include="Option.h" />
     <ClInclude Include="PadInput.h" />
-    <ClInclude Include="PAUSE.h" />
-    <ClInclude Include="PLAYER.h" />
+    <ClInclude Include="Pause.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Ranking.h" />
-    <ClInclude Include="RESULT.h" />
+    <ClInclude Include="Result.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="STAGE.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="StageSelect.h" />
     <ClInclude Include="ThrowSlime.h" />
     <ClInclude Include="Title.h" />

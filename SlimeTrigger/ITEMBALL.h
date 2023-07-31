@@ -1,8 +1,8 @@
 #pragma once
 #include<math.h>
 #include"DxLib.h"
-#include"STAGE.h"
-#include"PLAYER.h"
+#include"Stage.h"
+#include"Player.h"
 #define _BALL_RADIUS 20
 
 class ITEMBALL

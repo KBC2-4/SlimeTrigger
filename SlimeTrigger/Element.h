@@ -1,5 +1,5 @@
 #pragma once
-#include "STAGE.h"
+#include "Stage.h"
 #include <vector>
 
 #define LIFT_SIZE 160

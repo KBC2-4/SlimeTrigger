@@ -1,4 +1,4 @@
-#include "PLAYER.h"
+#include "Player.h"
 #include"DxLib.h"
 #include "Element.h"
 #define _USE_MATH_DEFINES

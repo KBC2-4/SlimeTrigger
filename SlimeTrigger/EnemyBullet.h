@@ -2,8 +2,8 @@
 #include"Enemy.h"
 #include<math.h>
 #include"DxLib.h"
-#include"PLAYER.h"
-#include"STAGE.h"
+#include"Player.h"
+#include"Stage.h"
 #define BULLET_SPEED 12
 
 class ENEMY_BULLET

@@ -1,4 +1,4 @@
-#include "GAMEMAIN_Restart.h"
+#include "GameMainRestart.h"
 #include "GameMain.h"
 #include "DxLib.h"
 

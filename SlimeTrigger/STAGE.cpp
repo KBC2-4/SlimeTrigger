@@ -1,4 +1,4 @@
-#include "STAGE.h"
+#include "Stage.h"
 #include "Element.h"
 #include"DxLib.h"
 #include <iostream>
@@ -8,8 +8,8 @@
 #include <vector>
 
 
-#include "PLAYER.h"
-#include "RESULT.h"
+#include "Player.h"
+#include "Result.h"
 #include "Option.h"
 
 //#define _DEBUG

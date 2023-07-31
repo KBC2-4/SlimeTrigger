@@ -1,7 +1,7 @@
 #pragma once
 #include "AbstractScene.h"
-#include "PLAYER.h"
-#include "STAGE.h"
+#include "Player.h"
+#include "Stage.h"
 #include "Lemon.h"
 
 class STAGE_SELECT :

@@ -1,7 +1,7 @@
 #pragma once
-#include"PLAYER.h"
-#include"STAGE.h"
-#include"ITEMBALL.h"
+#include"Player.h"
+#include"Stage.h"
+#include"ItemBall.h"
 
 
 #define BALL_W 10

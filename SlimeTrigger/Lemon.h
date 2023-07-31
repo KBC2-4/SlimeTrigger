@@ -1,7 +1,7 @@
 #pragma once
 #include"Enemy.h"
 #include"EnemyBullet.h"
-#include"STAGE.h"
+#include"Stage.h"
 
 class LEMON :
     public ENEMY

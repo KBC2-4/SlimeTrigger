@@ -1,6 +1,6 @@
 #pragma once
 #include "AbstractScene.h"
-#include "STAGE.h"
+#include "Stage.h"
 #include "GameOver.h"
 #include "PadInput.h"
 #include "Option.h"

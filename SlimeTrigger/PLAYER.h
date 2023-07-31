@@ -3,7 +3,7 @@
 #include "Element.h"
 #include <vector>
 #include "ThrowSlime.h"
-#include "STAGE.h"
+#include "Stage.h"
 
 class TOMATO;
 

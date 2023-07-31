@@ -1,6 +1,6 @@
 #include "ThrowSlime.h"
 #include "PadInput.h"
-#include"PLAYER.h"
+#include"Player.h"
 #include<math.h>
 #include "Tomato.h"
 

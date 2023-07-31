@@ -1,7 +1,7 @@
 #pragma once
 #include"Enemy.h"
 #include"EnemyBullet.h"
-#include"STAGE.h"
+#include"Stage.h"
 #include<math.h>
 
 #define GURAFRU_W 80
