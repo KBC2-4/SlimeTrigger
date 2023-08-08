@@ -8,8 +8,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	double dNextTime = GetNowCount();
 
-	SetMainWindowText("スライムアクション");
-	SetMainWindowClassName("SlimeAction");
+	SetMainWindowText("スライムトリガー");
+	SetMainWindowClassName("SlimeTrigger");
 	SetWindowIconID(01);
 
 	SetOutApplicationLogValidFlag(FALSE);   //ログ出力を無効にする

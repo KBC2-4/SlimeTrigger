@@ -194,7 +194,7 @@ void Title::Draw()const
 	}
 	else {
 
-		DrawRotaStringToHandle(GetDrawCenterX("スライムアクション", title_font, 600 - title_anitimer[1] * 3), 200 + title_anitimer[1] * 3, 1.0 - title_anitimer[1] * 0.01, 1.0 - title_anitimer[1] * 0.01, 600, 100, 10 * title_anitimer[0] * (M_PI / 180), 0x56F590, title_font, 0xFFFFFF, FALSE, "スライムアクション");
+		DrawRotaStringToHandle(GetDrawCenterX("スライムトリガー", title_font, 600 - title_anitimer[1] * 3), 200 + title_anitimer[1] * 3, 1.0 - title_anitimer[1] * 0.01, 1.0 - title_anitimer[1] * 0.01, 600, 100, 10 * title_anitimer[0] * (M_PI / 180), 0x56F590, title_font, 0xFFFFFF, FALSE, "スライムトリガー");
 		//DrawStringToHandle(GetDrawCenterX("スライムアクション",title_font), 100, "スライムアクション", 0x56F590, title_font, 0xFFFFFF);
 
 		//ボックス
