@@ -306,6 +306,9 @@ void PLAYER::Move()
 	if (input_lx > 0) {
 		move_x = 1.0f;
 	}
+	else {
+		move_x = -1.0f;
+	}
 	move_x = input_lx > 0 ? 1.0f : -1.0f;	//ˆÚ“®•ûŒü‚ÌƒZƒbƒg
 
 	//ˆÚ“®‚·‚é‚Æ‚«
