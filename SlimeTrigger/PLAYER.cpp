@@ -705,6 +705,12 @@ void PLAYER::Throw(STAGE* stage) {
 		throw_x.push_back(x0);
 		throw_y.push_back(y0);
 	}
+	for (int i = 0; i < 3; i++) {
+		throw_x.erase(throw_x.begin());
+	}
+	for (int i = 0; i < 3; i++) {
+		throw_y.erase(throw_y.begin());
+	}
 
 	//“Š‚°‚é‚Æ‚«
 	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_RIGHT_SHOULDER && PAD_INPUT::GetPadState() == PAD_STATE::ON) {
