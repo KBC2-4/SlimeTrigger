@@ -23,6 +23,7 @@ private:
 	bool delete_flg;                //消えるフラグ
 	int face_image[2];				//顔の画像
 	int fruit_image[3];             //果実の画像
+	double fruit_image_size;		//果実の画像の大きさ
 	int damage_se;					//ダメージを受けた時のSE
 	int press_se;					//プレスアニメーション時のSE
 	int splash_se;					//弾けるときのSE

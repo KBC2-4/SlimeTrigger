@@ -5,8 +5,8 @@
 #include <vector>
 #include"Option.h"
 
+#define DETH_FRUIT_SIZE 1.5
 //コンストラクタ
-
 GRAPEFRUIT::GRAPEFRUIT()
 {
 	image = new int[100];
@@ -35,6 +35,7 @@ GRAPEFRUIT::GRAPEFRUIT()
 	}
 	damage_se = 0;
 	bullet_count = 3;
+	fruit_image_size = 1.0;
 }
 
 //引数付のコンストラクタ
@@ -83,7 +84,7 @@ GRAPEFRUIT::GRAPEFRUIT(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damage_se);
 	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), press_se);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
-
+	fruit_image_size = 1.0;
 }
 
 GRAPEFRUIT::~GRAPEFRUIT()
@@ -291,6 +292,7 @@ void GRAPEFRUIT::Hit()
 		{
 			state = ENEMY_STATE::DETH;
 			animation_timer = 0;
+			fruit_image_size = DETH_FRUIT_SIZE;
 			animation_type = 0;
 			PlaySoundMem(splash_se, DX_PLAYTYPE_BACK);
 		}
@@ -414,8 +416,8 @@ void GRAPEFRUIT::Draw() const
 {
 	for (int i = 0; i < 2; i++)
 	{
-		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), 1, rad + (-90 * (PI / 180)), fruit_image[i], TRUE);
-		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), 1, rad + (-90 * (PI / 180)), face_image[i], TRUE);
+		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), fruit_image_size, rad + (-90 * (PI / 180)), fruit_image[i], TRUE);
+		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), 1.0, rad + (-90 * (PI / 180)), face_image[i], TRUE);
 	}
 
 	if (flag)
