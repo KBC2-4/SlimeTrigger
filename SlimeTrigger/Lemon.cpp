@@ -6,15 +6,15 @@ LEMON::LEMON()
 {
 	//画像の取得
 	image = nullptr;
-	damage_se = 0;
+	damageSe = 0;
 
-	shootcount = 0;
-	hitflg = false;
-	delete_flag = false;
+	shootCount = 0;
+	hitFlg = false;
+	deleteFlg = false;
 	x = 0;
-	spawn_map_x = 0;
-	spawn_map_y = 0;
-	now_image = 0;
+	spawnMapX = 0;
+	spawnMapY = 0;
+	nowImage = 0;
 
 	state = ENEMY_STATE::IDOL;
 	bullet = nullptr;
@@ -24,12 +24,12 @@ LEMON::LEMON()
 LEMON::LEMON(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 {
 	//スポーン場所の設定
-	spawn_map_x = spawn_x;
-	spawn_map_y = spawn_y;
-	x = (spawn_map_x * MAP_CEllSIZE + MAP_CEllSIZE / 2);
-	y = spawn_map_y * MAP_CEllSIZE;
-	hitflg = false;
-	delete_flag = false;
+	spawnMapX = spawn_x;
+	spawnMapY = spawn_y;
+	x = (spawnMapX * MAP_CEllSIZE + MAP_CEllSIZE / 2);
+	y = spawnMapY * MAP_CEllSIZE;
+	hitFlg = false;
+	deleteFlg = false;
 
 	//画像の取得
 	image = new int[15];
@@ -42,27 +42,27 @@ LEMON::LEMON(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 		throw "Resource/Images/Enemy/lemon_break.png";
 	}
 	//SEの取得
-	if ((damage_se = LoadSoundMem("Resource/Sounds/SE/Enemy/damage.wav")) == -1) {
+	if ((damageSe = LoadSoundMem("Resource/Sounds/SE/Enemy/damage.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/damage.wav";
 	}
-	if ((press_se = LoadSoundMem("Resource/Sounds/SE/Enemy/press.wav")) == -1) {
+	if ((pressSe = LoadSoundMem("Resource/Sounds/SE/Enemy/press.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/press.wav";
 	}
-	if ((splash_se = LoadSoundMem("Resource/Sounds/SE/Enemy/splash.wav")) == -1) {
+	if ((splashSe = LoadSoundMem("Resource/Sounds/SE/Enemy/splash.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/splash.wav";
 	}
-	shootcount = 0;
+	shootCount = 0;
 
 	bullet = nullptr;
 	this->player = player;
 	this->stage = stage;
 
 
-	now_image = image[3];
+	nowImage = image[3];
 	state = ENEMY_STATE::IDOL;
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damage_se);
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), press_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damageSe);
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), pressSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
 }
 
 
@@ -81,20 +81,20 @@ LEMON::~LEMON()
 		delete bullet;
 	}
 
-	DeleteSoundMem(damage_se);
-	DeleteSoundMem(press_se);
-	DeleteSoundMem(splash_se);
+	DeleteSoundMem(damageSe);
+	DeleteSoundMem(pressSe);
+	DeleteSoundMem(splashSe);
 }
 
 void LEMON::Update()
 {
 
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damage_se);
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), press_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damageSe);
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), pressSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
 
-	if (animation_timer < 80) {
-		++animation_timer;
+	if (animationTimer < 80) {
+		++animationTimer;
 	}
 
 	switch (state)
@@ -103,11 +103,11 @@ void LEMON::Update()
 		break;
 	case ENEMY_STATE::MOVE:
 		ChangeAngle();
-		if (player->GetMapY() > map_y)
+		if (player->GetMapY() > mapY)
 		{
-			if (++shootcount % 60 == 0)
+			if (++shootCount % 60 == 0)
 			{
-				animation_timer = 0;
+				animationTimer = 0;
 				state = ENEMY_STATE::PRESS;
 
 			}
@@ -117,8 +117,8 @@ void LEMON::Update()
 		ChangeAngle();
 		if (ReturnAnimation())
 		{
-			animation_timer = 0;
-			animation_type = 0;
+			animationTimer = 0;
+			animationType = 0;
 			state = ENEMY_STATE::MOVE;
 		}
 		break;
@@ -127,10 +127,10 @@ void LEMON::Update()
 		if (PressAnimation())
 		{
 			bullet = new ENEMY_BULLET(player, stage, x, y, 0, rad, 1);
-			animation_timer = 0;
-			animation_type = 0;
+			animationTimer = 0;
+			animationType = 0;
 			state = ENEMY_STATE::RETURN;
-			PlaySoundMem(press_se, DX_PLAYTYPE_BACK);
+			PlaySoundMem(pressSe, DX_PLAYTYPE_BACK);
 		}
 		break;
 	case ENEMY_STATE::FALL:
@@ -140,7 +140,7 @@ void LEMON::Update()
 	case ENEMY_STATE::DETH:
 		if (DethAnimation())
 		{
-			delete_flag = true;
+			deleteFlg = true;
 		}
 		break;
 	default:
@@ -149,8 +149,8 @@ void LEMON::Update()
 
 
 	//マップ上の座標の設定
-	map_x = x / MAP_CEllSIZE;
-	map_y = (y - IMAGE_SIZE / 2) / MAP_CEllSIZE;
+	mapX = x / MAP_CEllSIZE;
+	mapY = (y - IMAGE_SIZE / 2) / MAP_CEllSIZE;
 
 	//弾が存在しているときに弾の処理を行う
 	if (bullet != nullptr)
@@ -172,12 +172,12 @@ void LEMON::Update()
 	{
 		state = ENEMY_STATE::IDOL;	//ステートをアイドル状態へ
 		//アイドル状態の画像に変更
-		now_image = image[3];
+		nowImage = image[3];
 	}
 	else if (state == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
 	{
 		// アニメーション時間をリセットし、ステートをムーブへ
-		animation_timer = 0;
+		animationTimer = 0;
 		state = ENEMY_STATE::MOVE;
 	}
 	else {}
@@ -191,7 +191,7 @@ void LEMON::Move()
 
 void LEMON::Hit()
 {
-	ThrowSlime throw_slime;
+	ThrowSlime throwSlime;
 
 	float bx1, by1, bx2, by2;
 	float gx1, gy1, gx2, gy2;
@@ -200,12 +200,12 @@ void LEMON::Hit()
 	{
 		for (int i = 0; i < player->GetThrowCnt(); i++)
 		{
-			throw_slime = player->GetThrowSlime(i);
+			throwSlime = player->GetThrowSlime(i);
 			//スライムのボールの当たり判定
-			bx1 = throw_slime.GetThrowX();
-			by1 = throw_slime.GetThrowY();
-			bx2 = throw_slime.GetThrowX() + BALL_W;
-			by2 = throw_slime.GetThrowY() - BALL_H;
+			bx1 = throwSlime.GetThrowX();
+			by1 = throwSlime.GetThrowY();
+			bx2 = throwSlime.GetThrowX() + BALL_W;
+			by2 = throwSlime.GetThrowY() - BALL_H;
 			//レモナーの当たり判定
 			gx1 = x - IMAGE_SIZE / 2.5;
 			gy1 = y - IMAGE_SIZE / 2;
@@ -215,7 +215,7 @@ void LEMON::Hit()
 			{
 				rad = 90 * (PI / 180);
 				state = ENEMY_STATE::FALL;
-				PlaySoundMem(damage_se, DX_PLAYTYPE_BACK);
+				PlaySoundMem(damageSe, DX_PLAYTYPE_BACK);
 			}
 		}
 	}
@@ -223,12 +223,12 @@ void LEMON::Hit()
 	//地面やブロックとの当たり判定
 	if (state == ENEMY_STATE::FALL)
 	{
-		if (stage->HitMapDat(map_y + 1, map_x))
+		if (stage->HitMapDat(mapY + 1, mapX))
 		{
 			state = ENEMY_STATE::DETH;
-			animation_timer = 0;
-			animation_type = 0;
-			PlaySoundMem(splash_se, DX_PLAYTYPE_BACK);
+			animationTimer = 0;
+			animationType = 0;
+			PlaySoundMem(splashSe, DX_PLAYTYPE_BACK);
 		}
 	}
 }
@@ -236,17 +236,17 @@ bool LEMON::PressAnimation()
 {
 
 	bool ret = false;
-	if (animation_timer < 40) //40フレーム間アニメーションをする
+	if (animationTimer < 40) //40フレーム間アニメーションをする
 	{
-		if (animation_timer % (ANIMATION_TIME * 2) == 0)
+		if (animationTimer % (ANIMATION_TIME * 2) == 0)
 		{
-			if (animation_type < 2)
+			if (animationType < 2)
 			{
-				now_image = image[(animation_type++ % 7) + 4];
+				nowImage = image[(animationType++ % 7) + 4];
 			}
 			else
 			{
-				now_image = image[0];
+				nowImage = image[0];
 			}
 
 		}
@@ -261,11 +261,11 @@ bool LEMON::PressAnimation()
 bool LEMON::ReturnAnimation()
 {
 	bool ret = false;
-	if (animation_timer < 50) //50フレーム間アニメーションをする
+	if (animationTimer < 50) //50フレーム間アニメーションをする
 	{
-		if (animation_timer % (ANIMATION_TIME * 2) == 0)
+		if (animationTimer % (ANIMATION_TIME * 2) == 0)
 		{
-			now_image = image[(animation_type++ % 7)];
+			nowImage = image[(animationType++ % 7)];
 		}
 	}
 	else //アニメーションの終了
@@ -277,21 +277,21 @@ bool LEMON::ReturnAnimation()
 
 void LEMON::FallAnimation()
 {
-	if (animation_timer % ANIMATION_TIME == 0)
+	if (animationTimer % ANIMATION_TIME == 0)
 	{
-		now_image = image[(++animation_type % 2) + 7];
+		nowImage = image[(++animationType % 2) + 7];
 	}
 }
 
 bool LEMON::DethAnimation()
 {
 	bool ret = false;
-	if (animation_timer < 30) //30フレーム間アニメーションをする
+	if (animationTimer < 30) //30フレーム間アニメーションをする
 	{
 		//アニメーション
-		if (animation_timer % ANIMATION_TIME == 0)
+		if (animationTimer % ANIMATION_TIME == 0)
 		{
-			now_image = image[(++animation_type % 6) + 9];
+			nowImage = image[(++animationType % 6) + 9];
 		}
 	}
 	else //アニメーションの終了
@@ -309,5 +309,5 @@ void LEMON::Draw() const
 	{
 		bullet->Draw();
 	}
-	DrawRotaGraphF(x + stage->GetScrollX(), y + stage->GetScrollY(), 1, rad + (-90 * (PI / 180)), now_image, TRUE);
+	DrawRotaGraphF(x + stage->GetScrollX(), y + stage->GetScrollY(), 1, rad + (-90 * (PI / 180)), nowImage, TRUE);
 }
