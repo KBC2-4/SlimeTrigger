@@ -14,36 +14,36 @@ class GAMEMAIN :
 {
 private:
 	//背景画像
-	int background_image[3];
-	int background_music[3];		//BGM
-	int start_time_font, time_font;	//フォント
-	int cursor_move_se, ok_se, count_se, start_se, clear_se;	//SE
-	int start_time;		//開始までの遅延時間
-	int start_effect_timer;
-	int start_addtime;
-	int elapsed_time;	//経過時間
-	const char* stage_name;	//リスタート時のステージ選択用
-	int now_graph;		//リスタート時の今現在の画面
-	int clear_interval;	//クリア時の画面推移までの時間
+	int backgraundImage[3];
+	int backgroundMusic[3];		//BGM
+	int starttimeFont, timeFont;	//フォント
+	int cursormoveSe, okSe, countSe, startSe, clearSe;	//SE
+	int startTime;		//開始までの遅延時間
+	int starteffectTimer;
+	int startaddTime;
+	int elapsedTime;	//経過時間
+	const char* stageName;	//リスタート時のステージ選択用
+	int nowGraph;		//リスタート時の今現在の画面
+	int clearInterval;	//クリア時の画面推移までの時間
 
 	//プレイヤーのライフの画像
-	int hp_img;
+	int hpImage;
 
 	//レモナーの数用の変数
-	int lemoner_count;
+	int lemonerCount;
 
 	//とまとんの数用の変数
-	int tomaton_count;
+	int tomatonCount;
 
 	//グレポンの数用の変数
-	int gurepon_count;
+	int gureponCount;
 
 	//アイテムの数用変数
-	int item_count;
-	int item_num;
-	int item_rand;
+	int itemCount;
+	int itemNum;
+	int itemRand;
 
-	bool restart;	//復活フラグ
+	bool reStart;	//復活フラグ
 
 	PLAYER* player;	//プレイヤー
 	STAGE* stage;	//ステージ
@@ -56,15 +56,15 @@ private:
 
 
 	//PV制作用（完成次第即座に消去）
-	int input_margin;
-	int scroll_speed;
-	bool player_visible;
+	int inputMargin;
+	int scrollSpeed;
+	bool playerVisible;
 
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	GAMEMAIN(bool restart = false, int halfway_time = 0, const char* stage_name = "StageSelect");
+	GAMEMAIN(bool reStart = false, int halfway_time = 0, const char* stageName = "StageSelect");
 	/// <summary>
 	/// デストラクタ
 	/// </summary>

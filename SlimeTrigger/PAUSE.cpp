@@ -5,11 +5,11 @@
 #include "Option.h"
 
 PAUSE::PAUSE() {
-	if ((cursor_move_se = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1) {
+	if ((cursormoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1) {
 		throw "Resource/Sounds/SE/cursor_move.wav";
 	}
 
-	if ((ok_se = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
+	if ((okSe = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
@@ -25,14 +25,14 @@ PAUSE::PAUSE() {
 	buttonguid_font = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	selectmenu = 0;
 	nextmenu = 0;
-	input_margin = 0;
+	inputMargin = 0;
 	pause_graph = 0;
 	pause_effect_timer = 0;
 	pause_flg = false;
 
 	//SE
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursor_move_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, memu_open_se);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, memu_close_se);
 
@@ -45,8 +45,8 @@ PAUSE::~PAUSE() {
 	DeleteFontToHandle(title_font);
 	DeleteFontToHandle(menu_font);
 	DeleteFontToHandle(buttonguid_font);
-	DeleteSoundMem(cursor_move_se);
-	DeleteSoundMem(ok_se);
+	DeleteSoundMem(cursormoveSe);
+	DeleteSoundMem(okSe);
 	DeleteSoundMem(memu_open_se);
 	DeleteSoundMem(memu_close_se);
 
@@ -80,8 +80,8 @@ int PAUSE::Update(void) {
 			GetDrawScreenGraph(0, 0, 1280, 720, pause_graph);
 		}
 
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursor_move_se);
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
+		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
+		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, memu_open_se);
 		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, memu_close_se);
 
@@ -89,19 +89,19 @@ int PAUSE::Update(void) {
 			option->Update();
 		}
 		else {
-			if (input_margin < 20) {
-				input_margin++;
+			if (inputMargin < 20) {
+				inputMargin++;
 			}
 			else {
 
-				if (PAD_INPUT::GetPadThumbLY() > 20000) { selectmenu = (selectmenu + 3) % 4;  input_margin = 0; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1); }
-				if (PAD_INPUT::GetPadThumbLY() < -20000) { selectmenu = (selectmenu + 1) % 4; input_margin = 0; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1); }
+				if (PAD_INPUT::GetPadThumbLY() > 20000) { selectmenu = (selectmenu + 3) % 4;  inputMargin = 0; PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1); }
+				if (PAD_INPUT::GetPadThumbLY() < -20000) { selectmenu = (selectmenu + 1) % 4; inputMargin = 0; PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1); }
 			}
 
 			if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
-				PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+				PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 				//ok_seが鳴り終わってから画面推移する。
-				while (CheckSoundMem(ok_se)) {}
+				while (CheckSoundMem(okSe)) {}
 				StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 
 				//デリート処理
@@ -130,10 +130,10 @@ int PAUSE::Update(void) {
 
 				// Aボタンを一定時間無効化する
 				int disable_time = 100;  // Aボタンを無効化する時間（単位：ミリ秒）
-				int start_time = GetNowCount();  // Aボタンを押した時間
+				int startTime = GetNowCount();  // Aボタンを押した時間
 				while (!pause_flg) {
 					// Aボタンを無効化する時間を超えた場合、while文を抜ける
-					if (GetNowCount() - start_time > disable_time) {
+					if (GetNowCount() - startTime > disable_time) {
 						break;
 					}
 				}

@@ -10,13 +10,13 @@
 
 STAGE_SELECT::STAGE_SELECT()
 {
-	//background_image[0] = LoadGraph("Resource/Images/Stage/BackImpause_cash.bmp");
-	background_image[0] = LoadGraph("Resource/Images/Stage/BackImage1.png");
-	if ((background_music = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {
+	//backgraundImage[0] = LoadGraph("Resource/Images/Stage/BackImpause_cash.bmp");
+	backgraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png");
+	if ((backgroundMusic = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {
 		throw "Resource/Sounds/BGM/title.wav";
 	}
 
-	if ((ok_se = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
+	if ((okSe = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
@@ -28,7 +28,7 @@ STAGE_SELECT::STAGE_SELECT()
 	player = new PLAYER(stage);
 	element = new ELEMENT();
 	lemoner = nullptr;
-	lemoner_count = 0;
+	lemonerCount = 0;
 
 	std::vector<std::vector<int>> spawn_point;
 	//レモナー生成する数を数える
@@ -38,7 +38,7 @@ STAGE_SELECT::STAGE_SELECT()
 		{
 			if (stage->GetMapData(i, j) == 91)
 			{
-				lemoner_count++;
+				lemonerCount++;
 				spawn_point.push_back(std::vector<int>(2));
 				spawn_point[point][0] = i;
 				spawn_point[point][1] = j;
@@ -48,10 +48,10 @@ STAGE_SELECT::STAGE_SELECT()
 	}
 
 	//レモナーの生成
-	if (lemoner_count > 0)
+	if (lemonerCount > 0)
 	{
-		lemoner = new LEMON * [lemoner_count];
-		for (int i = 0; i < lemoner_count; i++)
+		lemoner = new LEMON * [lemonerCount];
+		for (int i = 0; i < lemonerCount; i++)
 		{
 			lemoner[i] = new LEMON(player, stage, spawn_point[i][0], spawn_point[i][1]);
 		}
@@ -104,11 +104,11 @@ STAGE_SELECT::STAGE_SELECT()
 		}
 	}
 
-	PlaySoundMem(background_music, DX_PLAYTYPE_LOOP);
+	PlaySoundMem(backgroundMusic, DX_PLAYTYPE_LOOP);
 
 	//BGM
-	ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
+	ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 }
 
 STAGE_SELECT::~STAGE_SELECT()
@@ -117,15 +117,15 @@ STAGE_SELECT::~STAGE_SELECT()
 	DeleteFontToHandle(buttonguid_font);
 	DeleteFontToHandle(move_to_title_font);
 	DeleteFontToHandle(stagename_font);
-	StopSoundMem(background_music);
-	DeleteSoundMem(background_music);
-	DeleteSoundMem(ok_se);
-	DeleteGraph(background_image[0]);
+	StopSoundMem(backgroundMusic);
+	DeleteSoundMem(backgroundMusic);
+	DeleteSoundMem(okSe);
+	DeleteGraph(backgraundImage[0]);
 	delete player;
 	delete stage;
 	delete element;
 
-	for (int i = 0; i < lemoner_count; i++)
+	for (int i = 0; i < lemonerCount; i++)
 	{
 		delete lemoner[i];
 	}
@@ -136,9 +136,9 @@ AbstractScene* STAGE_SELECT::Update()
 {
 	//BACKボタンでタイトルへ戻る
 	if ((PAD_INPUT::GetNowKey() == XINPUT_BUTTON_BACK) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
-		PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
-		while (CheckSoundMem(ok_se)) {}
+		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 		return new Title();
 	}
@@ -150,18 +150,18 @@ AbstractScene* STAGE_SELECT::Update()
 	//プレイヤーを死なせない。
 	if (player->GetLife() < 2) { player->SetLife(2); }
 
-	for (int i = 0; i < lemoner_count; i++)
+	for (int i = 0; i < lemonerCount; i++)
 	{
 		if (lemoner[i] != nullptr)
 		{
 			lemoner[i]->Update();
 			if (lemoner[i]->GetDeleteFlag())
 			{
-				//item_rand = GetRand(5);
+				//itemRand = GetRand(5);
 				//アイテムを生成
-				/*if (item_rand == 0)
+				/*if (itemRand == 0)
 				{
-					item[item_num++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+					item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
 				}*/
 				delete lemoner[i];
 				lemoner[i] = nullptr;
@@ -241,15 +241,15 @@ AbstractScene* STAGE_SELECT::Update()
 void STAGE_SELECT::Draw() const
 {
 	//ステージ背景
-	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scroll_y*/0, background_image[0], FALSE);
-	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scroll_y*/0, background_image[0], FALSE);
+	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scroll_y*/0, backgraundImage[0], FALSE);
+	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scroll_y*/0, backgraundImage[0], FALSE);
 
 
 	//ステージの描画
 	element->Draw(stage, player);
 	stage->Draw(element);
 
-	for (int i = 0; i < lemoner_count; i++)
+	for (int i = 0; i < lemonerCount; i++)
 	{
 		if (lemoner[i] != nullptr)
 		{
@@ -428,16 +428,16 @@ void STAGE_SELECT::Draw() const
 
 void STAGE_SELECT::StageIn(void)
 {
-	PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+	PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 	//ok_seが鳴り終わってから画面推移する。
-	while (CheckSoundMem(ok_se)) {}
+	while (CheckSoundMem(okSe)) {}
 	StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 
 
 }
 
 
-void STAGE_SELECT::DrawStageGuid(const char* stage_name, const float x, const float y, const int stagename_font, const int text_color, const int textback_color,
+void STAGE_SELECT::DrawStageGuid(const char* stageName, const float x, const float y, const int stagename_font, const int text_color, const int textback_color,
 	const int text_margin_x, const int text_margin_y, const int backcolor, const char* second_title, const int secont_margin_x, const int secont_margin_y) const {
 
 	if (textback_color == -1) { const int textback_color = 0xFFFFFF; }
@@ -447,7 +447,7 @@ void STAGE_SELECT::DrawStageGuid(const char* stage_name, const float x, const fl
 	DrawOvalAA(x + MAP_CEllSIZE / 2 + stage->GetScrollX(), y - MAP_CEllSIZE + stage->GetScrollY(), 100, 80, 30, 0x000000, FALSE, 1.0F);
 	DrawOvalAA(x + MAP_CEllSIZE / 2 + stage->GetScrollX(), y - MAP_CEllSIZE + stage->GetScrollY(), 99, 79, 30, backcolor, TRUE, 0.0F);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	DrawStringToHandle(x + stage->GetScrollX() - 55 + text_margin_x, y - MAP_CEllSIZE - 10 + stage->GetScrollY() + text_margin_y, stage_name, text_color, stagename_font, textback_color);
+	DrawStringToHandle(x + stage->GetScrollX() - 55 + text_margin_x, y - MAP_CEllSIZE - 10 + stage->GetScrollY() + text_margin_y, stageName, text_color, stagename_font, textback_color);
 	if (second_title != "") { DrawStringToHandle(x + stage->GetScrollX() - 55 + secont_margin_x, y - MAP_CEllSIZE - 10 + stage->GetScrollY() + secont_margin_y, second_title, text_color, stagename_font, textback_color); }
 
 	DrawCircleAA(x + stage->GetScrollX(), y + stage->GetScrollY(), 15, 20, guid_timer < 50 ? 0xFFFFFF : 0xFFCB33, 1);

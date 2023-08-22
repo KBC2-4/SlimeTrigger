@@ -3,7 +3,7 @@
 #include "StageSelect.h"
 #include "DxLib.h"
 
-GameOver::GameOver(const char* stage_name)
+GameOver::GameOver(const char* stageName)
 {
 
 	if ((title_image = (LoadGraph("Resource/Images/Result/GameOver_title.png"))) == -1)
@@ -11,20 +11,20 @@ GameOver::GameOver(const char* stage_name)
 		throw "Resource/Images/Result/GameOver_title.png";
 	}
 
-	if ((background_image = (LoadGraph("Resource/Images/Result/GameOvar_background.png"))) == -1)
+	if ((backgraundImage = (LoadGraph("Resource/Images/Result/GameOvar_background.png"))) == -1)
 	{
 		throw "Resource/Images/Result/GameOvar_background.png";
 	}
 
-	if ((background_music = LoadSoundMem("Resource/Sounds/BGM/gameover02.wav")) == -1) {
+	if ((backgroundMusic = LoadSoundMem("Resource/Sounds/BGM/gameover02.wav")) == -1) {
 		throw "Resource/Sounds/BGM/gameover02.wav";
 	}
 
-	if ((ok_se = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
+	if ((okSe = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
-	if ((cursor_move_se = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
+	if ((cursormoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
 	{
 		throw "Resource/Sounds/SE/cursor_move.wav";
 	}
@@ -42,20 +42,20 @@ GameOver::GameOver(const char* stage_name)
 	guid_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 40, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
 
-	input_margin= 0;
+	inputMargin= 0;
 	selectmenu = 0;
 
 	timer=0;
 
-	this->stage_name = stage_name;
+	this->stageName = stageName;
 
-	ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music);
+	ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
 
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, bad_se[se_randnum]);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursor_move_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 
-	PlaySoundMem(background_music, DX_PLAYTYPE_BACK, FALSE);
+	PlaySoundMem(backgroundMusic, DX_PLAYTYPE_BACK, FALSE);
 	PlaySoundMem(bad_se[se_randnum], DX_PLAYTYPE_BACK, FALSE);
 }
 
@@ -63,12 +63,12 @@ GameOver::~GameOver()
 {
 
 	DeleteGraph(title_image);
-	DeleteGraph(background_image);
+	DeleteGraph(backgraundImage);
 	DeleteFontToHandle(menu_font);
 	DeleteFontToHandle(guid_font);
-	DeleteSoundMem(background_music);
-	DeleteSoundMem(ok_se);
-	DeleteSoundMem(cursor_move_se);
+	DeleteSoundMem(backgroundMusic);
+	DeleteSoundMem(okSe);
+	DeleteSoundMem(cursormoveSe);
 	DeleteSoundMem(bad_se[se_randnum]);
 }
 
@@ -76,8 +76,8 @@ AbstractScene* GameOver::Update()
 {
 
 	//WaitTimeを加算
-	if (input_margin < 20) {
-		++input_margin;
+	if (inputMargin < 20) {
+		++inputMargin;
 	}
 	else {
 
@@ -85,20 +85,20 @@ AbstractScene* GameOver::Update()
 		最上の場合は下へ*/
 		if (PAD_INPUT::GetPadThumbLY() > 20000)
 		{
-			PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
+			PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 			selectmenu = (selectmenu + 1) % 2;
-			input_margin = 0;
+			inputMargin = 0;
 		}
 
 		/*下入力かつWaitTimeが20より大きい時cursorを下に、
 		最上の場合は上へ*/
 		if (PAD_INPUT::GetPadThumbLY() < -20000)
 		{
-			PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
+			PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 			selectmenu = (selectmenu + 1) % 2;
-			input_margin = 0;
+			inputMargin = 0;
 		}
 
 	}
@@ -106,16 +106,16 @@ AbstractScene* GameOver::Update()
 
 	if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON))
 	{
-		PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
-		while (CheckSoundMem(ok_se)) {}
+		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 
 		switch (static_cast<GAMEOVER_MENU>(selectmenu))
 		{
 
 		case GAMEOVER_MENU::NewGame:
-			return new GAMEMAIN(false, 0, stage_name);
+			return new GAMEMAIN(false, 0, stageName);
 			break;
 
 		case  GAMEOVER_MENU::ReSelect:
@@ -134,7 +134,7 @@ AbstractScene* GameOver::Update()
 void GameOver::Draw() const
 {
 
-	DrawGraph(0, 0, background_image, FALSE);
+	DrawGraph(0, 0, backgraundImage, FALSE);
 	DrawGraph(185, 100, title_image, TRUE);
 
 	//Select用String

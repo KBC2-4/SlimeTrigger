@@ -15,12 +15,12 @@ Option::Option() {
 	menu_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 80, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	buttonguid_font = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
-	if ((cursor_move_se = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
+	if ((cursormoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
 	{
 		throw "Resource/Sounds/SE/cursor_move.wav";
 	}
 
-	if ((ok_se = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
+	if ((okSe = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
@@ -32,16 +32,16 @@ Option::Option() {
 	window_mode = 1;
 	LoadData();
 
-	//PlaySoundMem(background_music, DX_PLAYTYPE_LOOP);
+	//PlaySoundMem(backgroundMusic, DX_PLAYTYPE_LOOP);
 
 	old_bgm_vol = 0;
 	old_se_vol = 0;
 	selectmenu = 0;
-	input_margin = 0;
+	inputMargin = 0;
 
 	//SE
-	ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursor_move_se);
-	ChangeVolumeSoundMem(GetSEVolume() * 1.6, ok_se);
+	ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursormoveSe);
+	ChangeVolumeSoundMem(GetSEVolume() * 1.6, okSe);
 	ChangeVolumeSoundMem(GetSEVolume() * 1.6, mute_se);
 
 	option_flg = false;
@@ -54,8 +54,8 @@ Option::~Option() {
 	SaveData();
 	DeleteFontToHandle(menu_font);
 	DeleteFontToHandle(buttonguid_font);
-	DeleteSoundMem(cursor_move_se);
-	DeleteSoundMem(ok_se);
+	DeleteSoundMem(cursormoveSe);
+	DeleteSoundMem(okSe);
 	DeleteSoundMem(mute_se);
 	selectmenu = 0;
 	option_flg = false;
@@ -64,36 +64,36 @@ Option::~Option() {
 
 void Option::Update() {
 	
-	if (input_margin < 20) {
-		input_margin++;
+	if (inputMargin < 20) {
+		inputMargin++;
 	}
 	else {
 		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetPadThumbLX() > 20000) || (PAD_INPUT::GetPadThumbLX() < -20000)) {
-			input_margin = 0;
+			inputMargin = 0;
 		}
 
 
 		if (((static_cast<MENU>(selectmenu) == MENU::BGM && bgm_vol < 255 * 90 / 100) || (static_cast<MENU>(selectmenu) == MENU::SE && se_vol < 255 * 90 / 100)) && PAD_INPUT::GetPadThumbLX() > 20000) {
-			PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
+			PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 50, 100, -1);
 		}
 
 		if (((static_cast<MENU>(selectmenu) == MENU::BGM && bgm_vol > 255 * 10 / 100) || (static_cast<MENU>(selectmenu) == MENU::SE && se_vol > 255 * 10 / 100)) && PAD_INPUT::GetPadThumbLX() < -20000) {
-			PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
+			PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 50, 100, -1);
 		}
 
-		if (PAD_INPUT::GetPadThumbLY() > 20000) { selectmenu = (selectmenu + 3) % 4; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
+		if (PAD_INPUT::GetPadThumbLY() > 20000) { selectmenu = (selectmenu + 3) % 4; PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 		}
 
-		if (PAD_INPUT::GetPadThumbLY() < -20000) { selectmenu = (selectmenu + 1) % 4; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
+		if (PAD_INPUT::GetPadThumbLY() < -20000) { selectmenu = (selectmenu + 1) % 4; PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 		}
 
 		if (PAD_INPUT::GetPadThumbLX() > 20000) {
 			if (static_cast<MENU>(selectmenu) == MENU::BGM && bgm_vol < 255 * 90 / 100) { bgm_vol += 255 * 10 / 100; }
 			else if (static_cast<MENU>(selectmenu) == MENU::SE && se_vol < 255 * 90 / 100) { se_vol += 255 * 10 / 100; }
 
-			ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursor_move_se);
+			ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursormoveSe);
 		}
 
 		if (PAD_INPUT::GetPadThumbLX() < -20000) {
@@ -112,9 +112,9 @@ void Option::Update() {
 	if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
 
 		if (static_cast<MENU>(selectmenu) == MENU::WindowMode) {
-			PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+			PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 			//ok_seが鳴り終わってから画面推移する。
-			while (CheckSoundMem(ok_se)) {}
+			while (CheckSoundMem(okSe)) {}
 			StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 			window_mode = !window_mode;
 			ChangeWindowMode(window_mode);
@@ -135,9 +135,9 @@ void Option::Update() {
 			else { se_vol = old_se_vol; }
 		}
 		else if (static_cast<MENU>(selectmenu) == MENU::RETURN) {
-			PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+			PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 			//ok_seが鳴り終わってから画面推移する。
-			while (CheckSoundMem(ok_se)) {}
+			while (CheckSoundMem(okSe)) {}
 			StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 			selectmenu = 0;
 			ChangeOptionFlg();
@@ -147,26 +147,26 @@ void Option::Update() {
 
 	//入力方式の切り替え
 	if ((PAD_INPUT::GetNowKey() == XINPUT_BUTTON_BACK) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
-		PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
-		while (CheckSoundMem(ok_se)) {}
+		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 		input_mode = !input_mode;
 	}
 
 	//戻る(戻るメニューにカーソルを合わせなくても)
 	if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
-		PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
-		while (CheckSoundMem(ok_se)) {}
+		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 		selectmenu = 0;
 		ChangeOptionFlg();
 	}
 
-	ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursor_move_se);
+	ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursormoveSe);
 	ChangeVolumeSoundMem(GetSEVolume(), mute_se);
-	ChangeVolumeSoundMem(GetSEVolume(), ok_se);
+	ChangeVolumeSoundMem(GetSEVolume(), okSe);
 }
 
 

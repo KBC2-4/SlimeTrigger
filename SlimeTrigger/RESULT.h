@@ -4,10 +4,10 @@
 class RESULT : public AbstractScene
 {
 private:
-	int time_font;
-	int title_image, background_image;
-	int background_music;
-	int count_se, ok_se, good_se[4];
+	int timeFont;
+	int title_image, backgroundImage;
+	int backgroundMusic;
+	int countSe, okSe, good_se[4];
 	int menu_font, guid_font, button_guid_font;
 	int timer, guide_timer;
 	bool win;
@@ -18,7 +18,7 @@ private:
 	bool high_score;
 
 public:
-	RESULT(bool issue, int clear_time = -1, const char* stage_name = "StageSelect");
+	RESULT(bool issue, int clear_time = -1, const char* stageName = "StageSelect");
 	~RESULT();
 	AbstractScene* Update() override;
 	void Draw() const override;

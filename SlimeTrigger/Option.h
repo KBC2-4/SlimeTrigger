@@ -31,8 +31,8 @@ private:
 	};
 
 	int menu_font, buttonguid_font;
-	int cursor_move_se, ok_se, mute_se;
-	int input_margin;
+	int cursormoveSe, okSe, mute_se;
+	int inputMargin;
 	static int bgm_vol;        //BGM‚Ì‰¹—Ê
 	static int se_vol;         //SE‚Ì‰¹—Ê
 	static bool input_mode;	//“ü—Í•û®‚ÌØ‚è‘Ö‚¦

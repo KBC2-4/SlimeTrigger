@@ -5,7 +5,7 @@
 /// <summary>
 /// コンストラクタ
 /// </summary>
-ELEMENT::ELEMENT(const char* stage_name) : STAGE(stage_name) {
+ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 
 	guid_font = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
@@ -420,8 +420,8 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 	//酸性雨の水たまり
 	for (int i = 0; i < acidrain_puddles.size(); i++) {
 
-		if (stage_name == "Stage02") { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[7], TRUE); }
-		else if (stage_name == "Stage03") { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[11], TRUE); }
+		if (stageName == "Stage02") { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[7], TRUE); }
+		else if (stageName == "Stage03") { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[11], TRUE); }
 		else { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[3], TRUE); }
 
 		switch (acidrain_puddles[i].type)

@@ -38,12 +38,12 @@ protected:
 	std::vector<std::vector<int>> button_info;
 	float scroll_x, scroll_y;	//マップスクロール量
 	int temporary_hit;		//一時的な当たり判定
-	const char* stage_name;		//ステージ名
+	const char* stageName;		//ステージ名
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	STAGE(const char* stage_name = "StageSelect", bool restert = false);
+	STAGE(const char* stageName = "StageSelect", bool restert = false);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -64,8 +64,8 @@ public:
 	/// <summary>
 	/// マップデータの読み込み
 	/// </summary>
-	/// <param name="stage_name">ステージのインスタンス</param>
-	void LoadMapData(const char* stage_name);
+	/// <param name="stageName">ステージのインスタンス</param>
+	void LoadMapData(const char* stageName);
 	/// <summary>
 	/// マップサイズのGeter
 	/// </summary>

@@ -31,12 +31,12 @@ public:
 	ThrowSlime() {}
 	ThrowSlime(float player_x, float player_y, float throw_rad, STAGE* stage);
 	void Finalize();
-	void Update(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomaton_count);
+	void Update(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomatonCount);
 	void Draw(STAGE* stage) const;
 
 
 	bool checkdel() { return throw_del; }
-	void Hit(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomaton_count);
+	void Hit(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomatonCount);
 
 	float GetThrowX() { return x0; }
 	float GetThrowY() { return y0; }

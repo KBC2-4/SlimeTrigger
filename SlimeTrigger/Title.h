@@ -16,12 +16,12 @@ class Title : public AbstractScene
 {
 private:
 
-	int background_image;
-	int background_music;
-	int cursor_move_se, ok_se,exit_se;
+	int backgraundImage;
+	int backgroundMusic;
+	int cursormoveSe, okSe,exit_se;
 	int title_font, menu_font, guid_font;
 	int selectmenu;
-	int input_margin;
+	int inputMargin;
 	int timer;
 	bool exit_flg;
 

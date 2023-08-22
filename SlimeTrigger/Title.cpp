@@ -15,21 +15,21 @@ static bool animation_flg = false;
 Title::Title()
 {
 
-	if ((background_image = LoadGraph("Resource/Images/Stage/TitleBackImage.png")) == -1)
+	if ((backgraundImage = LoadGraph("Resource/Images/Stage/TitleBackImage.png")) == -1)
 	{
 		throw "Resource/Images/Stage/TitleBackImage.png";
 	}
 
-	if ((background_music = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {
+	if ((backgroundMusic = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {
 		throw "Resource/Sounds/BGM/title.wav";
 	}
 
-	if ((cursor_move_se = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
+	if ((cursormoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
 	{
 		throw "Resource/Sounds/SE/cursor_move.wav";
 	}
 
-	if ((ok_se = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1)
+	if ((okSe = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1)
 	{
 		throw "Resource/Sounds/SE/ok.wav";
 	}
@@ -47,7 +47,7 @@ Title::Title()
 	guid_font = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
 	selectmenu = 0;
-	input_margin = 0;
+	inputMargin = 0;
 	timer = 0;
 	exit_flg = false;
 
@@ -65,11 +65,11 @@ Title::Title()
 	
 
 	//BGM
-	ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music);
+	ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
 
 	//SE
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursor_move_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, exit_se);
 }
 
@@ -77,11 +77,11 @@ Title::~Title()
 {
 	delete option;
 
-	DeleteGraph(background_image);
-	StopSoundMem(background_music);
-	DeleteSoundMem(background_music);
-	DeleteSoundMem(cursor_move_se);
-	DeleteSoundMem(ok_se);
+	DeleteGraph(backgraundImage);
+	StopSoundMem(backgroundMusic);
+	DeleteSoundMem(backgroundMusic);
+	DeleteSoundMem(cursormoveSe);
+	DeleteSoundMem(okSe);
 	DeleteSoundMem(exit_se);
 	DeleteFontToHandle(title_font);
 	DeleteFontToHandle(menu_font);
@@ -93,23 +93,23 @@ AbstractScene* Title::Update()
 	if (option->GetOptionFlg() == true) {
 		option->Update();
 		//BGM
-		ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music);
+		ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
 
 		//SE
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursor_move_se);
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
+		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
+		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, exit_se);
 	}
 	else {
 
-		if (input_margin < 20) {
-			input_margin++;
+		if (inputMargin < 20) {
+			inputMargin++;
 		}
 		else {
 
 			//タイトルアニメーションが終わってからBGMを再生する
-			if (title_anitimer[1] == 0 && !CheckSoundMem(background_music)) {
-				PlaySoundMem(background_music, DX_PLAYTYPE_LOOP);
+			if (title_anitimer[1] == 0 && !CheckSoundMem(backgroundMusic)) {
+				PlaySoundMem(backgroundMusic, DX_PLAYTYPE_LOOP);
 			}
 
 
@@ -118,15 +118,15 @@ AbstractScene* Title::Update()
 				{
 
 					selectmenu = (selectmenu + 3) % 4;
-					input_margin = 0; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
+					inputMargin = 0; PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 
 				if (PAD_INPUT::GetPadThumbLY() < -20000)
 				{
 
-					selectmenu = (selectmenu + 1) % 4; input_margin = 0;
-					PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
+					selectmenu = (selectmenu + 1) % 4; inputMargin = 0;
+					PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 			}
@@ -136,9 +136,9 @@ AbstractScene* Title::Update()
 		{
 
 			if (title_anitimer[1] <= 0) {
-				PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+				PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 				//ok_seが鳴り終わってから画面推移する。
-				while (CheckSoundMem(ok_se)) {}
+				while (CheckSoundMem(okSe)) {}
 				StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 
 				switch (static_cast<MENU>(selectmenu))
@@ -186,7 +186,7 @@ AbstractScene* Title::Update()
 void Title::Draw()const
 {
 
-	DrawGraph(0, 0, background_image, false);
+	DrawGraph(0, 0, backgraundImage, false);
 
 	//オプション画面へ入る
 	if (option->GetOptionFlg() == true) {

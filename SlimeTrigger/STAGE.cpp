@@ -17,7 +17,7 @@
 /// <summary>
 /// コンストラクタ
 /// </summary>
-STAGE::STAGE(const char* stage_name, bool restert) {
+STAGE::STAGE(const char* stageName, bool restert) {
 	//**map_data = 0;
 	*block_image1 = 0;
 	*stage_image = 0;
@@ -45,7 +45,7 @@ STAGE::STAGE(const char* stage_name, bool restert) {
 
 	//InitStage();
 
-	LoadMapData(stage_name);
+	LoadMapData(stageName);
 	temporary_hit = 999;
 	clearflg = false;
 	clearbox = { 0,0 };
@@ -54,7 +54,7 @@ STAGE::STAGE(const char* stage_name, bool restert) {
 	halfwaypoint = restert;
 	halfway_timer = 0;
 	spawn_point = { 0,0 };
-	this->stage_name = stage_name;
+	this->stageName = stageName;
 
 
 	for (int i = 0; i < map_data.size(); i++) {
@@ -155,10 +155,10 @@ void STAGE::Draw(ELEMENT* element)const {
 /// <summary>
 /// マップデータの読み込み
 /// </summary>
-void STAGE::LoadMapData(const char* stage_name) {
+void STAGE::LoadMapData(const char* stageName) {
 
 	char buf[37];
-	sprintf_s(buf, sizeof(buf), "Resource/Map_Data/%s.csv", stage_name);
+	sprintf_s(buf, sizeof(buf), "Resource/Map_Data/%s.csv", stageName);
 	//std::ifstream ifs(buf);
 
 	//map_data.clear();

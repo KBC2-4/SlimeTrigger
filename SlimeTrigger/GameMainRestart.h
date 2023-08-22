@@ -5,14 +5,14 @@
 class GAMEMAIN_RESTART : public AbstractScene
 {
 private:
-	int now_graph;
-	bool restart;
+	int nowGraph;
+	bool reStart;
 	int halfway_time;
-	const char* stage_name;
+	const char* stageName;
 
 public:
 	//コンストラクタ
-	GAMEMAIN_RESTART(bool restart = false, int halfway_time = 0, const char* stage_name = "StageSelect", int now_graph = 0);
+	GAMEMAIN_RESTART(bool reStart = false, int halfway_time = 0, const char* stageName = "StageSelect", int nowGraph = 0);
 	~GAMEMAIN_RESTART();
 
 	AbstractScene* Update() override;

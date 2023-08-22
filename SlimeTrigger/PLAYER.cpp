@@ -143,7 +143,7 @@ PLAYER::~PLAYER() {
 /// <summary>
 /// プレイヤーの更新
 /// </summary>
-void PLAYER::Update(ELEMENT* element, STAGE* stage, TOMATO** tomaton, int tomaton_count, bool is_stay) {
+void PLAYER::Update(ELEMENT* element, STAGE* stage, TOMATO** tomaton, int tomatonCount, bool is_stay) {
 
 	ChangeVolumeSoundMem(Option::GetSEVolume(), damageSE);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), jumpSE);
@@ -187,7 +187,7 @@ void PLAYER::Update(ELEMENT* element, STAGE* stage, TOMATO** tomaton, int tomato
 	//球の更新
 	int throw_cnt = throw_slime.size();
 	for (int i = 0; i < throw_cnt; i++) {
-		throw_slime[i].Update(stage, element, tomaton, tomaton_count);
+		throw_slime[i].Update(stage, element, tomaton, tomatonCount);
 	}
 
 	//死判定

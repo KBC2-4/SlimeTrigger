@@ -49,7 +49,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ELEMENT(const char* stage_name = "StageSelect");
+	ELEMENT(const char* stageName = "StageSelect");
 	/// <summary>
 	/// デストラクタ
 	/// </summary>

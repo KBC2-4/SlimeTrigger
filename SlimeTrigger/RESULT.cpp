@@ -5,34 +5,34 @@
 #include "Option.h"
 #include "Ranking.h"
 
-RESULT::RESULT(bool issue, int clear_time, const char* stage_name)
+RESULT::RESULT(bool issue, int clear_time, const char* stageName)
 {
 
 	menu_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 90, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	guid_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 70, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	button_guid_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 40, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
-	time_font = LoadFontDataToHandle("Resource/Fonts/TimeAttack.dft", 2);
+	timeFont = LoadFontDataToHandle("Resource/Fonts/TimeAttack.dft", 2);
 
 	if ((title_image = LoadGraph("Resource/Images/Result/GameClear_title.png")) == -1) {
 		throw "Resource/Images/Result/GameClear_title.png";
 	}
 
-	if ((background_image = LoadGraph("Resource/Images/Result/GameClear_background.png")) == -1) {
+	if ((backgroundImage = LoadGraph("Resource/Images/Result/GameClear_background.png")) == -1) {
 		throw "Resource/Images/Result/GameClear_background.png";
 	}
 	int bgm_randum = GetRand(1);
 	char dis_good_bgm[36];
 	sprintf_s(dis_good_bgm, sizeof(dis_good_bgm), "Resource/Sounds/BGM/gameclear0%d.wav", bgm_randum + 1);
 
-	if ((background_music = LoadSoundMem(dis_good_bgm)) == -1) {
+	if ((backgroundMusic = LoadSoundMem(dis_good_bgm)) == -1) {
 		throw dis_good_bgm;
 	}
 
-	if ((count_se = LoadSoundMem("Resource/Sounds/SE/321.wav")) == -1) {
+	if ((countSe = LoadSoundMem("Resource/Sounds/SE/321.wav")) == -1) {
 		throw "Resource/Sounds/SE/321.wav";
 	}
 
-	if ((ok_se = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
+	if ((okSe = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
@@ -59,30 +59,30 @@ RESULT::RESULT(bool issue, int clear_time, const char* stage_name)
 	string_effect_timer = 0.0f;
 	guide_timer = 0;
 
-	ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music);
+	ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
 
 	//SE
-	ChangeVolumeSoundMem(Option::GetSEVolume(), count_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), countSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, good_se[se_randnum]);
 
-	PlaySoundMem(background_music, DX_PLAYTYPE_BACK, FALSE);
+	PlaySoundMem(backgroundMusic, DX_PLAYTYPE_BACK, FALSE);
 	PlaySoundMem(good_se[se_randnum], DX_PLAYTYPE_BACK, FALSE);
 
 	high_score = false;
 
 	//ランキング登録
-	if (stage_name == "Stage01")
+	if (stageName == "Stage01")
 	{
 		if (clear_time < RANKING::GetBestTime(0)) { high_score = true; }
 		RANKING::Insert(this->clear_time, 1);
 	}
-	else if (stage_name == "Stage02")
+	else if (stageName == "Stage02")
 	{
 		if (clear_time < RANKING::GetBestTime(1)) { high_score = true; }
 		RANKING::Insert(this->clear_time, 2);
 	}
-	else if (stage_name == "Stage03")
+	else if (stageName == "Stage03")
 	{
 		if (clear_time < RANKING::GetBestTime(2)) { high_score = true; }
 		RANKING::Insert(this->clear_time, 3);
@@ -96,17 +96,17 @@ RESULT::~RESULT()
 	DeleteFontToHandle(menu_font);
 	DeleteFontToHandle(guid_font);
 	DeleteFontToHandle(button_guid_font);
-	DeleteFontToHandle(time_font);
+	DeleteFontToHandle(timeFont);
 	DeleteGraph(title_image);
-	DeleteSoundMem(background_music);
-	DeleteSoundMem(count_se);
-	DeleteSoundMem(ok_se);
+	DeleteSoundMem(backgroundMusic);
+	DeleteSoundMem(countSe);
+	DeleteSoundMem(okSe);
 	DeleteSoundMem(good_se[se_randnum]);
 }
 
 AbstractScene* RESULT::Update()
 {
-	if (timer <= 5 * 60) { if (CheckSoundMem(count_se) == FALSE)PlaySoundMem(count_se, DX_PLAYTYPE_BACK, FALSE); }
+	if (timer <= 5 * 60) { if (CheckSoundMem(countSe) == FALSE)PlaySoundMem(countSe, DX_PLAYTYPE_BACK, FALSE); }
 
 	if (timer <= 60) { return new STAGE_SELECT(); }
 	else { --timer; }
@@ -125,9 +125,9 @@ AbstractScene* RESULT::Update()
 
 	if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A) && PAD_INPUT::GetPadState() == PAD_STATE::ON)
 	{
-		PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
+		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
-		while (CheckSoundMem(ok_se)) {}
+		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 		return new STAGE_SELECT();
 	}
@@ -146,7 +146,7 @@ void RESULT::Draw() const {
 
 		DrawFillBox(0, 0, 1280, 720, 0x000000);
 		//DrawExtendGraph(0, 0, 1280, 720, title_image, true);
-		DrawGraph(0, 0, background_image, FALSE);
+		DrawGraph(0, 0, backgroundImage, FALSE);
 		DrawGraph(180, 90, title_image, TRUE);
 
 		char dis_clear_time[20];	//文字列合成バッファー
@@ -168,7 +168,7 @@ void RESULT::Draw() const {
 		//クリアタイム
 		DrawStringToHandle(GetDrawCenterX("クリアタイム",menu_font), 300, "クリアタイム", 0x1aff00, menu_font, 0x000000);
 
-		DrawStringToHandle(GetDrawCenterX(dis_clear_time, time_font,-20), 410, dis_clear_time, 0x1aff00, time_font, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX(dis_clear_time, timeFont,-20), 410, dis_clear_time, 0x1aff00, timeFont, 0xFFFFFF);
 
 		DrawFormatStringToHandle(GetDrawCenterX("%2d秒後にリスタートします",guid_font,120), 540, 0x56F590, guid_font, "%2d秒後にリスタートします", timer / 60);
 
