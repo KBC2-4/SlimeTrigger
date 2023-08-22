@@ -12,11 +12,11 @@ ENEMY::ENEMY()
 	rad = 0.0;
 	x = 0;
 	y = 0;
-	map_x = 0;
-	map_y = 0;
+	mapX = 0;
+	mapY = 0;
 	image = nullptr;
-	animation_timer = 0;
-	animation_type = 0;
+	animationTimer = 0;
+	animationType = 0;
 
 	state = ENEMY_STATE::IDOL;
 }

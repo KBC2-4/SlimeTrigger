@@ -21,10 +21,10 @@ class ENEMY
 {
 protected:
 	int x, y;			//座標
-	int map_x, map_y;	//マップ内での座標
+	int mapX, mapY;	//マップ内での座標
 	int* image;			//画像保存用
-	int animation_timer;//アニメーションの時間
-	int animation_type;	//アニメーションの種類
+	int animationTimer;//アニメーションの時間
+	int animationType;	//アニメーションの種類
 	double rad;          //ラジアン
 	ENEMY_STATE state;	//エネミーの状態
 	STAGE* stage;		//ステージ

@@ -7,144 +7,144 @@ ENEMY_BULLET::ENEMY_BULLET()
 {
 	player = nullptr;
 	stage = nullptr;
-	player_x = 0.0;
-	player_y = 0.0;
-	bullet_x = 0.0;
-	bullet_y = 0.0;
+	playerX = 0.0;
+	playerY = 0.0;
+	bulletX = 0.0;
+	bulletY = 0.0;
 	hypote = 0.0;
-	my_x = 0.0;
-	my_y = 0.0;
-	dis_x = 0.0;
-	dis_y = 0.0;
-	draw_x = 0;
-	bullet_sx = 0.0;
-	bullet_sy = 0.0;
-	hit_rad = 0.0;
-	end_flg = false;
-	delete_flg = false;
-	hit_flg = false;
-	right_side_hit = false;
-	left_side_hit = false;
+	myX = 0.0;
+	myY = 0.0;
+	disX = 0.0;
+	disY = 0.0;
+	drawX = 0;
+	bulletSx = 0.0;
+	bulletSy = 0.0;
+	hitRad = 0.0;
+	endFlg = false;
+	deleteFlg = false;
+	hitFlg = false;
+	rightSideHit = false;
+	leftSideHit = false;
 	image = 0;
-	rad_x = 0.0;
-	map_x = 0;
-	map_y = 0;
-	mapd_x = 0.0;
-	mapd_y = 0.0;
-	o_map_x = 0;
-	o_map_y = 0;
-	image_index = 0;
-	animation_timer = 0;
-	animation_type = 0;
-	splash_se = 0;
+	radX = 0.0;
+	mapX = 0;
+	mapY = 0;
+	mapdX = 0.0;
+	mapdY = 0.0;
+	oldMapX = 0;
+	oldMapY = 0;
+	imageIndex = 0;
+	animationTimer = 0;
+	animationType = 0;
+	splashSe = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		bullet_images[i] = 0;
+		bulletImages[i] = 0;
 	}
 	for (int i = 0; i < 20; i++)
 	{
-		bullet_end_images[i] = 0;
+		bulletEndImages[i] = 0;
 	}
 }
 
 //引数付きコンストラクタ
 ENEMY_BULLET::ENEMY_BULLET(PLAYER* argu_player, STAGE* aug_stage, int x, int y, double dis, double p_rad, int index)
 {
-	if (LoadDivGraph("Resource/images/Enemy/Enemy_Bullet.png", 4, 4, 1, 20, 20, bullet_images) == -1)
+	if (LoadDivGraph("Resource/images/Enemy/Enemy_Bullet.png", 4, 4, 1, 20, 20, bulletImages) == -1)
 	{
 		throw "Resource/Images/Enemy/Enemy_Bullet.png";
 	}
-	if (LoadDivGraph("Resource/images/Enemy/Bullet_End.png", 20, 10, 2, 60, 30, bullet_end_images) == -1)
+	if (LoadDivGraph("Resource/images/Enemy/Bullet_End.png", 20, 10, 2, 60, 30, bulletEndImages) == -1)
 	{
 		throw "Resource/Images/Enemy/Bullet_End.png";
 	}
-	if ((splash_se = LoadSoundMem("Resource/Sounds/SE/Enemy/bullet.wav")) == -1) {
+	if ((splashSe = LoadSoundMem("Resource/Sounds/SE/Enemy/bullet.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/bullet.wav";
 	}
 	player = argu_player;
 	if (player->GetMoveX() > 0)
 	{
-		player_x = player->GetPlayerX();
+		playerX = player->GetPlayerX();
 	}
 	else
 	{
-		player_x = player->GetPlayerX();
+		playerX = player->GetPlayerX();
 	}
 
-	player_y = player->GetPlayerY();
-	bullet_x = x;
-	bullet_y = y;
+	playerY = player->GetPlayerY();
+	bulletX = x;
+	bulletY = y;
 	hypote = 0.0;
-	my_x = x;
-	my_y = y;
-	dis_x = 0.0;
-	dis_y = 0.0;
-	draw_x = 0;
-	bullet_sx = 0.0;
-	bullet_sy = 0.0;
-	hit_rad = -90 * (PI / 180);
-	end_flg = false;
-	delete_flg = false;
-	hit_flg = false;
-	right_side_hit = false;
-	left_side_hit = false;
-	rad_x = dis;
+	myX = x;
+	myY = y;
+	disX = 0.0;
+	disY = 0.0;
+	drawX = 0;
+	bulletSx = 0.0;
+	bulletSy = 0.0;
+	hitRad = -90 * (PI / 180);
+	endFlg = false;
+	deleteFlg = false;
+	hitFlg = false;
+	rightSideHit = false;
+	leftSideHit = false;
+	radX = dis;
 	stage = aug_stage;
-	this->scroll_x = abs(stage->GetScrollX());
-	this->scroll_y = abs(stage->GetScrollY());
+	this->scrollX = abs(stage->GetScrollX());
+	this->scrollY = abs(stage->GetScrollY());
 
-	map_x = 0;
-	map_y = 0;
-	mapd_x = 0.0;
-	mapd_y = 0.0;
-	o_map_x = 0;
-	o_map_y = 0;
+	mapX = 0;
+	mapY = 0;
+	mapdX = 0.0;
+	mapdY = 0.0;
+	oldMapX = 0;
+	oldMapY = 0;
 	rad = p_rad;
-	image_index = index;
+	imageIndex = index;
 	image = 0;
-	animation_timer = 0;
-	animation_type = 0;
-	dis_x = (player_x + rad_x) - (my_x - static_cast<double>(scroll_x));
-	dis_y = player_y - (my_y - static_cast<double>(scroll_y) - stage->GetSpawnPoint().y);
+	animationTimer = 0;
+	animationType = 0;
+	disX = (playerX + radX) - (myX - static_cast<double>(scrollX));
+	disY = playerY - (myY - static_cast<double>(scrollY) - stage->GetSpawnPoint().y);
 
-	hypote = sqrt((dis_x * dis_x) + (dis_y * dis_y));
+	hypote = sqrt((disX * disX) + (disY * disY));
 
-	bullet_sx = dis_x / hypote * BULLET_SPEED;
-	bullet_sy = dis_y / hypote * BULLET_SPEED;
+	bulletSx = disX / hypote * BULLET_SPEED;
+	bulletSy = disY / hypote * BULLET_SPEED;
 
-	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
 }
 
 ENEMY_BULLET::~ENEMY_BULLET() {
 
 	for (int i = 0; i < 4; i++) {
-		DeleteGraph(bullet_images[i]);
+		DeleteGraph(bulletImages[i]);
 	}
 
 	for (int i = 0; i < 20; i++) {
-		DeleteGraph(bullet_end_images[i]);
+		DeleteGraph(bulletEndImages[i]);
 	}
 
-	DeleteSoundMem(splash_se);
+	DeleteSoundMem(splashSe);
 }
 
 //描画
 void ENEMY_BULLET::Draw() const
 {
-	DrawRotaGraph(static_cast<int>(GetDrawX()) - draw_x, static_cast<int>(GetDrawY()), 2, rad + hit_rad, image, TRUE);
+	DrawRotaGraph(static_cast<int>(GetDrawX()) - drawX, static_cast<int>(GetDrawY()), 2, rad + hitRad, image, TRUE);
 }
 
 //アップデート
 void ENEMY_BULLET::Update()
 {
 
-	animation_timer++;        //アニメーションの時間を加算
+	animationTimer++;        //アニメーションの時間を加算
 	//アニメーションを終わらせる
-	if (end_flg)
+	if (endFlg)
 	{
 		if (EndAnimation())
 		{
-			delete_flg = true;
+			deleteFlg = true;
 		}
 	}
 	else
@@ -153,7 +153,7 @@ void ENEMY_BULLET::Update()
 		Hit();  //プレイヤーとの当たり判定
 	}
 	//弾がプレイヤーに当たっていたら
-	if (hit_flg)
+	if (hitFlg)
 	{
 		if (player->GetLife() > 0)
 		{
@@ -165,9 +165,9 @@ void ENEMY_BULLET::Update()
 		}
 	}
 
-	if (GetDrawX() < 0 || GetDrawX() > 1280 || (bullet_y + stage->GetScrollY()) < 0 || (bullet_y + stage->GetScrollY()) > 720)
+	if (GetDrawX() < 0 || GetDrawX() > 1280 || (bulletY + stage->GetScrollY()) < 0 || (bulletY + stage->GetScrollY()) > 720)
 	{
-		delete_flg = true;
+		deleteFlg = true;
 	}
 }
 
@@ -175,20 +175,20 @@ void ENEMY_BULLET::Move()
 {
 
 	//弾の移動
-	bullet_x += bullet_sx;
-	bullet_y += bullet_sy;
+	bulletX += bulletSx;
+	bulletY += bulletSy;
 
 	//マップ上の値を代入
-	mapd_x = bullet_x / MAP_CEllSIZE;
-	mapd_y = (bullet_y + IMAGE_Y_SIZE) / MAP_CEllSIZE;
+	mapdX = bulletX / MAP_CEllSIZE;
+	mapdY = (bulletY + IMAGE_Y_SIZE) / MAP_CEllSIZE;
 
 	//自分が前いたマップ座標
-	o_map_x = map_x;
-	o_map_y = map_y;
+	oldMapX = mapX;
+	oldMapY = mapY;
 
 	//ダブル型のマップ上の値をイント型に
-	map_x = (int)(mapd_x);
-	map_y = (int)(mapd_y);
+	mapX = (int)(mapdX);
+	mapY = (int)(mapdY);
 	MoveAnimation();
 }
 
@@ -196,11 +196,11 @@ void ENEMY_BULLET::Move()
 bool ENEMY_BULLET::EndAnimation()
 {
 	bool ret = false;           //アニメーションが終わっているかどうかのフラグ
-	if (animation_timer < 50)	//50フレーム間アニメーションをする
+	if (animationTimer < 50)	//50フレーム間アニメーションをする
 	{
-		if (animation_timer % ANIMATION_TIMER == 0)
+		if (animationTimer % ANIMATION_TIMER == 0)
 		{
-			image = bullet_end_images[(image_index * 10) + (animation_type++ % 10)];
+			image = bulletEndImages[(imageIndex * 10) + (animationType++ % 10)];
 		}
 	}
 	else  //アニメーションの終了
@@ -212,9 +212,9 @@ bool ENEMY_BULLET::EndAnimation()
 }
 void ENEMY_BULLET::MoveAnimation()
 {
-	if (animation_timer % ANIMATION_TIMER == 0)
+	if (animationTimer % ANIMATION_TIMER == 0)
 	{
-		image = bullet_images[(image_index * 2) + (animation_type++ % 2)];
+		image = bulletImages[(imageIndex * 2) + (animationType++ % 2)];
 	}
 }
 
@@ -236,27 +236,27 @@ void ENEMY_BULLET::Hit()
 
 	if (px1 < bx2 && bx1 < px2 && py1 < by2 && by1 < py2)
 	{
-		delete_flg = true;
-		hit_flg = true;
+		deleteFlg = true;
+		hitFlg = true;
 	}
-	if (stage->HitMapDat(map_y, map_x))
+	if (stage->HitMapDat(mapY, mapX))
 	{
-		PlaySoundMem(splash_se, DX_PLAYTYPE_BACK);
-		end_flg = true;
-		animation_timer = 0;
-		animation_type = 0;
-		if (stage->GetMapData(o_map_y + 1, o_map_x) != stage->GetMapData(map_y, map_x))
+		PlaySoundMem(splashSe, DX_PLAYTYPE_BACK);
+		endFlg = true;
+		animationTimer = 0;
+		animationType = 0;
+		if (stage->GetMapData(oldMapY + 1, oldMapX) != stage->GetMapData(mapY, mapX))
 		{
 			if (rad > 90 * (PI / 180))
 			{
-				hit_rad = 0;
-				draw_x = -40;
+				hitRad = 0;
+				drawX = -40;
 			}
 			else {}
 			if (rad < 90 * (PI / 180))
 			{
-				hit_rad = 180 * (PI / 180);
-				draw_x = 40;
+				hitRad = 180 * (PI / 180);
+				drawX = 40;
 			}
 			else {}
 		}
@@ -266,13 +266,13 @@ void ENEMY_BULLET::Hit()
 
 float ENEMY_BULLET::GetDrawX() const
 {
-	float ret = (bullet_x - scroll_x) + (static_cast<double>(scroll_x) + stage->GetScrollX());
+	float ret = (bulletX - scrollX) + (static_cast<double>(scrollX) + stage->GetScrollX());
 	return ret;
 }
 
 float ENEMY_BULLET::GetDrawY() const
 {
-	float ret = (bullet_y - scroll_y) + (static_cast<double>(scroll_y) + stage->GetScrollY());
+	float ret = (bulletY - scrollY) + (static_cast<double>(scrollY) + stage->GetScrollY());
 
 	return ret;
 }

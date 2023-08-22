@@ -4,13 +4,13 @@ class TOMATO :
 	public ENEMY
 {
 private:
-	int spawn_map_x;		//スポーン地点(x)
-	int spawn_map_y;		//スポーン地点(y)
+	int spawnMapX;		//スポーン地点(x)
+	int spawnMapY;		//スポーン地点(y)
 
-	int splash_se;		//弾けるときのSE
+	int splashSe;		//弾けるときのSE
 
-	int now_image;			//現在の画像
-	double image_rate;			//画像サイズ
+	int nowImage;			//現在の画像
+	double imageRate;			//画像サイズ
 	const int ANIMATION_TIME = 5;	//アニメーションの切り替え時間
 	const int FALL_SPEED = 10;		//落下速度
 public:
@@ -23,9 +23,9 @@ public:
 	/// </summary>
 	/// <param name="player">プレイヤーのアドレス</param>
 	/// <param name="stage">ステージのアドレス</param>
-	/// <param name="spawn_y">マップ上のスポーン地点(y)</param>
-	/// <param name="spawn_x">マップ上のスポーン地点(x)</param>
-	TOMATO(PLAYER* player,STAGE* stage,int spawn_y,int spawn_x);
+	/// <param name="spawnY">マップ上のスポーン地点(y)</param>
+	/// <param name="spawnX">マップ上のスポーン地点(x)</param>
+	TOMATO(PLAYER* player,STAGE* stage,int spawnY,int spawnX);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
