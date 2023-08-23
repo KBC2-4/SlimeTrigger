@@ -12,7 +12,7 @@ int Option::se_vol = 255 * 50 / 100;
 bool Option::input_mode = true;
 
 Option::Option() {
-	menu_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 80, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	menuFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 80, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	buttonguid_font = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
 	if ((cursormoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
@@ -52,7 +52,7 @@ Option::Option() {
 
 Option::~Option() {
 	SaveData();
-	DeleteFontToHandle(menu_font);
+	DeleteFontToHandle(menuFont);
 	DeleteFontToHandle(buttonguid_font);
 	DeleteSoundMem(cursormoveSe);
 	DeleteSoundMem(okSe);
@@ -176,14 +176,14 @@ void Option::Draw() {
 
 	//ウィンドウモード切替
 	if (window_mode) {
-		DrawStringToHandle(GetDrawCenterX("全画面表示", menu_font), 120, "全画面表示", static_cast<MENU>(selectmenu) == MENU::WindowMode ? 0x4572D9 : 0xEB8F63, menu_font, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("全画面表示", menuFont), 120, "全画面表示", static_cast<MENU>(selectmenu) == MENU::WindowMode ? 0x4572D9 : 0xEB8F63, menuFont, 0xFFFFFF);
 	}else{
-		DrawStringToHandle(GetDrawCenterX("ウィンドウ表示", menu_font), 120, "ウィンドウ表示", static_cast<MENU>(selectmenu) == MENU::WindowMode ? 0x4572D9 : 0xEB8F63, menu_font, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("ウィンドウ表示", menuFont), 120, "ウィンドウ表示", static_cast<MENU>(selectmenu) == MENU::WindowMode ? 0x4572D9 : 0xEB8F63, menuFont, 0xFFFFFF);
 	}
 
 
 	//BGM
-	DrawStringToHandle(GetDrawCenterX("BGM", menu_font), 250, "BGM", static_cast<MENU>(selectmenu) == MENU::BGM ? 0x5FEBB6 : 0xEB8F63, menu_font, 0xFFFFFF);
+	DrawStringToHandle(GetDrawCenterX("BGM", menuFont), 250, "BGM", static_cast<MENU>(selectmenu) == MENU::BGM ? 0x5FEBB6 : 0xEB8F63, menuFont, 0xFFFFFF);
 
 	const int bgm_x = 640;
 	const int bgm_y = 350;
@@ -198,7 +198,7 @@ void Option::Draw() {
 
 
 	//SE
-	DrawStringToHandle(GetDrawCenterX("SE", menu_font), 380, "SE", static_cast<MENU>(selectmenu) == MENU::SE ? 0xF5E6B3 : 0xEB8F63, menu_font, 0xFFFFFF);
+	DrawStringToHandle(GetDrawCenterX("SE", menuFont), 380, "SE", static_cast<MENU>(selectmenu) == MENU::SE ? 0xF5E6B3 : 0xEB8F63, menuFont, 0xFFFFFF);
 
 	const int se_x = 640;
 	const int se_y = 480;
@@ -211,7 +211,7 @@ void Option::Draw() {
 
 	DrawFormatString(se_x, se_y - 6, 0x000000, "%d", ((110 * se_vol / 255) - 1) / 10);
 
-	DrawStringToHandle(GetDrawCenterX("戻る", menu_font), 540, "戻る", static_cast<MENU>(selectmenu) == MENU::RETURN ? 0xEBABDC : 0xEB8F63, menu_font, 0xFFFFFF);
+	DrawStringToHandle(GetDrawCenterX("戻る", menuFont), 540, "戻る", static_cast<MENU>(selectmenu) == MENU::RETURN ? 0xEBABDC : 0xEB8F63, menuFont, 0xFFFFFF);
 
 	//入力方式の切り替え
 

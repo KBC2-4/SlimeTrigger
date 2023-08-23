@@ -7,7 +7,7 @@ class DRAW_RANKING :
 private:
 	int waitTime;
 	int bestTime[3];
-	int title_font,timeFont;
+	int titleFont,timeFont;
 	int image;
 	int okSe;
 	int backgraundImage;

@@ -8,12 +8,12 @@
 RESULT::RESULT(bool issue, int clear_time, const char* stageName)
 {
 
-	menu_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 90, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
-	guid_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 70, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	menuFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 90, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	guidFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 70, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	button_guid_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 40, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	timeFont = LoadFontDataToHandle("Resource/Fonts/TimeAttack.dft", 2);
 
-	if ((title_image = LoadGraph("Resource/Images/Result/GameClear_title.png")) == -1) {
+	if ((titleImage = LoadGraph("Resource/Images/Result/GameClear_title.png")) == -1) {
 		throw "Resource/Images/Result/GameClear_title.png";
 	}
 
@@ -37,12 +37,12 @@ RESULT::RESULT(bool issue, int clear_time, const char* stageName)
 	}
 
 
-	se_randnum = GetRand(3);
+	serandNum = GetRand(3);
 
 	char dis_good_se[30];
-	sprintf_s(dis_good_se, sizeof(dis_good_se), "Resource/Sounds/SE/good%d.wav", se_randnum + 1);
+	sprintf_s(dis_good_se, sizeof(dis_good_se), "Resource/Sounds/SE/good%d.wav", serandNum + 1);
 
-	if ((good_se[se_randnum] = LoadSoundMem(dis_good_se)) == -1) {
+	if ((good_se[serandNum] = LoadSoundMem(dis_good_se)) == -1) {
 		throw dis_good_se;
 	}
 
@@ -64,10 +64,10 @@ RESULT::RESULT(bool issue, int clear_time, const char* stageName)
 	//SE
 	ChangeVolumeSoundMem(Option::GetSEVolume(), countSe);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, good_se[se_randnum]);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, good_se[serandNum]);
 
 	PlaySoundMem(backgroundMusic, DX_PLAYTYPE_BACK, FALSE);
-	PlaySoundMem(good_se[se_randnum], DX_PLAYTYPE_BACK, FALSE);
+	PlaySoundMem(good_se[serandNum], DX_PLAYTYPE_BACK, FALSE);
 
 	high_score = false;
 
@@ -93,15 +93,15 @@ RESULT::RESULT(bool issue, int clear_time, const char* stageName)
 RESULT::~RESULT()
 {
 
-	DeleteFontToHandle(menu_font);
-	DeleteFontToHandle(guid_font);
+	DeleteFontToHandle(menuFont);
+	DeleteFontToHandle(guidFont);
 	DeleteFontToHandle(button_guid_font);
 	DeleteFontToHandle(timeFont);
-	DeleteGraph(title_image);
+	DeleteGraph(titleImage);
 	DeleteSoundMem(backgroundMusic);
 	DeleteSoundMem(countSe);
 	DeleteSoundMem(okSe);
-	DeleteSoundMem(good_se[se_randnum]);
+	DeleteSoundMem(good_se[serandNum]);
 }
 
 AbstractScene* RESULT::Update()
@@ -145,9 +145,9 @@ void RESULT::Draw() const {
 	{
 
 		DrawFillBox(0, 0, 1280, 720, 0x000000);
-		//DrawExtendGraph(0, 0, 1280, 720, title_image, true);
+		//DrawExtendGraph(0, 0, 1280, 720, titleImage, true);
 		DrawGraph(0, 0, backgroundImage, FALSE);
-		DrawGraph(180, 90, title_image, TRUE);
+		DrawGraph(180, 90, titleImage, TRUE);
 
 		char dis_clear_time[20];	//文字列合成バッファー
 
@@ -166,11 +166,11 @@ void RESULT::Draw() const {
 		}
 
 		//クリアタイム
-		DrawStringToHandle(GetDrawCenterX("クリアタイム",menu_font), 300, "クリアタイム", 0x1aff00, menu_font, 0x000000);
+		DrawStringToHandle(GetDrawCenterX("クリアタイム",menuFont), 300, "クリアタイム", 0x1aff00, menuFont, 0x000000);
 
 		DrawStringToHandle(GetDrawCenterX(dis_clear_time, timeFont,-20), 410, dis_clear_time, 0x1aff00, timeFont, 0xFFFFFF);
 
-		DrawFormatStringToHandle(GetDrawCenterX("%2d秒後にリスタートします",guid_font,120), 540, 0x56F590, guid_font, "%2d秒後にリスタートします", timer / 60);
+		DrawFormatStringToHandle(GetDrawCenterX("%2d秒後にリスタートします",guidFont,120), 540, 0x56F590, guidFont, "%2d秒後にリスタートします", timer / 60);
 
 
 		if (high_score == true) {
@@ -179,9 +179,9 @@ void RESULT::Draw() const {
 			const float size = 1.0f + string_effect_timer;
 			/*DrawOvalAA(x, y, 100, 80, 30, 0x000000, FALSE, 1.0F);
 			DrawOvalAA(x, y, 99, 79, 30, 0xFFFFFF, TRUE, 0.0F);*/
-			DrawStringToHandle(x, y, "新記録", 0xFAF300, menu_font, 0xFFFFFF);
+			DrawStringToHandle(x, y, "新記録", 0xFAF300, menuFont, 0xFFFFFF);
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 75 + effect_timer[0]);
-			//DrawExtendStringToHandle(x, y, size, size, "新記録", 0xFAF300, menu_font, 0xFFFFFF);
+			//DrawExtendStringToHandle(x, y, size, size, "新記録", 0xFAF300, menuFont, 0xFFFFFF);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 	}

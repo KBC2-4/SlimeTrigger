@@ -7,7 +7,7 @@ private:
 	int pause_graph;
 	int pause_effect_timer;
 	int cursormoveSe,okSe, memu_open_se, memu_close_se;
-	int menu_font, title_font, buttonguid_font;
+	int menuFont, titleFont, buttonguid_font;
 	int selectmenu;
 	int inputMargin;
 	int nextmenu;

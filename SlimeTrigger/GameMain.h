@@ -64,7 +64,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	GAMEMAIN(bool reStart = false, int halfway_time = 0, const char* stageName = "StageSelect");
+	GAMEMAIN(bool reStart = false, int halfwayTime = 0, const char* stageName = "StageSelect");
 	/// <summary>
 	/// デストラクタ
 	/// </summary>

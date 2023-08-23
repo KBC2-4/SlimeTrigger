@@ -28,7 +28,7 @@ public:
 	};
 	
 private:
-	int guid_font,guid_timer;
+	int guidFont,guid_timer;
 	std::vector<ELEMENT_DATA> hook;			//フック
 	std::vector<ELEMENT_DATA> button;		//ボタン
 	std::vector<ELEMENT_DATA> door;			//ドア

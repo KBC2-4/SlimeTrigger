@@ -120,7 +120,7 @@ void GRAPEFRUIT::Update()
 	}
 
 	//動きのステート
-	switch (state)
+	switch (State)
 	{
 		//待機状態
 	case ENEMY_STATE::IDOL:
@@ -137,7 +137,7 @@ void GRAPEFRUIT::Update()
 				if (++shootCount % 90 == 0)
 				{
 					animationTimer = 0;
-					state = ENEMY_STATE::PRESS;
+					State = ENEMY_STATE::PRESS;
 				}
 			}
 		}
@@ -150,7 +150,7 @@ void GRAPEFRUIT::Update()
 		{
 			animationTimer = 0;
 			animationType = 0;
-			state = ENEMY_STATE::MOVE;
+			State = ENEMY_STATE::MOVE;
 		}
 		break;
 
@@ -169,7 +169,7 @@ void GRAPEFRUIT::Update()
 			}
 			animationTimer = 0;
 			animationType = 0;
-			state = ENEMY_STATE::RETURN;
+			State = ENEMY_STATE::RETURN;
 			PlaySoundMem(pressSe, DX_PLAYTYPE_BACK);
 		}
 		break;
@@ -215,9 +215,9 @@ void GRAPEFRUIT::Update()
 
 	//画面内にいるかどうか
 	if (((x + stage->GetScrollX() < -IMAGE_SIZE) || (x + stage->GetScrollX() > 1280 + IMAGE_SIZE) || (y + stage->GetScrollY() < 0) 
-		|| (y + stage->GetScrollY() > 720)) && (state != ENEMY_STATE::FALL && state != ENEMY_STATE::DETH))		//画面外に出るとアイドル状態にする
+		|| (y + stage->GetScrollY() > 720)) && (State != ENEMY_STATE::FALL && State != ENEMY_STATE::DETH))		//画面外に出るとアイドル状態にする
 	{
-		state = ENEMY_STATE::IDOL;		//ステートをアイドル状態へ
+		State = ENEMY_STATE::IDOL;		//ステートをアイドル状態へ
 		//アイドル状態の画像に変更
 		for (int i = 0; i < 2; i++)
 		{
@@ -225,11 +225,11 @@ void GRAPEFRUIT::Update()
 			fruitImage[i] = image[(i + 1) * 6];
 		}
 	}
-	else if (state == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
+	else if (State == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
 	{
 		//アニメーション時間をリセットし、ステートをムーブへ
 		animationTimer = 0;
-		state = ENEMY_STATE::MOVE;
+		State = ENEMY_STATE::MOVE;
 	}
 	else {}
 }
@@ -260,7 +260,7 @@ void GRAPEFRUIT::Hit()
 	float bx1, by1, bx2, by2;
 	float gx1, gy1, gx2, gy2;
 	//プレイヤーが投げた体一部との当たり判定
-	if ((state != ENEMY_STATE::FALL) && (state != ENEMY_STATE::DETH))
+	if ((State != ENEMY_STATE::FALL) && (State != ENEMY_STATE::DETH))
 	{
 		for (int i = 0; i < player->GetThrowCnt(); i++)
 		{
@@ -278,7 +278,7 @@ void GRAPEFRUIT::Hit()
 			if (((bx2 >= gx1 && bx2 <= gx2) || (bx1 <= gx2 && bx1 >= gx1)) && ((by1 >= gy2 && by1 <= gy1) || (by2 >= gy1 && by2 <= gy2)))
 			{
 				rad = 90 * (PI / 180);
-				state = ENEMY_STATE::FALL;
+				State = ENEMY_STATE::FALL;
 				PlaySoundMem(damageSe, DX_PLAYTYPE_BACK);
 
 			}
@@ -286,11 +286,11 @@ void GRAPEFRUIT::Hit()
 	}
 
 	//地面やブロックとの当たり判定
-	if (state == ENEMY_STATE::FALL)
+	if (State == ENEMY_STATE::FALL)
 	{
 		if (stage->HitMapDat(mapY + 1, mapX))
 		{
-			state = ENEMY_STATE::DETH;
+			State = ENEMY_STATE::DETH;
 			animationTimer = 0;
 			fruitImageSize = DETH_FRUIT_SIZE;
 			animationType = 0;

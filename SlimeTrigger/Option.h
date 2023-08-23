@@ -30,7 +30,7 @@ private:
 		RETURN
 	};
 
-	int menu_font, buttonguid_font;
+	int menuFont, buttonguid_font;
 	int cursormoveSe, okSe, mute_se;
 	int inputMargin;
 	static int bgm_vol;        //BGM‚Ì‰¹—Ê

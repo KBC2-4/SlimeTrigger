@@ -26,7 +26,7 @@ protected:
 	int animationTimer;//アニメーションの時間
 	int animationType;	//アニメーションの種類
 	double rad;          //ラジアン
-	ENEMY_STATE state;	//エネミーの状態
+	ENEMY_STATE State;	//エネミーの状態
 	STAGE* stage;		//ステージ
 	PLAYER* player;		//ステージ
 	ITEMBALL* item;     //ドロップするアイテム

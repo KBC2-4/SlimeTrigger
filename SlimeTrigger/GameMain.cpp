@@ -7,7 +7,7 @@
 
 //#define DEBUG_PV
 
-GAMEMAIN::GAMEMAIN(bool reStart, int halfway_time, const char* stageName)
+GAMEMAIN::GAMEMAIN(bool reStart, int halfwayTime, const char* stageName)
 {
 	ChangeFontType(DX_FONTTYPE_ANTIALIASING_4X4);
 	std::vector<std::vector<int>> spawn_point;
@@ -78,7 +78,7 @@ GAMEMAIN::GAMEMAIN(bool reStart, int halfway_time, const char* stageName)
 	starttimeFont = CreateFontToHandle("ƒƒCƒŠƒI", 160, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	timeFont = LoadFontDataToHandle("Resource/Fonts/TimeAttack_HUD.dft", 2);
 	this->stageName = stageName;
-	elapsedTime = halfway_time;
+	elapsedTime = halfwayTime;
 	startaddTime = 0;
 	lemonerCount = 0;
 	tomatonCount = 0;

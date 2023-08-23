@@ -6,7 +6,7 @@
 GameOver::GameOver(const char* stageName)
 {
 
-	if ((title_image = (LoadGraph("Resource/Images/Result/GameOver_title.png"))) == -1)
+	if ((titleImage = (LoadGraph("Resource/Images/Result/GameOver_title.png"))) == -1)
 	{
 		throw "Resource/Images/Result/GameOver_title.png";
 	}
@@ -29,17 +29,17 @@ GameOver::GameOver(const char* stageName)
 		throw "Resource/Sounds/SE/cursor_move.wav";
 	}
 
-	se_randnum = GetRand(3);
+	serandNum = GetRand(3);
 	char dis_bad_se[30];
-	sprintf_s(dis_bad_se, sizeof(dis_bad_se), "Resource/Sounds/SE/bad%d.wav", se_randnum + 1);
+	sprintf_s(dis_bad_se, sizeof(dis_bad_se), "Resource/Sounds/SE/bad%d.wav", serandNum + 1);
 
-	if ((bad_se[se_randnum] = LoadSoundMem(dis_bad_se)) == -1) {
+	if ((badSe[serandNum] = LoadSoundMem(dis_bad_se)) == -1) {
 		throw dis_bad_se;
 	}
 
 
-	menu_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 90, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
-	guid_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 40, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	menuFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 90, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	guidFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 40, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
 
 	inputMargin= 0;
@@ -51,25 +51,25 @@ GameOver::GameOver(const char* stageName)
 
 	ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
 
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, bad_se[se_randnum]);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, badSe[serandNum]);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
 
 	PlaySoundMem(backgroundMusic, DX_PLAYTYPE_BACK, FALSE);
-	PlaySoundMem(bad_se[se_randnum], DX_PLAYTYPE_BACK, FALSE);
+	PlaySoundMem(badSe[serandNum], DX_PLAYTYPE_BACK, FALSE);
 }
 
 GameOver::~GameOver()
 {
 
-	DeleteGraph(title_image);
+	DeleteGraph(titleImage);
 	DeleteGraph(backgraundImage);
-	DeleteFontToHandle(menu_font);
-	DeleteFontToHandle(guid_font);
+	DeleteFontToHandle(menuFont);
+	DeleteFontToHandle(guidFont);
 	DeleteSoundMem(backgroundMusic);
 	DeleteSoundMem(okSe);
 	DeleteSoundMem(cursormoveSe);
-	DeleteSoundMem(bad_se[se_randnum]);
+	DeleteSoundMem(badSe[serandNum]);
 }
 
 AbstractScene* GameOver::Update()
@@ -135,18 +135,18 @@ void GameOver::Draw() const
 {
 
 	DrawGraph(0, 0, backgraundImage, FALSE);
-	DrawGraph(185, 100, title_image, TRUE);
+	DrawGraph(185, 100, titleImage, TRUE);
 
 	//Select用String
-	DrawStringToHandle(GetDrawCenterX("ステージ選択画面へ",menu_font), 480, "ステージ選択画面へ", selectmenu == 0 ? 0x0a6500 : 0x1aff00, menu_font, 0x000000);
-	DrawStringToHandle(GetDrawCenterX("リスタート",menu_font), 360, "リスタート", selectmenu == 1 ? 0x0a6500 : 0x1aff00, menu_font, 0x000000);
+	DrawStringToHandle(GetDrawCenterX("ステージ選択画面へ",menuFont), 480, "ステージ選択画面へ", selectmenu == 0 ? 0x0a6500 : 0x1aff00, menuFont, 0x000000);
+	DrawStringToHandle(GetDrawCenterX("リスタート",menuFont), 360, "リスタート", selectmenu == 1 ? 0x0a6500 : 0x1aff00, menuFont, 0x000000);
 
 	if (timer % 120 < 60)
 	{
 
 		//Bボタンを押すことを促す(表示非表示を切り替え)
 		DrawCircleAA(580.5f, 627.5f, 20, 20, 0x000000, 1);
-		DrawStringToHandle(572, 610,  Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guid_font, 0x000000);
-		DrawStringToHandle(600, 610,  "で決定", 0x95ff89, guid_font, 0x000000);
+		DrawStringToHandle(572, 610,  Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0x000000);
+		DrawStringToHandle(600, 610,  "で決定", 0x95ff89, guidFont, 0x000000);
 	}
 }

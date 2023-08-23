@@ -20,7 +20,7 @@ STAGE_SELECT::STAGE_SELECT()
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
-	guid_font = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	guidFont = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	buttonguid_font = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	move_to_title_font = CreateFontToHandle("メイリオ", 18, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	stagename_font = CreateFontToHandle("メイリオ", 31, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8, -1, 4);
@@ -113,7 +113,7 @@ STAGE_SELECT::STAGE_SELECT()
 
 STAGE_SELECT::~STAGE_SELECT()
 {
-	DeleteFontToHandle(guid_font);
+	DeleteFontToHandle(guidFont);
 	DeleteFontToHandle(buttonguid_font);
 	DeleteFontToHandle(move_to_title_font);
 	DeleteFontToHandle(stagename_font);
@@ -372,7 +372,7 @@ void STAGE_SELECT::Draw() const
 		//DrawOvalAA(11 * MAP_CEllSIZE + MAP_CEllSIZE / 2 + stage->GetScrollX(), stage_move[1].y - MAP_CEllSIZE + stage->GetScrollY(), 99, 79, 30, callout_backcolor, TRUE, 0.0F);
 		////DrawString(stage_move[1].x + MAP_CEllSIZE / 2, stage_move[1].y + MAP_CEllSIZE, "STAGE 1" , 0x6AF6C5, 0x000000);
 		//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		//DrawExtendStringToHandle(11 * MAP_CEllSIZE + stage->GetScrollX() - 55, stage_move[1].y - MAP_CEllSIZE - 10 + stage->GetScrollY(), 0.4f, 0.4f, "４ステージ", 0x856AF6, guid_font, 0x000000);
+		//DrawExtendStringToHandle(11 * MAP_CEllSIZE + stage->GetScrollX() - 55, stage_move[1].y - MAP_CEllSIZE - 10 + stage->GetScrollY(), 0.4f, 0.4f, "４ステージ", 0x856AF6, guidFont, 0x000000);
 
 		//DrawCircleAA(11 * MAP_CEllSIZE + stage->GetScrollX(), stage_move[1].y + stage->GetScrollY(), 15, 20, 0xFFFFFF, 1);
 		//DrawStringToHandle(11 * MAP_CEllSIZE + stage->GetScrollX() - 7, stage_move[1].y + stage->GetScrollY() - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonguid_font, 0xFFFFFF);

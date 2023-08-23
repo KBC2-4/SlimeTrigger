@@ -15,7 +15,7 @@ private:
 
 	int okSe;
 	//フォント
-	int guid_font, buttonguid_font, stagename_font, move_to_title_font;
+	int guidFont, buttonguid_font, stagename_font, move_to_title_font;
 	int guid_timer;		//ガイド表示タイマー
 	bool effect_delta;
 	int effect_timer[2];	//[0:出現エフェクト, 1:ステージポータルエフェクト]

@@ -12,7 +12,7 @@ DRAW_RANKING::DRAW_RANKING()
 		bestTime[i] = RANKING::GetBestTime(i);
 	}
 
-	title_font = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_8X8);
+	titleFont = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_8X8);
 	timeFont = LoadFontDataToHandle("Resource/Fonts/TimeAttack_BestTime.dft", 0);
 
 	if ((image = (LoadGraph("Resource/Images/Result/Best_time_Image.png"))) == -1)
@@ -34,7 +34,7 @@ DRAW_RANKING::DRAW_RANKING()
 
 DRAW_RANKING::~DRAW_RANKING() {
 
-	DeleteFontToHandle(title_font);
+	DeleteFontToHandle(titleFont);
 	DeleteFontToHandle(timeFont);
 	DeleteGraph(image);
 	DeleteSoundMem(okSe);
@@ -70,7 +70,7 @@ void DRAW_RANKING::Draw() const
 
 	for (int i = 0; i < 3; i++)
 	{
-		DrawFormatStringToHandle(330, 320 + (75 * i), 0xFF8C00, title_font,  "%dステージ :", i+1);
+		DrawFormatStringToHandle(330, 320 + (75 * i), 0xFF8C00, titleFont,  "%dステージ :", i+1);
 		if (bestTime[i] != -1)
 		{
 			if (bestTime[i] / 1000 >= 60)
@@ -87,8 +87,8 @@ void DRAW_RANKING::Draw() const
 	if (waitTime % 120 < 60)
 	{
 		DrawCircleAA(393.0f, 630.0f, 30, 28, 0xFFFFFF, 1);
-		DrawStringToHandle(375, 602, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, title_font);
-		DrawStringToHandle(430, 600, "でタイトルに戻る", 0xFFFFFF,title_font);
+		DrawStringToHandle(375, 602, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, titleFont);
+		DrawStringToHandle(430, 600, "でタイトルに戻る", 0xFFFFFF,titleFont);
 	}
 	SetFontSize(-1);
 }

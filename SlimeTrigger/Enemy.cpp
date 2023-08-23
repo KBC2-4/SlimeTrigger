@@ -18,7 +18,7 @@ ENEMY::ENEMY()
 	animationTimer = 0;
 	animationType = 0;
 
-	state = ENEMY_STATE::IDOL;
+	State = ENEMY_STATE::IDOL;
 }
 
 void ENEMY::ChangeAngle()

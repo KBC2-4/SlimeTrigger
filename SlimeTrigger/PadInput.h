@@ -13,9 +13,9 @@ enum class PAD_STATE
 class PAD_INPUT
 {
 private:
-	static int NowKey;
-	static int OldKey;
-	static PAD_STATE state;
+	static int nowKey;
+	static int oldKey;
+	static PAD_STATE State;
 	static XINPUT_STATE Input;
 	PAD_INPUT(); //コンストラクタ
 public:
@@ -24,7 +24,7 @@ public:
 	static int GetPadThumbLY() { return Input.ThumbLY; }	//左スティックの縦軸値
 	static int GetPadThumbRX() { return Input.ThumbRX; }	//右スティックの横軸値
 	static int GetPadThumbRY() { return Input.ThumbRY; }	//右スティックの縦軸値
-	static int GetNowKey() { return NowKey; }
-	static PAD_STATE GetPadState() { return state; }
+	static int GetNowKey() { return nowKey; }
+	static PAD_STATE GetPadState() { return State; }
 };
 

@@ -2,9 +2,9 @@
 #include "GameMain.h"
 #include "DxLib.h"
 
-GAMEMAIN_RESTART::GAMEMAIN_RESTART(bool reStart, int halfway_time, const char* stageName, int nowGraph) : AbstractScene(false) {
+GAMEMAIN_RESTART::GAMEMAIN_RESTART(bool reStart, int halfwayTime, const char* stageName, int nowGraph) : AbstractScene(false) {
 	this->reStart = reStart;
-	this->halfway_time = halfway_time;
+	this->halfwayTime = halfwayTime;
 	this->stageName = stageName;
 	this->nowGraph = nowGraph;
 }
@@ -16,7 +16,7 @@ GAMEMAIN_RESTART::~GAMEMAIN_RESTART()
 }
 
 AbstractScene* GAMEMAIN_RESTART::Update() {
-		return new GAMEMAIN(reStart, halfway_time, stageName);
+		return new GAMEMAIN(reStart, halfwayTime, stageName);
 }
 
 

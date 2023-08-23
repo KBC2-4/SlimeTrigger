@@ -19,7 +19,7 @@ private:
 	int backgraundImage;
 	int backgroundMusic;
 	int cursormoveSe, okSe,exit_se;
-	int title_font, menu_font, guid_font;
+	int titleFont, menuFont, guidFont;
 	int selectmenu;
 	int inputMargin;
 	int timer;

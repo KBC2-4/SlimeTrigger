@@ -13,14 +13,14 @@ enum class GAMEOVER_MENU
 class GameOver : public AbstractScene
 {
 private:
-	int title_image,backgraundImage;
+	int titleImage,backgraundImage;
 	int selectmenu;
-	int menu_font;
-	int guid_font;
+	int menuFont;
+	int guidFont;
 	int backgroundMusic;
-	int bad_se[4], okSe, cursormoveSe;
+	int badSe[4], okSe, cursormoveSe;
 	int inputMargin;
-	int timer,se_randnum;
+	int timer,serandNum;
 	const char* stageName;	//リスタート時のステージ選択用
 	
 public:

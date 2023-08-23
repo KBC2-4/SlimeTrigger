@@ -20,8 +20,8 @@ PAUSE::PAUSE() {
 	if ((memu_close_se = LoadSoundMem("Resource/Sounds/SE/pause_close.wav")) == -1) {
 		throw "Resource/Sounds/SE/ok.wav";
 	}
-	menu_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 80, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
-	title_font = CreateFontToHandle("UD デジタル 教科書体 N-B", 140, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8, -1, 8);
+	menuFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 80, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	titleFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 140, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8, -1, 8);
 	buttonguid_font = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	selectmenu = 0;
 	nextmenu = 0;
@@ -42,8 +42,8 @@ PAUSE::PAUSE() {
 PAUSE::~PAUSE() {
 
 	delete option;
-	DeleteFontToHandle(title_font);
-	DeleteFontToHandle(menu_font);
+	DeleteFontToHandle(titleFont);
+	DeleteFontToHandle(menuFont);
 	DeleteFontToHandle(buttonguid_font);
 	DeleteSoundMem(cursormoveSe);
 	DeleteSoundMem(okSe);
@@ -163,12 +163,12 @@ void PAUSE::Draw() {
 	}
 	else {
 
-		DrawStringToHandle(GetDrawCenterX("ポーズ", title_font), 100, "ポーズ", 0x56F590, title_font, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("ポーズ", titleFont), 100, "ポーズ", 0x56F590, titleFont, 0xFFFFFF);
 		//選択メニュー
-		DrawStringToHandle(GetDrawCenterX("ゲームへ戻る", menu_font), 270, "ゲームへ戻る", static_cast<MENU>(selectmenu) == MENU::RETURN ? 0xB3E0F5 : 0xEB8F63, menu_font, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("リスタート", menu_font), 360, "リスタート", static_cast<MENU>(selectmenu) == MENU::RESTART ? 0xEBABDC : 0xEB8F63, menu_font, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("オプション", menu_font), 450, "オプション", static_cast<MENU>(selectmenu) == MENU::OPTION ? 0x5FEBB6 : 0xEB8F63, menu_font, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("ステージ選択へ", menu_font), 540, "ステージ選択へ", static_cast<MENU>(selectmenu) == MENU::STAGE_SELECT ? 0xF5E6B3 : 0xEB8F63, menu_font, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("ゲームへ戻る", menuFont), 270, "ゲームへ戻る", static_cast<MENU>(selectmenu) == MENU::RETURN ? 0xB3E0F5 : 0xEB8F63, menuFont, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("リスタート", menuFont), 360, "リスタート", static_cast<MENU>(selectmenu) == MENU::RESTART ? 0xEBABDC : 0xEB8F63, menuFont, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("オプション", menuFont), 450, "オプション", static_cast<MENU>(selectmenu) == MENU::OPTION ? 0x5FEBB6 : 0xEB8F63, menuFont, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("ステージ選択へ", menuFont), 540, "ステージ選択へ", static_cast<MENU>(selectmenu) == MENU::STAGE_SELECT ? 0xF5E6B3 : 0xEB8F63, menuFont, 0xFFFFFF);
 
 		//ガイド表示
 		DrawStringToHandle(580, 668, "ゲームへ戻る", 0xFFA15C, buttonguid_font, 0x000000);
