@@ -64,7 +64,7 @@ PLAYER::PLAYER(STAGE* stage) {
 	// 着地アニメーション
 	if (LoadDivGraph("Resource/Images/Player/LandSlime.png", 10, 10, 1, 80, 80, images[6]) == -1) {
 		throw "Resource/Images/Player/JumpSlime1.png";
-	}
+	}*/
 	if ((throw_ball_image = LoadGraph("Resource/Images/Player/Slime_Bullet.png")) == -1) {
 		throw "Resource/Images/Player/Slime_Bullet.png";
 	}

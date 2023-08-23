@@ -5,72 +5,73 @@
 #include <vector>
 #include"Option.h"
 
+#define DETH_FRUIT_SIZE 1.5
 //コンストラクタ
-
 GRAPEFRUIT::GRAPEFRUIT()
 {
 	image = new int[100];
 	if (image[0] = LoadGraph("Resource/Images/Enemy/gurepon.png") == -1)
 		throw "Resource/Images/Enemy/gurepon.png";
-	shootcount = 0;
-	delete_flg = false;
+	shootCount = 0;
+	deleteFlg = false;
 	rad = 0.0;
 	for (int i = 0; i < 3; i++)
 	{
 		flag[i] = false;
 	}
 	x = 0;
-	spawn_map_x = 0;
-	spawn_map_y = 0;
-	target_x = 200;
-	animation_timer = 0;
-	animation_type = 0;
+	spawnMapX = 0;
+	spawnMapY = 0;
+	targetX = 200;
+	animationTimer = 0;
+	animationType = 0;
 	for (int i = 0; i < 2; i++)
 	{
-		face_image[i] = 0;
-		fruit_image[i] = 0;
+		faceImage[i] = 0;
+		fruitImage[i] = 0;
 	}
 	for (int i = 0; i < 3; i++) {
 		bullet[i] = nullptr;
 	}
-	damage_se = 0;
-	bullet_count = 3;
+	damageSe = 0;
+	bulletCount = 3;
+	fruitImageSize = 1.0;
 }
 
 //引数付のコンストラクタ
 
 GRAPEFRUIT::GRAPEFRUIT(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 {
-	spawn_map_x = spawn_x;
-	spawn_map_y = spawn_y;
-	x = (spawn_map_x * MAP_CEllSIZE + MAP_CEllSIZE / 2);
-	y = (spawn_map_y * MAP_CEllSIZE + MAP_CEllSIZE / 2) - 40;
+	spawnMapX = spawn_x;
+	spawnMapY = spawn_y;
+	x = (spawnMapX * MAP_CEllSIZE + MAP_CEllSIZE / 2);
+	y = (spawnMapY * MAP_CEllSIZE + MAP_CEllSIZE / 2) - 40;
 	for (int i = 0; i < 3; i++)
 	{
 		flag[i] = false;
 	}
-	delete_flg = false;
+	deleteFlg = false;
 	image = new int[24];
 	if (LoadDivGraph("Resource/Images/Enemy/gurepon.png", 24, 6, 4, 80, 80, image) == -1)
 	{
 		throw "Resource/Images/Enemy/gurepon.png";
 	}
-	if ((damage_se = LoadSoundMem("Resource/Sounds/SE/Enemy/damage.wav")) == -1) {
+	if ((damageSe = LoadSoundMem("Resource/Sounds/SE/Enemy/damage.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/damage.wav";
 	}
-	if ((press_se = LoadSoundMem("Resource/Sounds/SE/Enemy/press.wav")) == -1) {
+	if ((pressSe = LoadSoundMem("Resource/Sounds/SE/Enemy/press.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/press.wav";
 	}
-	if ((splash_se = LoadSoundMem("Resource/Sounds/SE/Enemy/splash.wav")) == -1) {
+	if ((splashSe = LoadSoundMem("Resource/Sounds/SE/Enemy/splash.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/splash.wav";
 	}
-	shootcount = 0;
-	target_x = 200;
+	shootCount = 0;
+	targetX = 200;
 
 	for (int i = 0; i < 2; i++)
 	{
-		face_image[i] = image[i];
-		fruit_image[i] = image[(i + 1) * 6];
+		faceImage[i] = image[i];
+		fruitImage[i] = image[(i + 1) * 6];
 	}
 	for (int i = 0; i < 3; i++)
 	{
@@ -78,12 +79,12 @@ GRAPEFRUIT::GRAPEFRUIT(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 	}
 	this->player = player;
 	this->stage = stage;
-	bullet_count = 3;
+	bulletCount = 3;
 
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damage_se);
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), press_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
-
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damageSe);
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), pressSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
+	fruitImageSize = 1.0;
 }
 
 GRAPEFRUIT::~GRAPEFRUIT()
@@ -100,22 +101,22 @@ GRAPEFRUIT::~GRAPEFRUIT()
 		delete bullet[i];
 	}
 
-	DeleteSoundMem(damage_se);
-	DeleteSoundMem(press_se);
-	DeleteSoundMem(splash_se);
+	DeleteSoundMem(damageSe);
+	DeleteSoundMem(pressSe);
+	DeleteSoundMem(splashSe);
 
 }
 //アップデート
 void GRAPEFRUIT::Update()
 {
 
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damage_se);
-	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), press_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damageSe);
+	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), pressSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
 
 	//アニメーションの時間を加算
-	if (animation_timer < 80) {
-		++animation_timer;
+	if (animationTimer < 80) {
+		++animationTimer;
 	}
 
 	//動きのステート
@@ -130,12 +131,12 @@ void GRAPEFRUIT::Update()
 		ChangeAngle();
 		if ((x + stage->GetScrollX() > 0) && (x + stage->GetScrollX() < 1280))
 		{
-			if (player->GetMapY() > map_y)
+			if (player->GetMapY() > mapY)
 			{
 
-				if (++shootcount % 90 == 0)
+				if (++shootCount % 90 == 0)
 				{
-					animation_timer = 0;
+					animationTimer = 0;
 					state = ENEMY_STATE::PRESS;
 				}
 			}
@@ -147,8 +148,8 @@ void GRAPEFRUIT::Update()
 		ChangeAngle();
 		if (ReturnAnimation())
 		{
-			animation_timer = 0;
-			animation_type = 0;
+			animationTimer = 0;
+			animationType = 0;
 			state = ENEMY_STATE::MOVE;
 		}
 		break;
@@ -166,10 +167,10 @@ void GRAPEFRUIT::Update()
 					flag[i] = true;
 				}
 			}
-			animation_timer = 0;
-			animation_type = 0;
+			animationTimer = 0;
+			animationType = 0;
 			state = ENEMY_STATE::RETURN;
-			PlaySoundMem(press_se, DX_PLAYTYPE_BACK);
+			PlaySoundMem(pressSe, DX_PLAYTYPE_BACK);
 		}
 		break;
 
@@ -183,7 +184,7 @@ void GRAPEFRUIT::Update()
 	case ENEMY_STATE::DETH:
 		if (DethAnimation())
 		{
-			delete_flg = true;
+			deleteFlg = true;
 		}
 		break;
 	default:
@@ -191,8 +192,8 @@ void GRAPEFRUIT::Update()
 	}
 
 	//マップ上の座標の設定
-	map_x = x / MAP_CEllSIZE;
-	map_y = (y - IMAGE_SIZE / 2) / MAP_CEllSIZE;
+	mapX = x / MAP_CEllSIZE;
+	mapY = (y - IMAGE_SIZE / 2) / MAP_CEllSIZE;
 
 	//弾が存在しているときに弾の処理を行う
 	for (int i = 0; i < 3; i++)
@@ -220,14 +221,14 @@ void GRAPEFRUIT::Update()
 		//アイドル状態の画像に変更
 		for (int i = 0; i < 2; i++)
 		{
-			face_image[i] = image[i];
-			fruit_image[i] = image[(i + 1) * 6];
+			faceImage[i] = image[i];
+			fruitImage[i] = image[(i + 1) * 6];
 		}
 	}
 	else if (state == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
 	{
 		//アニメーション時間をリセットし、ステートをムーブへ
-		animation_timer = 0;
+		animationTimer = 0;
 		state = ENEMY_STATE::MOVE;
 	}
 	else {}
@@ -254,7 +255,7 @@ void GRAPEFRUIT::Move()
 void GRAPEFRUIT::Hit()
 {
 	//呼ばれた時にスライムのクラス変数を作成
-	ThrowSlime throw_slime;
+	ThrowSlime throwSlime;
 
 	float bx1, by1, bx2, by2;
 	float gx1, gy1, gx2, gy2;
@@ -263,12 +264,12 @@ void GRAPEFRUIT::Hit()
 	{
 		for (int i = 0; i < player->GetThrowCnt(); i++)
 		{
-			throw_slime = player->GetThrowSlime(i);
+			throwSlime = player->GetThrowSlime(i);
 			//スライムのボールの当たり判定
-			bx1 = throw_slime.GetThrowX();
-			by1 = throw_slime.GetThrowY();
-			bx2 = throw_slime.GetThrowX() + BALL_W;
-			by2 = throw_slime.GetThrowY() - BALL_H;
+			bx1 = throwSlime.GetThrowX();
+			by1 = throwSlime.GetThrowY();
+			bx2 = throwSlime.GetThrowX() + BALL_W;
+			by2 = throwSlime.GetThrowY() - BALL_H;
 			//グレープフルーツの当たり判定
 			gx1 = x - IMAGE_SIZE / 2;
 			gy1 = y - IMAGE_SIZE / 2;
@@ -278,7 +279,7 @@ void GRAPEFRUIT::Hit()
 			{
 				rad = 90 * (PI / 180);
 				state = ENEMY_STATE::FALL;
-				PlaySoundMem(damage_se, DX_PLAYTYPE_BACK);
+				PlaySoundMem(damageSe, DX_PLAYTYPE_BACK);
 
 			}
 		}
@@ -287,12 +288,13 @@ void GRAPEFRUIT::Hit()
 	//地面やブロックとの当たり判定
 	if (state == ENEMY_STATE::FALL)
 	{
-		if (stage->HitMapDat(map_y + 1, map_x))
+		if (stage->HitMapDat(mapY + 1, mapX))
 		{
 			state = ENEMY_STATE::DETH;
-			animation_timer = 0;
-			animation_type = 0;
-			PlaySoundMem(splash_se, DX_PLAYTYPE_BACK);
+			animationTimer = 0;
+			fruitImageSize = DETH_FRUIT_SIZE;
+			animationType = 0;
+			PlaySoundMem(splashSe, DX_PLAYTYPE_BACK);
 		}
 	}
 }
@@ -302,22 +304,22 @@ bool GRAPEFRUIT::PressAnimation()
 {
 
 	bool ret = false;
-	if (animation_timer < 40) //30フレーム間アニメーションをする
+	if (animationTimer < 40) //30フレーム間アニメーションをする
 	{
-		if (animation_timer % (ANIMATION_TIME * 2) == 0)
+		if (animationTimer % (ANIMATION_TIME * 2) == 0)
 		{
-			animation_type++;
+			animationType++;
 
 			for (int i = 0; i < 2; i++)
 			{
-				face_image[i] = image[i];
-				if (animation_type % 3 == 0)
+				faceImage[i] = image[i];
+				if (animationType % 3 == 0)
 				{
-					fruit_image[i] = image[(6 * (i + 2) - 1)];
+					fruitImage[i] = image[(6 * (i + 2) - 1)];
 				}
 				else
 				{
-					fruit_image[i] = image[((animation_type % 3) * 2) + (6 * (i + 1))];
+					fruitImage[i] = image[((animationType % 3) * 2) + (6 * (i + 1))];
 				}
 			}
 
@@ -334,22 +336,22 @@ bool GRAPEFRUIT::PressAnimation()
 bool GRAPEFRUIT::ReturnAnimation()
 {
 	bool ret = false;
-	if (animation_timer < 40) //30フレーム間アニメーションをする
+	if (animationTimer < 40) //30フレーム間アニメーションをする
 	{
-		if (animation_timer % (ANIMATION_TIME * 2) == 0)
+		if (animationTimer % (ANIMATION_TIME * 2) == 0)
 		{
-			animation_type++;
+			animationType++;
 
 			for (int i = 0; i < 2; i++)
 			{
-				face_image[i] = image[i];
-				if (animation_type % 3 == 0)
+				faceImage[i] = image[i];
+				if (animationType % 3 == 0)
 				{
-					fruit_image[i] = image[(i + 1) * 6];
+					fruitImage[i] = image[(i + 1) * 6];
 				}
 				else
 				{
-					fruit_image[i] = image[(6 * (i + 2) - 1) - (animation_type % 6)];
+					fruitImage[i] = image[(6 * (i + 2) - 1) - (animationType % 6)];
 				}
 			}
 		}
@@ -358,8 +360,8 @@ bool GRAPEFRUIT::ReturnAnimation()
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			face_image[i] = image[i];
-			fruit_image[i] = image[(i + 1) * 6];
+			faceImage[i] = image[i];
+			fruitImage[i] = image[(i + 1) * 6];
 		}
 		ret = true;
 	}
@@ -370,16 +372,16 @@ bool GRAPEFRUIT::ReturnAnimation()
 //落ちるアニメーション
 void GRAPEFRUIT::FallAnimation()
 {
-	if (animation_timer % ANIMATION_TIME == 0)
+	if (animationTimer % ANIMATION_TIME == 0)
 	{
-		if (animation_timer % (ANIMATION_TIME * 2) == 0)
+		if (animationTimer % (ANIMATION_TIME * 2) == 0)
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				face_image[i] = image[(2 + (animation_type % 2) +  (i  * 2))];
-				fruit_image[i] = image[(i + 1) * 6];
+				faceImage[i] = image[(2 + (animationType % 2) +  (i  * 2))];
+				fruitImage[i] = image[(i + 1) * 6];
 			}
-			animation_type++;
+			animationType++;
 		}
 	}
 }
@@ -388,18 +390,18 @@ void GRAPEFRUIT::FallAnimation()
 bool GRAPEFRUIT::DethAnimation()
 {
 	bool ret = false;
-	if (animation_timer < 30) //30フレーム間アニメーションをする
+	if (animationTimer < 30) //30フレーム間アニメーションをする
 	{
 		//アニメーション
-		if (animation_timer % ANIMATION_TIME == 0)
+		if (animationTimer % ANIMATION_TIME == 0)
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				face_image[i] = 0;
+				faceImage[i] = 0;
 			}
-			fruit_image[0] = image[(animation_type % 6) + (6 * 3)];
-			fruit_image[1] = 0;
-			animation_type++;
+			fruitImage[0] = image[(animationType % 6) + (6 * 3)];
+			fruitImage[1] = 0;
+			animationType++;
 		}
 	}
 	else //アニメーションの終了
@@ -414,13 +416,13 @@ void GRAPEFRUIT::Draw() const
 {
 	for (int i = 0; i < 2; i++)
 	{
-		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), 1, rad + (-90 * (PI / 180)), fruit_image[i], TRUE);
-		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), 1, rad + (-90 * (PI / 180)), face_image[i], TRUE);
+		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), fruitImageSize, rad + (-90 * (PI / 180)), fruitImage[i], TRUE);
+		DrawRotaGraphF(x + stage->GetScrollX(), (y + 5 * i) + stage->GetScrollY(), 1.0, rad + (-90 * (PI / 180)), faceImage[i], TRUE);
 	}
 
 	if (flag)
 	{
-		for (int i = 0; i < bullet_count; i++)
+		for (int i = 0; i < bulletCount; i++)
 		{
 			if (bullet[i] != nullptr)
 			{

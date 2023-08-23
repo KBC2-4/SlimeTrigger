@@ -13,19 +13,20 @@ class GRAPEFRUIT :
 {
 private:
 	bool flag[3];                   //弾が存在しているかどうかのフラグ
-	int shootcount;                 //弾を撃つ感覚
-	int animation_timer;            //アニメーションの時間
-	int animation_type;             //アニメーションの種類
-	int spawn_map_x;                //マップ上のX
-	int spawn_map_y;                //マップ上のY
-	int target_x;                   //グレポンのターゲット座標
-	int bullet_count;               //弾を撃つタイミング
-	bool delete_flg;                //消えるフラグ
-	int face_image[2];				//顔の画像
-	int fruit_image[3];             //果実の画像
-	int damage_se;					//ダメージを受けた時のSE
-	int press_se;					//プレスアニメーション時のSE
-	int splash_se;					//弾けるときのSE
+	int shootCount;                 //弾を撃つ感覚
+	int animationTimer;            //アニメーションの時間
+	int animationType;             //アニメーションの種類
+	int spawnMapX;                //マップ上のX
+	int spawnMapY;                //マップ上のY
+	int targetX;                   //グレポンのターゲット座標
+	int bulletCount;               //弾を撃つタイミング
+	bool deleteFlg;                //消えるフラグ
+	int faceImage[2];				//顔の画像
+	int fruitImage[3];             //果実の画像
+	double fruitImageSize;		//果実の画像の大きさ
+	int damageSe;					//ダメージを受けた時のSE
+	int pressSe;					//プレスアニメーション時のSE
+	int splashSe;					//弾けるときのSE
 
 	ENEMY_BULLET* bullet[3];       //弾のクラス
 public:
@@ -81,9 +82,9 @@ public:
 
 
 	//ゲット関数
-	bool GetDeleteFlg() { return delete_flg; }
-	int GetSpawnMapY() { return spawn_map_y; }
-	int GetSpawnMapX() { return spawn_map_x; }
+	bool GetDeleteFlg() { return deleteFlg; }
+	int GetSpawnMapY() { return spawnMapY; }
+	int GetSpawnMapX() { return spawnMapX; }
 	int GetX();
 };
 

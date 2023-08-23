@@ -5,11 +5,11 @@
 TOMATO::TOMATO()
 {
 	x = 0;
-	image_rate = 0.1;
-	spawn_map_x = 0;
-	spawn_map_y = 0;
+	imageRate = 0.1;
+	spawnMapX = 0;
+	spawnMapY = 0;
 
-	now_image = 0;
+	nowImage = 0;
 	image = new int[3];
 	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, image) == -1)
 	{
@@ -20,18 +20,18 @@ TOMATO::TOMATO()
 TOMATO::TOMATO(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 {
 	//スポーン場所の設定
-	spawn_map_x = spawn_x;
-	spawn_map_y = spawn_y;
-	x = spawn_map_x * MAP_CEllSIZE + MAP_CEllSIZE / 2;
-	y = spawn_map_y * MAP_CEllSIZE + MAP_CEllSIZE / 2;
+	spawnMapX = spawn_x;
+	spawnMapY = spawn_y;
+	x = spawnMapX * MAP_CEllSIZE + MAP_CEllSIZE / 2;
+	y = spawnMapY * MAP_CEllSIZE + MAP_CEllSIZE / 2;
 
 	this->player = player;
 	this->stage = stage;
 
-	image_rate = 0.1;
+	imageRate = 0.1;
 	state = ENEMY_STATE::IDOL;
 
-	now_image = 0;
+	nowImage = 0;
 	image = new int[9];
 	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, image) == -1)
 	{
@@ -42,11 +42,11 @@ TOMATO::TOMATO(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 		throw "Resource/Images/Enemy/tomaton_Break.png";
 	}
 
-	if ((splash_se = LoadSoundMem("Resource/Sounds/SE/Enemy/splash.wav")) == -1) {
+	if ((splashSe = LoadSoundMem("Resource/Sounds/SE/Enemy/splash.wav")) == -1) {
 		throw "Resource/Sounds/SE/Enemy/splash.wav";
 	}
 
-	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
 
 }
 
@@ -60,15 +60,15 @@ TOMATO::~TOMATO()
 
 	delete[] image;
 
-	DeleteSoundMem(splash_se);
+	DeleteSoundMem(splashSe);
 
 }
 void TOMATO::Update()
 {
-	ChangeVolumeSoundMem(Option::GetSEVolume(), splash_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
 
-	if (animation_timer < 80) {
-		++animation_timer;
+	if (animationTimer < 80) {
+		++animationTimer;
 	}
 	switch (state)
 	{
@@ -76,7 +76,7 @@ void TOMATO::Update()
 		//プレイヤーが一定範囲以内に入っている間落ちる
 		if ((IdolAnimation()) && (fabsf(player->GetPlayerX() - (x + stage->GetScrollX())) < 240) && (y + stage->GetScrollY() > 0))
 		{
-			animation_timer = 0;
+			animationTimer = 0;
 			state = ENEMY_STATE::FALL;
 		}
 		break;
@@ -94,10 +94,10 @@ void TOMATO::Update()
 		if(DethAnimation() || (y + stage->GetScrollY() > 720))
 		{
 			state = ENEMY_STATE::IDOL;
-			image_rate = 0;
+			imageRate = 0;
 			//スポーン地点に移動
-			x = spawn_map_x * MAP_CEllSIZE + MAP_CEllSIZE / 2;
-			y = spawn_map_y * MAP_CEllSIZE + MAP_CEllSIZE / 2;
+			x = spawnMapX * MAP_CEllSIZE + MAP_CEllSIZE / 2;
+			y = spawnMapY * MAP_CEllSIZE + MAP_CEllSIZE / 2;
 
 		}
 		break;
@@ -105,8 +105,8 @@ void TOMATO::Update()
 		break;
 	}
 	//マップ上の座標の設定
-	map_x = x / MAP_CEllSIZE;
-	map_y = (y - IMAGE_SIZE / 2) / MAP_CEllSIZE;
+	mapX = x / MAP_CEllSIZE;
+	mapY = (y - IMAGE_SIZE / 2) / MAP_CEllSIZE;
 
 }
 
@@ -138,12 +138,12 @@ void TOMATO::Hit()
 	}
 
 	//地面やブロックとの当たり判定
-	if (stage->HitMapDat(map_y + 1,map_x))
+	if (stage->HitMapDat(mapY + 1,mapX))
 	{
 		state = ENEMY_STATE::DETH;
-		animation_timer = 0;
-		animation_type = 00;
-		PlaySoundMem(splash_se, DX_PLAYTYPE_BACK);
+		animationTimer = 0;
+		animationType = 00;
+		PlaySoundMem(splashSe, DX_PLAYTYPE_BACK);
 
 	}
 }
@@ -152,27 +152,27 @@ bool TOMATO::IdolAnimation()
 {
 	bool ret = false;
 	//アニメーション
-	if (animation_timer % ANIMATION_TIME == 0)
+	if (animationTimer % ANIMATION_TIME == 0)
 	{
-		if (image_rate < 1.0) //とまとんのサイズを大きくする
+		if (imageRate < 1.0) //とまとんのサイズを大きくする
 		{
-			image_rate += 0.1;
+			imageRate += 0.1;
 		}
 		else //とまとんのサイズが元のサイズより大きくなったら元のサイズに戻す
 		{
-			image_rate = 1.0;
+			imageRate = 1.0;
 			ret = true;
 		}
-		now_image = image[0];
+		nowImage = image[0];
 	}
 	return ret;
 }
 void TOMATO::FallAnimation()
 {
 	//アニメーション
-	if (animation_timer % ANIMATION_TIME == 0)
+	if (animationTimer % ANIMATION_TIME == 0)
 	{
-		now_image = image[(++animation_type % 2) + 1];
+		nowImage = image[(++animationType % 2) + 1];
 	}
 }
 
@@ -181,11 +181,11 @@ bool TOMATO::DethAnimation()
 {
 	bool ret = false;
 	
-	if (animation_timer < 15)	//15フレーム間アニメーション
+	if (animationTimer < 15)	//15フレーム間アニメーション
 	{
-		if (animation_timer % ANIMATION_TIME == 0)
+		if (animationTimer % ANIMATION_TIME == 0)
 		{
-			now_image = image[(++animation_type % 6) + 1];
+			nowImage = image[(++animationType % 6) + 1];
 		}
 	}
 	else //アニメーションの終了
@@ -202,7 +202,7 @@ void TOMATO::Draw()const
 	//画面外に出たら描画しない
 	if ((x + stage->GetScrollX() > -IMAGE_SIZE) && (x + stage->GetScrollX() < 1280 + IMAGE_SIZE))
 	{
-		DrawRotaGraphF(x + stage->GetScrollX(), y + stage->GetScrollY(), image_rate, 0, now_image, TRUE);
+		DrawRotaGraphF(x + stage->GetScrollX(), y + stage->GetScrollY(), imageRate, 0, nowImage, TRUE);
 	}
 
 }

@@ -125,8 +125,9 @@ private:
 	typedef struct Animation {
 		//画像を切り替えるタイミング(フレーム)
 		const int switch_frame;
-
-		//アニメーションの再生の仕方
+		
+		int animationPlayType[10] = {};
+		//アニメーションの再生の仕方;
 		//-1: 固定
 		// 0: 一枚目から再生したら逆再生する
 		// 1: 一枚目から再生したら一枚目に戻す
