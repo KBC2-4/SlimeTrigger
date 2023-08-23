@@ -8,14 +8,14 @@
 class ITEMBALL
 {
 private:
-	int map_x, map_y;
-	float item_x, item_y;
+	int mapX, mapY;
+	float itemX, itemY;
 	int item;
-	bool delete_flg;
+	bool deleteFlag;
 	PLAYER* player;
 	STAGE* stage;
-	float scrool_x;
-	float scrool_y;
+	float scroolX;
+	float scroolY;
 
 public:
 	ITEMBALL();
@@ -27,8 +27,8 @@ public:
 	void PlayerHit();
 	float GetDrawX() const;
 	float GetDrawY() const;
-	bool GetDeleteFlag() { return delete_flg; }
-	float GetItemX() { return item_x; }
+	bool GetDeleteFlag() { return deleteFlag; }
+	float GetItemX() { return itemX; }
 
 };
 

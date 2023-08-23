@@ -15,16 +15,16 @@ static bool animation_flg = false;
 Title::Title()
 {
 
-	if ((backgraundImage = LoadGraph("Resource/Images/Stage/TitleBackImage.png")) == -1)
+	if ((backGraundImage = LoadGraph("Resource/Images/Stage/TitleBackImage.png")) == -1)
 	{
 		throw "Resource/Images/Stage/TitleBackImage.png";
 	}
 
-	if ((backgroundMusic = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {
+	if ((backGraundMusic = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {
 		throw "Resource/Sounds/BGM/title.wav";
 	}
 
-	if ((cursormoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
+	if ((cursorMoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1)
 	{
 		throw "Resource/Sounds/SE/cursor_move.wav";
 	}
@@ -38,7 +38,7 @@ Title::Title()
 	char dis_exit_se[30];
 	sprintf_s(dis_exit_se, sizeof(dis_exit_se), "Resource/Sounds/SE/exit0%d.wav", se_random + 1);
 
-	if ((exit_se = LoadSoundMem(dis_exit_se)) == -1) {
+	if ((exitSe = LoadSoundMem(dis_exit_se)) == -1) {
 		throw dis_exit_se;
 	}
 
@@ -46,43 +46,43 @@ Title::Title()
 	menuFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 80, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	guidFont = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
-	selectmenu = 0;
+	selectMenu = 0;
 	inputMargin = 0;
 	timer = 0;
-	exit_flg = false;
+	exitFlag = false;
 
-	title_anitimer[0] = 0;
+	titleAnitimer[0] = 0;
 
 	//タイトルアニメーションを初回起動時のみ有効化
 	if (animation_flg == false) {
-		title_anitimer[1] = 180;
+		titleAnitimer[1] = 180;
 		animation_flg = true;
 	}
-	else { title_anitimer[1] = 0; }
+	else { titleAnitimer[1] = 0; }
 
 	option = new Option();
 
 	
 
 	//BGM
-	ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
+	ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic);
 
 	//SE
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursorMoveSe);
 	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, exit_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, exitSe);
 }
 
 Title::~Title()
 {
 	delete option;
 
-	DeleteGraph(backgraundImage);
-	StopSoundMem(backgroundMusic);
-	DeleteSoundMem(backgroundMusic);
-	DeleteSoundMem(cursormoveSe);
+	DeleteGraph(backGraundImage);
+	StopSoundMem(backGraundMusic);
+	DeleteSoundMem(backGraundMusic);
+	DeleteSoundMem(cursorMoveSe);
 	DeleteSoundMem(okSe);
-	DeleteSoundMem(exit_se);
+	DeleteSoundMem(exitSe);
 	DeleteFontToHandle(titleFont);
 	DeleteFontToHandle(menuFont);
 	DeleteFontToHandle(guidFont);
@@ -93,12 +93,12 @@ AbstractScene* Title::Update()
 	if (option->GetOptionFlg() == true) {
 		option->Update();
 		//BGM
-		ChangeVolumeSoundMem(Option::GetBGMVolume(), backgroundMusic);
+		ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic);
 
 		//SE
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursormoveSe);
+		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursorMoveSe);
 		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, exit_se);
+		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, exitSe);
 	}
 	else {
 
@@ -108,25 +108,25 @@ AbstractScene* Title::Update()
 		else {
 
 			//タイトルアニメーションが終わってからBGMを再生する
-			if (title_anitimer[1] == 0 && !CheckSoundMem(backgroundMusic)) {
-				PlaySoundMem(backgroundMusic, DX_PLAYTYPE_LOOP);
+			if (titleAnitimer[1] == 0 && !CheckSoundMem(backGraundMusic)) {
+				PlaySoundMem(backGraundMusic, DX_PLAYTYPE_LOOP);
 			}
 
 
-			if (title_anitimer[1] <= 0) {
+			if (titleAnitimer[1] <= 0) {
 				if (PAD_INPUT::GetPadThumbLY() > 20000)
 				{
 
-					selectmenu = (selectmenu + 3) % 4;
-					inputMargin = 0; PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
+					selectMenu = (selectMenu + 3) % 4;
+					inputMargin = 0; PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 
 				if (PAD_INPUT::GetPadThumbLY() < -20000)
 				{
 
-					selectmenu = (selectmenu + 1) % 4; inputMargin = 0;
-					PlaySoundMem(cursormoveSe, DX_PLAYTYPE_BACK, TRUE);
+					selectMenu = (selectMenu + 1) % 4; inputMargin = 0;
+					PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 			}
@@ -135,13 +135,13 @@ AbstractScene* Title::Update()
 		if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON))
 		{
 
-			if (title_anitimer[1] <= 0) {
+			if (titleAnitimer[1] <= 0) {
 				PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 				//ok_seが鳴り終わってから画面推移する。
 				while (CheckSoundMem(okSe)) {}
 				StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 
-				switch (static_cast<MENU>(selectmenu))
+				switch (static_cast<MENU>(selectMenu))
 				{
 
 				case MENU::GAME_SELECT:
@@ -157,8 +157,8 @@ AbstractScene* Title::Update()
 					break;
 
 				case MENU::END:
-					exit_flg = true;
-					PlaySoundMem(exit_se, DX_PLAYTYPE_BACK, FALSE);
+					exitFlag = true;
+					PlaySoundMem(exitSe, DX_PLAYTYPE_BACK, FALSE);
 					break;
 
 				default:
@@ -166,18 +166,18 @@ AbstractScene* Title::Update()
 				}
 
 			}
-			else { title_anitimer[1] = 0; }
+			else { titleAnitimer[1] = 0; }
 		}
 		timer++;
 
-		if (exit_flg == true && !CheckSoundMem(exit_se)) { return nullptr; }
+		if (exitFlag == true && !CheckSoundMem(exitSe)) { return nullptr; }
 
 		//合計フレーム
-		if (title_anitimer[1] > 0) { title_anitimer[1]--; }
+		if (titleAnitimer[1] > 0) { titleAnitimer[1]--; }
 
 		//回転
-		if (title_anitimer[0] < 180 && title_anitimer[1] > 0) { title_anitimer[0]++; }
-		else { title_anitimer[0] = 0; }
+		if (titleAnitimer[0] < 180 && titleAnitimer[1] > 0) { titleAnitimer[0]++; }
+		else { titleAnitimer[0] = 0; }
 	}
 
 	return this;
@@ -186,7 +186,7 @@ AbstractScene* Title::Update()
 void Title::Draw()const
 {
 
-	DrawGraph(0, 0, backgraundImage, false);
+	DrawGraph(0, 0, backGraundImage, false);
 
 	//オプション画面へ入る
 	if (option->GetOptionFlg() == true) {
@@ -194,7 +194,7 @@ void Title::Draw()const
 	}
 	else {
 
-		DrawRotaStringToHandle(GetDrawCenterX("スライムトリガー", titleFont, 600 - title_anitimer[1] * 3), 200 + title_anitimer[1] * 3, 1.0 - title_anitimer[1] * 0.01, 1.0 - title_anitimer[1] * 0.01, 600, 100, 10 * title_anitimer[0] * (M_PI / 180), 0x56F590, titleFont, 0xFFFFFF, FALSE, "スライムトリガー");
+		DrawRotaStringToHandle(GetDrawCenterX("スライムトリガー", titleFont, 600 - titleAnitimer[1] * 3), 200 + titleAnitimer[1] * 3, 1.0 - titleAnitimer[1] * 0.01, 1.0 - titleAnitimer[1] * 0.01, 600, 100, 10 * titleAnitimer[0] * (M_PI / 180), 0x56F590, titleFont, 0xFFFFFF, FALSE, "スライムトリガー");
 		//DrawStringToHandle(GetDrawCenterX("スライムアクション",titleFont), 100, "スライムアクション", 0x56F590, titleFont, 0xFFFFFF);
 
 		//ボックス
@@ -203,15 +203,15 @@ void Title::Draw()const
 		//SetDrawBlendMode(DX_BLENDGRAPHTYPE_NORMAL,0);
 
 		//矢印
-		//DrawCircleAA(475.0f, 398.0f + selectmenu * 90, 20, 3, 0xffffff, TRUE, 3.0f);
+		//DrawCircleAA(475.0f, 398.0f + selectMenu * 90, 20, 3, 0xffffff, TRUE, 3.0f);
 
-		if (title_anitimer[1] > 0) { return; }
+		if (titleAnitimer[1] > 0) { return; }
 
 		//選択メニュー
-		DrawStringToHandle(GetDrawCenterX("プレイ", menuFont), 360, "プレイ", selectmenu == 0 ? 0xB3E0F5 : 0xEB8F63, menuFont, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("ランキング", menuFont), 450, "ランキング", selectmenu == 1 ? 0xF5E6B3 : 0xEB8F63, menuFont, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("オプション", menuFont), 540, "オプション", selectmenu == 2 ? 0x5FEBB6 : 0xEB8F63, menuFont, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("終了", menuFont, 8), 630, "終了", selectmenu == 3 ? 0xEBABDC : 0xEB8F63, menuFont, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("プレイ", menuFont), 360, "プレイ", selectMenu == 0 ? 0xB3E0F5 : 0xEB8F63, menuFont, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("ランキング", menuFont), 450, "ランキング", selectMenu == 1 ? 0xF5E6B3 : 0xEB8F63, menuFont, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("オプション", menuFont), 540, "オプション", selectMenu == 2 ? 0x5FEBB6 : 0xEB8F63, menuFont, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX("終了", menuFont, 8), 630, "終了", selectMenu == 3 ? 0xEBABDC : 0xEB8F63, menuFont, 0xFFFFFF);
 
 
 

@@ -20,7 +20,7 @@ DRAW_RANKING::DRAW_RANKING()
 		throw "Resource/Images/Result/Best_time_Image.png";
 	}
 
-	if ((backgraundImage = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1)
+	if ((backGraundImage = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1)
 	{
 		throw "Resource/Images/Stage/BackImage1.png";
 	}
@@ -63,7 +63,7 @@ AbstractScene* DRAW_RANKING::Update()
 
 void DRAW_RANKING::Draw() const
 {
-	DrawGraph(0, 0, backgraundImage, false);
+	DrawGraph(0, 0, backGraundImage, false);
 
 	DrawRotaGraph(640, 200, 1, 0, image, TRUE);
 

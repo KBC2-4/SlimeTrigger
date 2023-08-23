@@ -29,7 +29,7 @@ private:
 	float maxY;
 public:
 	ThrowSlime() {}
-	ThrowSlime(float player_x, float player_y, float throw_rad, STAGE* stage);
+	ThrowSlime(float playerX, float playerY, float throwRad, STAGE* stage);
 	void Finalize();
 	void Update(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomatonCount);
 	void Draw(STAGE* stage) const;

@@ -29,7 +29,7 @@ TOMATO::TOMATO(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 	this->stage = stage;
 
 	imageRate = 0.1;
-	State = ENEMY_STATE::IDOL;
+	state = ENEMY_STATE::IDOL;
 
 	nowImage = 0;
 	image = new int[9];
@@ -70,14 +70,14 @@ void TOMATO::Update()
 	if (animationTimer < 80) {
 		++animationTimer;
 	}
-	switch (State)
+	switch (state)
 	{
 	case ENEMY_STATE::IDOL:
 		//プレイヤーが一定範囲以内に入っている間落ちる
 		if ((IdolAnimation()) && (fabsf(player->GetPlayerX() - (x + stage->GetScrollX())) < 240) && (y + stage->GetScrollY() > 0))
 		{
 			animationTimer = 0;
-			State = ENEMY_STATE::FALL;
+			state = ENEMY_STATE::FALL;
 		}
 		break;
 	case ENEMY_STATE::FALL:
@@ -86,14 +86,14 @@ void TOMATO::Update()
 		FallAnimation();
 		if (y + stage->GetScrollY() > 720)
 		{
-			State = ENEMY_STATE::DETH;
+			state = ENEMY_STATE::DETH;
 		}
 		break;
 	case ENEMY_STATE::DETH:
 		//爆発し終え時または、画面外に出たらアイドル状態にする
 		if(DethAnimation() || (y + stage->GetScrollY() > 720))
 		{
-			State = ENEMY_STATE::IDOL;
+			state = ENEMY_STATE::IDOL;
 			imageRate = 0;
 			//スポーン地点に移動
 			x = spawnMapX * MAP_CEllSIZE + MAP_CEllSIZE / 2;
@@ -140,7 +140,7 @@ void TOMATO::Hit()
 	//地面やブロックとの当たり判定
 	if (stage->HitMapDat(mapY + 1,mapX))
 	{
-		State = ENEMY_STATE::DETH;
+		state = ENEMY_STATE::DETH;
 		animationTimer = 0;
 		animationType = 00;
 		PlaySoundMem(splashSe, DX_PLAYTYPE_BACK);

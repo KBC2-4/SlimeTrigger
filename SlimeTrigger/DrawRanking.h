@@ -10,7 +10,7 @@ private:
 	int titleFont,timeFont;
 	int image;
 	int okSe;
-	int backgraundImage;
+	int backGraundImage;
 public:
 	/// <summary>
 	/// コンストラクタ

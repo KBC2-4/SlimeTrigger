@@ -14,13 +14,13 @@ class GAMEMAIN :
 {
 private:
 	//背景画像
-	int backgraundImage[3];
-	int backgroundMusic[3];		//BGM
-	int starttimeFont, timeFont;	//フォント
-	int cursormoveSe, okSe, countSe, startSe, clearSe;	//SE
+	int backGraundImage[3];
+	int backGraundMusic[3];		//BGM
+	int startTimeFont, timeFont;	//フォント
+	int cursorMoveSe, okSe, countSe, startSe, clearSe;	//SE
 	int startTime;		//開始までの遅延時間
-	int starteffectTimer;
-	int startaddTime;
+	int startEffectTimer;
+	int startAddTime;
 	int elapsedTime;	//経過時間
 	const char* stageName;	//リスタート時のステージ選択用
 	int nowGraph;		//リスタート時の今現在の画面

@@ -16,7 +16,7 @@ LEMON::LEMON()
 	spawnMapY = 0;
 	nowImage = 0;
 
-	State = ENEMY_STATE::IDOL;
+	state = ENEMY_STATE::IDOL;
 	bullet = nullptr;
 }
 
@@ -59,7 +59,7 @@ LEMON::LEMON(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 
 
 	nowImage = image[3];
-	State = ENEMY_STATE::IDOL;
+	state = ENEMY_STATE::IDOL;
 	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damageSe);
 	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), pressSe);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), splashSe);
@@ -97,7 +97,7 @@ void LEMON::Update()
 		++animationTimer;
 	}
 
-	switch (State)
+	switch (state)
 	{
 	case ENEMY_STATE::IDOL:
 		break;
@@ -108,7 +108,7 @@ void LEMON::Update()
 			if (++shootCount % 60 == 0)
 			{
 				animationTimer = 0;
-				State = ENEMY_STATE::PRESS;
+				state = ENEMY_STATE::PRESS;
 
 			}
 		}
@@ -119,7 +119,7 @@ void LEMON::Update()
 		{
 			animationTimer = 0;
 			animationType = 0;
-			State = ENEMY_STATE::MOVE;
+			state = ENEMY_STATE::MOVE;
 		}
 		break;
 	case ENEMY_STATE::PRESS:
@@ -129,7 +129,7 @@ void LEMON::Update()
 			bullet = new ENEMY_BULLET(player, stage, x, y, 0, rad, 1);
 			animationTimer = 0;
 			animationType = 0;
-			State = ENEMY_STATE::RETURN;
+			state = ENEMY_STATE::RETURN;
 			PlaySoundMem(pressSe, DX_PLAYTYPE_BACK);
 		}
 		break;
@@ -168,17 +168,17 @@ void LEMON::Update()
 	Hit();
 
 	if (((x + stage->GetScrollX() < -IMAGE_SIZE) || (x + stage->GetScrollX() > 1280 + IMAGE_SIZE) || (y + stage->GetScrollY() < 0)
-		|| (y + stage->GetScrollY() > 720)) && (State != ENEMY_STATE::FALL && State != ENEMY_STATE::DETH))		//画面外に出るとアイドル状態にする
+		|| (y + stage->GetScrollY() > 720)) && (state != ENEMY_STATE::FALL && state != ENEMY_STATE::DETH))		//画面外に出るとアイドル状態にする
 	{
-		State = ENEMY_STATE::IDOL;	//ステートをアイドル状態へ
+		state = ENEMY_STATE::IDOL;	//ステートをアイドル状態へ
 		//アイドル状態の画像に変更
 		nowImage = image[3];
 	}
-	else if (State == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
+	else if (state == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
 	{
 		// アニメーション時間をリセットし、ステートをムーブへ
 		animationTimer = 0;
-		State = ENEMY_STATE::MOVE;
+		state = ENEMY_STATE::MOVE;
 	}
 	else {}
 }
@@ -196,7 +196,7 @@ void LEMON::Hit()
 	float bx1, by1, bx2, by2;
 	float gx1, gy1, gx2, gy2;
 	//プレイヤーが投げた体の一部との当たり判定
-	if ((State != ENEMY_STATE::FALL) && (State != ENEMY_STATE::DETH))
+	if ((state != ENEMY_STATE::FALL) && (state != ENEMY_STATE::DETH))
 	{
 		for (int i = 0; i < player->GetThrowCnt(); i++)
 		{
@@ -214,18 +214,18 @@ void LEMON::Hit()
 			if (((bx2 >= gx1 && bx2 <= gx2) || (bx1 <= gx2 && bx1 >= gx1)) && ((by1 >= gy2 && by1 <= gy1) || (by2 >= gy1 && by2 <= gy2)))
 			{
 				rad = 90 * (PI / 180);
-				State = ENEMY_STATE::FALL;
+				state = ENEMY_STATE::FALL;
 				PlaySoundMem(damageSe, DX_PLAYTYPE_BACK);
 			}
 		}
 	}
 
 	//地面やブロックとの当たり判定
-	if (State == ENEMY_STATE::FALL)
+	if (state == ENEMY_STATE::FALL)
 	{
 		if (stage->HitMapDat(mapY + 1, mapX))
 		{
-			State = ENEMY_STATE::DETH;
+			state = ENEMY_STATE::DETH;
 			animationTimer = 0;
 			animationType = 0;
 			PlaySoundMem(splashSe, DX_PLAYTYPE_BACK);

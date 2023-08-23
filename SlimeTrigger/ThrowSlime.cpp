@@ -4,18 +4,18 @@
 #include<math.h>
 #include "Tomato.h"
 
-ThrowSlime::ThrowSlime(float player_x, float player_y, float throw_rad, STAGE* stage) : ve(110.0f) {
+ThrowSlime::ThrowSlime(float playerX, float playerY, float throwRad, STAGE* stage) : ve(110.0f) {
 	if ((image = LoadGraph("Resource/Images/Player/Slime_Bullet.png")) == -1) {
 		throw "Resource/Images/Player/Slime_Bullet.png";
 	}
 
 	throw_del = false;
 
-	vx0 = ve * cosf(throw_rad);
-	vy0 = ve * sinf(throw_rad);
+	vx0 = ve * cosf(throwRad);
+	vy0 = ve * sinf(throwRad);
 
-	x0 = player_x;
-	y0 = player_y;
+	x0 = playerX;
+	y0 = playerY;
 
 	vx = vx0;
 	vy = vy0;
