@@ -63,13 +63,17 @@ Option::~Option() {
 
 
 void Option::Update() {
-	
+
 	if (input_margin < 20) {
 		input_margin++;
 	}
 	else {
-		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetPadThumbLX() > 20000) || (PAD_INPUT::GetPadThumbLX() < -20000)) {
-			input_margin = 0;
+		// 操作制限のカウンターをリセット
+		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetPadThumbLY() < -20000)
+			|| (PAD_INPUT::GetPadThumbLX() > 20000) || (PAD_INPUT::GetPadThumbLX() < -20000)
+			|| (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN)
+			|| (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_LEFT) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_RIGHT)) {
+				input_margin = 0;
 		}
 
 
@@ -83,20 +87,22 @@ void Option::Update() {
 			StartJoypadVibration(DX_INPUT_PAD1, 50, 100, -1);
 		}
 
-		if (PAD_INPUT::GetPadThumbLY() > 20000) { selectmenu = (selectmenu + 3) % 4; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
+		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP)) {
+			selectmenu = (selectmenu + 3) % 4; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 		}
 
-		if (PAD_INPUT::GetPadThumbLY() < -20000) { selectmenu = (selectmenu + 1) % 4; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
+		if ((PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN)) {
+			selectmenu = (selectmenu + 1) % 4; PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 		}
 
-		if (PAD_INPUT::GetPadThumbLX() > 20000) {
+		if ((PAD_INPUT::GetPadThumbLX() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_RIGHT)) {
 			if (static_cast<MENU>(selectmenu) == MENU::BGM && bgm_vol < 255 * 90 / 100) { bgm_vol += 255 * 10 / 100; }
 			else if (static_cast<MENU>(selectmenu) == MENU::SE && se_vol < 255 * 90 / 100) { se_vol += 255 * 10 / 100; }
 
 			ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursor_move_se);
 		}
 
-		if (PAD_INPUT::GetPadThumbLX() < -20000) {
+		if ((PAD_INPUT::GetPadThumbLX() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_LEFT)) {
 			if (static_cast<MENU>(selectmenu) == MENU::BGM && bgm_vol > 255 * 10 / 100) { bgm_vol -= 255 * 10 / 100; }
 			else if (static_cast<MENU>(selectmenu) == MENU::SE && se_vol > 255 * 10 / 100) { se_vol -= 255 * 10 / 100; }
 		}
@@ -138,7 +144,7 @@ void Option::Update() {
 			PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
 			//ok_seが鳴り終わってから画面推移する。
 			while (CheckSoundMem(ok_se)) {}
-			StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
+			StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 			selectmenu = 0;
 			ChangeOptionFlg();
 		}
@@ -150,7 +156,7 @@ void Option::Update() {
 		PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(ok_se)) {}
-		StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
+		StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 		input_mode = !input_mode;
 	}
 
@@ -159,7 +165,7 @@ void Option::Update() {
 		PlaySoundMem(ok_se, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(ok_se)) {}
-		StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
+		StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 		selectmenu = 0;
 		ChangeOptionFlg();
 	}
@@ -177,7 +183,8 @@ void Option::Draw() {
 	//ウィンドウモード切替
 	if (window_mode) {
 		DrawStringToHandle(GetDrawCenterX("全画面表示", menu_font), 120, "全画面表示", static_cast<MENU>(selectmenu) == MENU::WindowMode ? 0x4572D9 : 0xEB8F63, menu_font, 0xFFFFFF);
-	}else{
+	}
+	else {
 		DrawStringToHandle(GetDrawCenterX("ウィンドウ表示", menu_font), 120, "ウィンドウ表示", static_cast<MENU>(selectmenu) == MENU::WindowMode ? 0x4572D9 : 0xEB8F63, menu_font, 0xFFFFFF);
 	}
 
@@ -228,7 +235,7 @@ void Option::Draw() {
 
 	{//ボタンの動作内容
 		const int x = 110;
-		
+
 		DrawCircleAA(x + 7, 362, 15, 20, 0xFFFFFF, 1);
 		DrawStringToHandle(x, 350, "A", A_COLOR, buttonguid_font, 0xFFFFFF);
 		DrawStringToHandle(x + 30, 350, Option::GetInputMode() ? "戻る／ジャンプ" : "決定／アクション", B_COLOR, buttonguid_font, 0xFFFFFF);
@@ -294,7 +301,7 @@ void Option::LoadData(void) {
 				if (key == "BGM") {
 					line_stream >> value;
 					if (value > 10 || value < 0) { continue; }
-					bgm_vol = value * 25 +2;
+					bgm_vol = value * 25 + 2;
 				}
 				else if (key == "SE") {
 					line_stream >> value;

@@ -302,6 +302,13 @@ void PLAYER::Move()
 	//スティック入力の取得
 	int input_lx = PAD_INPUT::GetPadThumbLX();
 
+	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_LEFT)  {
+		input_lx = -20000;
+	}
+	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_RIGHT) {
+		input_lx = 20000;
+	}
+
 	//移動方向
 	if (input_lx > 0) {
 		move_x = 1.0f;

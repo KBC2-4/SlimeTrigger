@@ -83,7 +83,7 @@ AbstractScene* GameOver::Update()
 
 		/*ã“ü—Í‚©‚ÂWaitTime‚ª20‚æ‚è‘å‚«‚¢cursor‚ğã‚ÉA
 		Åã‚Ìê‡‚Í‰º‚Ö*/
-		if (PAD_INPUT::GetPadThumbLY() > 20000)
+		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP))
 		{
 			PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
@@ -93,7 +93,7 @@ AbstractScene* GameOver::Update()
 
 		/*‰º“ü—Í‚©‚ÂWaitTime‚ª20‚æ‚è‘å‚«‚¢cursor‚ğ‰º‚ÉA
 		Åã‚Ìê‡‚Íã‚Ö*/
-		if (PAD_INPUT::GetPadThumbLY() < -20000)
+		if ((PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN))
 		{
 			PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
