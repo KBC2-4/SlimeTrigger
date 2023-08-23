@@ -122,11 +122,12 @@ private:
 	int healSE;			//回復したとき
 	int throw_ballSE;	//投げるとき
 
-	typedef struct Animation {
+	typedef struct Animation_old {
 		//画像を切り替えるタイミング(フレーム)
 		const int switch_frame;
-
-		//アニメーションの再生の仕方
+		
+		//int animationPlayType [10] = {};
+		//アニメーションの再生の仕方;
 		//-1: 固定
 		// 0: 一枚目から再生したら逆再生する
 		// 1: 一枚目から再生したら一枚目に戻す
@@ -154,7 +155,14 @@ private:
 		//アニメーションの終了判定
 		bool endAnim;
 	};
-	Animation animation[ANIMATION_TYPE]{
+	Animation_old animation[ANIMATION_TYPE]{
+		/*
+		* 切り替えタイミング（フレーム）
+		* アニメーションの再生方式
+		* 画像の枚数
+		* アニメーション切り替えの優先度
+		*/
+
 		{  3,  1,  9, 0 },	//アイドル
 		{  1,  0, 10, 0 },	//移動
 		{  2,  1,  7, 2 },	//投げる
