@@ -61,10 +61,10 @@ PLAYER::PLAYER(STAGE* stage) {
 	if (LoadDivGraph("Resource/Images/Player/JumpSlime02.png", 4, 4, 1, 80, 80, images[5]) == -1) {
 		throw "Resource/Images/Player/JumpSlime02.png";
 	}
-
-	/*if (LoadDivGraph("Resource/Images/Player/JumpSlime2.png", 10, 10, 1, 80, 80, images[6]) == -1) {
+	// 着地アニメーション
+	if (LoadDivGraph("Resource/Images/Player/LandSlime.png", 10, 10, 1, 80, 80, images[6]) == -1) {
 		throw "Resource/Images/Player/JumpSlime1.png";
-	}*/
+	}//*/
 	if ((throw_ball_image = LoadGraph("Resource/Images/Player/Slime_Bullet.png")) == -1) {
 		throw "Resource/Images/Player/Slime_Bullet.png";
 	}
@@ -704,6 +704,12 @@ void PLAYER::Throw(STAGE* stage) {
 		}
 		throw_x.push_back(x0);
 		throw_y.push_back(y0);
+	}
+	for (int i = 0; i < 3; i++) {
+		throw_x.erase(throw_x.begin());
+	}
+	for (int i = 0; i < 3; i++) {
+		throw_y.erase(throw_y.begin());
 	}
 
 	//投げるとき
