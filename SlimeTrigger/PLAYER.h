@@ -61,7 +61,6 @@ private:
 	float player_speed;
 
 	int life;
-	//int images[ANIMATION_TYPE][10];		//アニメーションの画像
 	int move_type;			//左か右の移動(反転用)
 	float move_x;
 
@@ -121,56 +120,6 @@ private:
 	int hook_pendulumSE;//振り子運動時
 	int healSE;			//回復したとき
 	int throw_ballSE;	//投げるとき
-
-	//typedef struct Animation_old {
-	//	//画像を切り替えるタイミング(フレーム)
-	//	const int switch_frame;
-	//	
-	//	//int animationPlayType [10] = {};
-	//	//アニメーションの再生の仕方;
-	//	//-1: 固定
-	//	// 0: 一枚目から再生したら逆再生する
-	//	// 1: 一枚目から再生したら一枚目に戻す
-	//	// 2: 最後までされたら最後の画像で固定
-	//	const int play_type;
-
-	//	//アニメーション画像の枚数
-	//	const int image_num;
-
-	//	//アニメーションの優先度
-	//	const int priority;
-
-	//	//アニメーションのフレームのカウント
-	//	int frame = 0;
-
-	//	//今のアニメーションの添え字
-	//	int type = 0;
-
-	//	//play_typeが0のアニメーションの段階(0: 前半, 1: 後半)
-	//	int phase = 0;
-
-	//	//ループ再生かどうか(0: ループ再生)
-	//	int playMode;
-
-	//	//アニメーションの終了判定
-	//	bool endAnim;
-	//};
-	//Animation_old animation[ANIMATION_TYPE]{
-	//	/*
-	//	* 切り替えタイミング（フレーム）
-	//	* アニメーションの再生方式
-	//	* 画像の枚数
-	//	* アニメーション切り替えの優先度
-	//	*/
-
-	//	{  3,  1,  9, 0 },	//アイドル
-	//	{  1,  0, 10, 0 },	//移動
-	//	{  2,  1,  7, 2 },	//投げる
-	//	{  1, -1,  1, 0 },	//フック
-	//	{ 20,  1,  4, 1 },	//ジャンプ
-	//	{ 20,  2,  4, 1 },	//落下
-	//	{  2,  1, 10, 1 },	//着地
-	//};
 
 	typedef struct Animation {
 		const int switch_frame;					// 画像切り替えのタイミング(フレーム指定)
