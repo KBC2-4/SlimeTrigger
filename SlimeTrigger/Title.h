@@ -25,7 +25,7 @@ private:
 	int timer;
 	bool exitFlag;
 
-	int titleAnitimer[2];
+	int titleAniTimer[2];
 
 	Option* option;
 

@@ -51,14 +51,14 @@ Title::Title()
 	timer = 0;
 	exitFlag = false;
 
-	titleAnitimer[0] = 0;
+	titleAniTimer[0] = 0;
 
 	//タイトルアニメーションを初回起動時のみ有効化
 	if (animation_flg == false) {
-		titleAnitimer[1] = 180;
+		titleAniTimer[1] = 180;
 		animation_flg = true;
 	}
-	else { titleAnitimer[1] = 0; }
+	else { titleAniTimer[1] = 0; }
 
 	option = new Option();
 
@@ -108,12 +108,12 @@ AbstractScene* Title::Update()
 		else {
 
 			//タイトルアニメーションが終わってからBGMを再生する
-			if (titleAnitimer[1] == 0 && !CheckSoundMem(backGraundMusic)) {
+			if (titleAniTimer[1] == 0 && !CheckSoundMem(backGraundMusic)) {
 				PlaySoundMem(backGraundMusic, DX_PLAYTYPE_LOOP);
 			}
 
 
-			if (title_anitimer[1] <= 0) {
+			if (titleAniTimer[1] <= 0) {
 				if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP))
 				{
 
@@ -135,7 +135,7 @@ AbstractScene* Title::Update()
 		if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON))
 		{
 
-			if (titleAnitimer[1] <= 0) {
+			if (titleAniTimer[1] <= 0) {
 				PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 				//ok_seが鳴り終わってから画面推移する。
 				while (CheckSoundMem(okSe)) {}
@@ -166,18 +166,18 @@ AbstractScene* Title::Update()
 				}
 
 			}
-			else { titleAnitimer[1] = 0; }
+			else { titleAniTimer[1] = 0; }
 		}
 		timer++;
 
 		if (exitFlag == true && !CheckSoundMem(exitSe)) { return nullptr; }
 
 		//合計フレーム
-		if (titleAnitimer[1] > 0) { titleAnitimer[1]--; }
+		if (titleAniTimer[1] > 0) { titleAniTimer[1]--; }
 
 		//回転
-		if (titleAnitimer[0] < 180 && titleAnitimer[1] > 0) { titleAnitimer[0]++; }
-		else { titleAnitimer[0] = 0; }
+		if (titleAniTimer[0] < 180 && titleAniTimer[1] > 0) { titleAniTimer[0]++; }
+		else { titleAniTimer[0] = 0; }
 	}
 
 	return this;
@@ -194,7 +194,7 @@ void Title::Draw()const
 	}
 	else {
 
-		DrawRotaStringToHandle(GetDrawCenterX("スライムトリガー", titleFont, 600 - titleAnitimer[1] * 3), 200 + titleAnitimer[1] * 3, 1.0 - titleAnitimer[1] * 0.01, 1.0 - titleAnitimer[1] * 0.01, 600, 100, 10 * titleAnitimer[0] * (M_PI / 180), 0x56F590, titleFont, 0xFFFFFF, FALSE, "スライムトリガー");
+		DrawRotaStringToHandle(GetDrawCenterX("スライムトリガー", titleFont, 600 - titleAniTimer[1] * 3), 200 + titleAniTimer[1] * 3, 1.0 - titleAniTimer[1] * 0.01, 1.0 - titleAniTimer[1] * 0.01, 600, 100, 10 * titleAniTimer[0] * (M_PI / 180), 0x56F590, titleFont, 0xFFFFFF, FALSE, "スライムトリガー");
 		//DrawStringToHandle(GetDrawCenterX("スライムアクション",titleFont), 100, "スライムアクション", 0x56F590, titleFont, 0xFFFFFF);
 
 		//ボックス
@@ -205,7 +205,7 @@ void Title::Draw()const
 		//矢印
 		//DrawCircleAA(475.0f, 398.0f + selectMenu * 90, 20, 3, 0xffffff, TRUE, 3.0f);
 
-		if (titleAnitimer[1] > 0) { return; }
+		if (titleAniTimer[1] > 0) { return; }
 
 		//選択メニュー
 		DrawStringToHandle(GetDrawCenterX("プレイ", menuFont), 360, "プレイ", selectMenu == 0 ? 0xB3E0F5 : 0xEB8F63, menuFont, 0xFFFFFF);
