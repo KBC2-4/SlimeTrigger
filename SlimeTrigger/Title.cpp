@@ -113,8 +113,8 @@ AbstractScene* Title::Update()
 			}
 
 
-			if (titleAnitimer[1] <= 0) {
-				if (PAD_INPUT::GetPadThumbLY() > 20000)
+			if (title_anitimer[1] <= 0) {
+				if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP))
 				{
 
 					selectMenu = (selectMenu + 3) % 4;
@@ -122,7 +122,7 @@ AbstractScene* Title::Update()
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 
-				if (PAD_INPUT::GetPadThumbLY() < -20000)
+				if ((PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN))
 				{
 
 					selectMenu = (selectMenu + 1) % 4; inputMargin = 0;
