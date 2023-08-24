@@ -29,6 +29,10 @@ ELEMENT::ELEMENT(const char* stage_name) : STAGE(stage_name) {
 		throw "Resource/Sounds/SE/Stage/manhole_opened.wav";
 	}
 
+	LoadDivGraph("Resource/Images/Stage/acid.png",11,11,1,80,80,acidImage);
+
+	foamAnimation = 4;
+
 	ELEMENT_DATA data;
 	for (int i = 0; i < map_data.size(); i++)
 	{
@@ -172,6 +176,7 @@ ELEMENT::ELEMENT(const char* stage_name) : STAGE(stage_name) {
 				data.type = 2;
 				data.animtimer = 0;
 				data.flg = false;
+				data.image = 99;
 				acidrain_puddles.push_back(data);
 				break;
 
@@ -258,6 +263,8 @@ ELEMENT::ELEMENT(const char* stage_name) : STAGE(stage_name) {
 		}
 
 	}
+
+	acidrain_puddles.at(0).image = 0;
 
 	player_map_x = 0;
 	player_map_y = 0;
@@ -420,38 +427,45 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 	//é_ê´âJÇÃêÖÇΩÇ‹ÇË
 	for (int i = 0; i < acidrain_puddles.size(); i++) {
 
-		if (stage_name == "Stage02") { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[7], TRUE); }
+		/*if (stage_name == "Stage02") { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[7], TRUE); }
 		else if (stage_name == "Stage03") { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[11], TRUE); }
-		else { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[3], TRUE); }
-
+		else { DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[3], TRUE); }*/
+		int imageNum = acidrain_puddles.at(i).image;
+		if (imageNum == 99) { imageNum = 0; }
 		switch (acidrain_puddles[i].type)
 		{
 		case 1:		//ç∂í[
-			if (acidrain_puddles_anitimer > 5) {
+			/*if (acidrain_puddles_anitimer > 5) {
 				DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[74], TRUE);
 			}
 			else {
 				DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[73], TRUE);
 			}
-			break;
+			break;*/
 
 		case 2:		//íÜâõ
-			if (acidrain_puddles_anitimer > 5) {
+			/*if (acidrain_puddles_anitimer > 5) {
 				DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[76], TRUE);
 			}
 			else {
 				DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[75], TRUE);
-			}
+			}*/
+			
+
+			DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), acidImage[imageNum], TRUE);
+			DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), acidImage[foamAnimation], TRUE);
+			DrawBoxAA(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY() + 80.0f, acidrain_puddles[i].x + stage->GetScrollX()+80.0f, acidrain_puddles[i].y + stage->GetScrollY() + 160.0f, 0xc731e8, TRUE);
+			//DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), acid, TRUE);
 			break;
 
 		case 3:		//âEí[
-			if (acidrain_puddles_anitimer > 5) {
+		/*	if (acidrain_puddles_anitimer > 5) {
 				DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[78], TRUE);
 			}
 			else {
 				DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), block_image1[77], TRUE);
 			}
-			break;
+			break;*/
 		default:
 			break;
 		}
@@ -470,7 +484,7 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 /// çXêV
 /// </summary>
 void ELEMENT::Update(PLAYER* player, STAGE* stage) {
-
+	
 	ChangeVolumeSoundMem(Option::GetSEVolume(), door_close_se);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), press_the_button_se);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), switch_se);
@@ -819,15 +833,62 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 /// é_ê´âJÇÃêÖÇΩÇ‹ÇËÇÃèàóù
 /// </summary>
 void ELEMENT::Acidrain_puddles(PLAYER* player) {
-	if (acidrain_puddles_anitimer < 10) { acidrain_puddles_anitimer++; }
-	else { acidrain_puddles_anitimer = 0; }
-	for (int i = 0; i < acidrain_puddles.size(); i++) {
+	if (acidrain_puddles_anitimer < 5) { acidrain_puddles_anitimer++; }
+	else
+	{
+		acidrain_puddles_anitimer = 0;
 
-		if (acidrain_puddles[i].flg == false)acidrain_puddles[0].animtimer++;
+		if (foamAnimation < 10)
+		{
+			foamAnimation++;
+		}
+		else
+		{
+			foamAnimation = 4;
+		}
+		
+	}
+	int acidSize = acidrain_puddles.size();
+	for (int i = 0; i < acidSize; i++) {
+		if (acidrain_puddles[i].image < 4)
+		{
+			if (acidrain_puddles[i].animtimer < 6)
+			{
+				acidrain_puddles[i].animtimer++;
+			}
+			else
+			{
+				acidrain_puddles.at(i).animtimer = 0;
+				if (i < acidSize - 1)
+				{
+					if (acidrain_puddles.at(i + 1).image == 99)
+					{
+						acidrain_puddles.at(i + 1).image = 0;
+					}
+				}
+
+				if (acidrain_puddles[i].image < 3)
+				{
+					acidrain_puddles[i].image++;
+
+					/*else if (acidrain_puddles[i - 1].image < acidrain_puddles[i].image)
+					{
+						acidrain_puddles[i].image++;
+					}*/
+				}
+				else
+				{
+					acidrain_puddles[i].image = 0;
+				}
+
+			}
+		}
+
+		/*if (acidrain_puddles[i].flg == false)acidrain_puddles[0].animtimer++;
 		if (acidrain_puddles[0].animtimer > 120) {
 			acidrain_puddles[0].animtimer = 0;
 			acidrain_puddles[i].flg = true;
-		}
+		}*/
 		//é_ê´âJÇÃêÖÇΩÇ‹ÇË
 		if ((player_map_x >= acidrain_puddles[i].x) && (player_map_x <= acidrain_puddles[i].x + MAP_CEllSIZE) && (player_map_y >= acidrain_puddles[i].y - MAP_CEllSIZE / 2) && (player_map_y <= acidrain_puddles[i].y)) {
 			if (CheckSoundMem(walk_puddle_se) == FALSE && acidrain_puddles[0].animtimer % 90 == 0)PlaySoundMem(walk_puddle_se, DX_PLAYTYPE_BACK, TRUE);

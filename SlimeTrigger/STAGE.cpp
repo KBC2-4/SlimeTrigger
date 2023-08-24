@@ -346,17 +346,20 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 		player_y_old = player->GetPlayerY();
 	}
 	else player_vector_y = 0;
+
+	/*scroll_x = player->GetPlayerX() - MAP_CEllSIZE * 4;
+	scroll_y = player->GetPlayerY() - MAP_CEllSIZE * 6;*/
 }
 
 /// <summary>
 /// 画面スクロール座標XのSetter
 /// </summary>
 bool STAGE::SetScrollPos(int move_x) {
-	scroll_x -= 5 * move_x;
+	/*scroll_x -= 5 * move_x;
 	if (scroll_x >= 0 || scroll_x <= -(80 * static_cast<int>(map_data.at(0).size()) - 640)) {
 		scroll_x += 5 * move_x;
 		return true;
-	}
+	}*/
 	return false;
 }
 

@@ -86,7 +86,7 @@ GAMEMAIN::GAMEMAIN(bool restart, int halfway_time, const char* stage_name)
 	item_num = 0;
 	item_rand = 0;
 
-	start_time = 180;
+	start_time = 0;
 	start_effect_timer = 120;
 	clear_interval = 480;
 

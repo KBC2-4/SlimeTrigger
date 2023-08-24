@@ -25,6 +25,7 @@ public:
 		int lift_wait_time;					//動く床待機時間
 		
 		int pair_num;						//ボタンとドアのペア番号
+		int image;							//画像
 	};
 	
 private:
@@ -44,6 +45,11 @@ private:
 	int door_close_se, press_the_button_se, switch_se, walk_puddle_se, manhole_opened_se;
 	int acidrain_puddles_anitimer;		//酸性雨の水たまりの切り替えアニメーション用タイマー
 	int underground_effects;			//地下エフェクト用タイマー
+
+	int acidImage[11];
+	int acidAnimation;
+	int foamAnimation;
+	int acid;
 
 public:
 	/// <summary>
