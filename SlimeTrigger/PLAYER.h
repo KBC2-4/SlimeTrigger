@@ -122,16 +122,15 @@ private:
 	int throwBallSe;	//投げるとき
 
 	typedef struct Animation {
-		const int switch_frame;					// 画像切り替えのタイミング(フレーム指定)
+		const int switchFrame;					// 画像切り替えのタイミング(フレーム指定)
 		const int priority;						// アニメーション切り替え時の優先度
 
-		int frame_count = 0;					// 画像切り替え時のフレームカウント用
-		int current_index;						// 現在の画像の要素番号
+		int frameCount = 0;					// 画像切り替え時のフレームカウント用
+		int currentIndex;						// 現在の画像の要素番号
 		std::vector<int> images;				// アニメーション画像
-		std::vector<int> animation_indexes;		// アニメーションの再生順番(要素番号で指定)
-		//bool is_play = true;					// アニメーションの再生
-		bool is_loop = true;					// ループ再生
-		bool end_animation = false;				// アニメーションの再生終了の判定
+		std::vector<int> animationIndexArray;		// アニメーションの再生順番(要素番号で指定)
+		bool isLoop = true;					// ループ再生
+		bool endAnimation = false;				// アニメーションの再生終了の判定
 	};
 	Animation animation[ANIMATION_TYPE] = {
 		/*

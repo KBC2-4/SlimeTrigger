@@ -44,7 +44,7 @@ PLAYER::PLAYER(STAGE* stage) {
 		throw "Resource/Images/Player/IdorSlime.png";
 	}
 	for (int i = 0; i < 9; i++) {
-		animation[0].animation_indexes.push_back(i);
+		animation[0].animationIndexArray.push_back(i);
 	}
 	
 	// 移動するとき
@@ -52,13 +52,13 @@ PLAYER::PLAYER(STAGE* stage) {
 	if (LoadDivGraph("Resource/Images/Player/Slime.png", 11, 11, 1, 80, 80, animation[1].images.data()) == -1) {
 		throw "Resource/Images/Player/Slime.png";
 	}
-	animation[1].animation_indexes.resize(20);
+	animation[1].animationIndexArray.resize(20);
 	for (int i = 0; i < 20; i++) {
 		if (i < 11) {
-			animation[1].animation_indexes[i] = i;
+			animation[1].animationIndexArray[i] = i;
 		}
 		else {
-			animation[1].animation_indexes[i] = 10 - i % 10;
+			animation[1].animationIndexArray[i] = 10 - i % 10;
 		}
 	}
 	
@@ -68,7 +68,7 @@ PLAYER::PLAYER(STAGE* stage) {
 		throw "Resource/Images/Player/ThrowSlime.png";
 	}
 	for (int i = 0; i < 7; i++) {
-		animation[2].animation_indexes.push_back(i);
+		animation[2].animationIndexArray.push_back(i);
 	}
 
 	// フックの画像
@@ -86,7 +86,7 @@ PLAYER::PLAYER(STAGE* stage) {
 		throw "Resource/Images/Player/JumpSlime01.png";
 	}
 	for (int i = 0; i < 4; i++) {
-		animation[4].animation_indexes.push_back(i);
+		animation[4].animationIndexArray.push_back(i);
 	}
 
 	// 落下するとき
@@ -95,7 +95,7 @@ PLAYER::PLAYER(STAGE* stage) {
 		throw "Resource/Images/Player/JumpSlime02.png";
 	}
 	for (int i = 0; i < 4; i++) {
-		animation[5].animation_indexes.push_back(i);
+		animation[5].animationIndexArray.push_back(i);
 	}
 
 	// 着地するとき
@@ -104,7 +104,7 @@ PLAYER::PLAYER(STAGE* stage) {
 		throw "Resource/Images/Player/JumpSlime1.png";
 	}
 	for (int i = 0; i < 10; i++) {
-		animation[6].animation_indexes.push_back(i);
+		animation[6].animationIndexArray.push_back(i);
 	}
 
 	if ((throwBallImage = LoadGraph("Resource/Images/Player/Slime_Bullet.png")) == -1) {
@@ -148,8 +148,8 @@ PLAYER::PLAYER(STAGE* stage) {
 
 	//アニメーションの初期化
 	animationState = PLAYER_ANIM_STATE::IDLE;
-	animation[2].is_loop = false;
-	animation[6].is_loop = false;
+	animation[2].isLoop = false;
+	animation[6].isLoop = false;
 }
 
 /// <summary>
@@ -272,7 +272,7 @@ void PLAYER::Draw(STAGE* stage)const {
 	if (playerState != PLAYER_MOVE_STATE::HOOK && !isHookMove) {
 		//描画する画像のセット
 		int image_type = static_cast<int>(animationState);
-		int now_image = animation[image_type].images[animation[image_type].animation_indexes[animation[image_type].current_index]];
+		int now_image = animation[image_type].images[animation[image_type].animationIndexArray[animation[image_type].currentIndex]];
 
 		DrawRotaGraphF(playerX + stage->GetScrollX(), (playerY - 20 + stage->GetScrollY()) + (1.6 - playerScale) * 40, playerScale, 0.0, now_image, TRUE, moveType);
 	}
@@ -381,13 +381,13 @@ void PLAYER::Move()
 		//移動アニメーションを後半へ移行
 		int move = static_cast<int>(PLAYER_ANIM_STATE::MOVE);
 		if (animationState == PLAYER_ANIM_STATE::MOVE) {
-			int current_index = animation[move].current_index;
+			int current_index = animation[move].currentIndex;
 			if (current_index == 0) {
 				ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
 			}
 			else if (current_index < 10) {
-				animation[move].current_index =
-					(animation[move].animation_indexes.size() - current_index) - 1;
+				animation[move].currentIndex =
+					(animation[move].animationIndexArray.size() - current_index) - 1;
 			}
 		}
 		else {
@@ -673,7 +673,7 @@ void PLAYER::JumpMove() {
 			}
 		}
 		if (animationState == PLAYER_ANIM_STATE::LANDING) {
-			if (animation[static_cast<int>(animationState)].end_animation) {
+			if (animation[static_cast<int>(animationState)].endAnimation) {
 				ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
 			}
 		}
@@ -884,12 +884,12 @@ void PLAYER::ChangeAnimation(PLAYER_ANIM_STATE anim, bool compelChange) {
 	int next_anim_type = static_cast<int>(anim);			//切り替えるアニメーション
 	
 	if (animationState != anim && playerState != PLAYER_MOVE_STATE::HOOK && !isHookMove || compelChange) {
-		if (animation[now_anim_type].priority <= animation[next_anim_type].priority || animation[now_anim_type].end_animation || compelChange) {
+		if (animation[now_anim_type].priority <= animation[next_anim_type].priority || animation[now_anim_type].endAnimation || compelChange) {
 			animationState = anim;
 			int anim_type = static_cast<int>(anim);
-			animation[anim_type].frame_count = 0;
-			animation[anim_type].current_index = 0;
-			animation[anim_type].end_animation = false;
+			animation[anim_type].frameCount = 0;
+			animation[anim_type].currentIndex = 0;
+			animation[anim_type].endAnimation = false;
 		}
 	}
 }
@@ -900,11 +900,11 @@ void PLAYER::ChangeAnimation(PLAYER_ANIM_STATE anim, bool compelChange) {
 void PLAYER::MoveAnimation() {
 	//画像の切り替えタイミングのとき
 	int type = static_cast<int>(animationState);
-	if (++animation[type].frame_count >= animation[type].switch_frame) {
-		animation[type].frame_count = 0;
-		if (++animation[type].current_index >= animation[type].animation_indexes.size()) {
-			animation[type].current_index = 0;
-			animation[type].end_animation = true;
+	if (++animation[type].frameCount >= animation[type].switchFrame) {
+		animation[type].frameCount = 0;
+		if (++animation[type].currentIndex >= animation[type].animationIndexArray.size()) {
+			animation[type].currentIndex = 0;
+			animation[type].endAnimation = true;
 		}
 	}
 }
