@@ -9,30 +9,30 @@ class STAGE_SELECT :
 {
 private:
 	//背景画像
-	int background_image[5];
+	int backGraundImage[5];
 	//BGM
-	int background_music;
+	int backGraundMusic;
 
-	int ok_se;
+	int okSe;
 	//フォント
-	int guid_font, buttonguid_font, stagename_font, move_to_title_font;
-	int guid_timer;		//ガイド表示タイマー
-	bool effect_delta;
-	int effect_timer[2];	//[0:出現エフェクト, 1:ステージポータルエフェクト]
+	int guidFont, buttonGuidFont, stageNameFont, moveToTitleFont;
+	int guidTimer;		//ガイド表示タイマー
+	bool effectDelta;
+	int effectTimer[2];	//[0:出現エフェクト, 1:ステージポータルエフェクト]
 
 	//チュートリアル用
-	int joys_anitimer;
-	bool joystick_delta;
+	int joysAniTimer;
+	bool joyStickDelta;
 
 	PLAYER* player;	//プレイヤー
 	STAGE* stage;	//ステージ
 	ELEMENT* element;	//ステージ内要素
 	LEMON** lemoner;	//レモナー
-	int lemoner_count;
+	int lemonerCount;
 
-	float player_map_x, player_map_y;	//プレイヤーマップ内座標計算用
-	POINT stage_return;		//タイトルへ戻る座標
-	POINT stage_move[4];	//ステージポータル座標
+	float playerMapX, playerMapY;	//プレイヤーマップ内座標計算用
+	POINT stageReturn;		//タイトルへ戻る座標
+	POINT stageMove[4];	//ステージポータル座標
 
 public:
 	/// <summary>
@@ -64,10 +64,10 @@ public:
 	/// <summary>
 	/// ステージポータルガイド表示
 	/// </summary>
-	/// <param name="stage_name">表示したい文字</param>
+	/// <param name="stageName">表示したい文字</param>
 	/// <param name="x">描画位置X</param>
 	/// <param name="y">描画位置Y</param>
-	/// <param name="stagename_font">表示する文字のフォント</param>
+	/// <param name="stageNameFont">表示する文字のフォント</param>
 	/// <param name="text_color">表示する文字色</param>
 	/// <param name="textback_color">表示する文字の輪郭色 (-1の場合は0xFFFFFF)</param>
 	/// <param name="text_margin_x">表示する文字X位置を誤差修正 (デフォルトは0)</param>
@@ -76,7 +76,7 @@ public:
 	/// <param name="second_title">2番目に表示する文字 (""空白で無効化)</param>
 	/// <param name="secont_margin_x">2番目に表示する文字X位置を誤差修正 (デフォルトは0)</param>
 	/// <param name="secont_margin_y">2番目に表示する文字Y位置を誤差修正 (デフォルトは25 : 0にするとstage_nameと重なる)</param>
-	void DrawStageGuid(const char* stage_name, const float x, const float y, const int stagename_font, const int text_color, const int textback_color = -1,
+	void DrawStageGuid(const char* stageName, const float x, const float y, const int stageNameFont, const int text_color, const int textback_color = -1,
 		const int text_margin_x = 0, const int text_margin_y = 0, const int backcolor = -1, const char* second_title = "", const int secont_margin_x = 0, const int secont_margin_y = 25) const;
 };
 

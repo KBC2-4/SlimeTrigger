@@ -3,13 +3,13 @@
 
 #define FILEPATH "Resource/BestTime/BestTime.bin"
 
-int RANKING::best_time[3];
+int RANKING::bestTime[3];
 void RANKING::Insert(int time, int stage)
 {
 	ReadRanking();
-	if ((time < best_time[stage - 1]) || (best_time[stage - 1] == NULL))
+	if ((time < bestTime[stage - 1]) || (bestTime[stage - 1] == NULL))
 	{
-		best_time[stage - 1] = time;
+		bestTime[stage - 1] = time;
 		SaveRanking();
 	}
 }
@@ -32,7 +32,7 @@ void RANKING::SaveRanking(void) {
 	//ベストタイムを書き込む
 	for (int i = 0; i < 3; i++)
 	{
-		fwrite(&best_time[i], sizeof(best_time) / sizeof(best_time[0]), 3, fp);
+		fwrite(&bestTime[i], sizeof(bestTime) / sizeof(bestTime[0]), 3, fp);
 	}
 	fclose(fp);
 }
@@ -54,7 +54,7 @@ void RANKING::ReadRanking(void) {
 	//ベストタイムを読み込む
 	for (int i = 0; i < 3; i++)
 	{
-		fread(&best_time[i], sizeof(best_time) / sizeof(best_time[0]), 3, fp);
+		fread(&bestTime[i], sizeof(bestTime) / sizeof(bestTime[0]), 3, fp);
 	}
 	fclose(fp);
 }

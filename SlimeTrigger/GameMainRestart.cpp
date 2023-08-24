@@ -2,24 +2,24 @@
 #include "GameMain.h"
 #include "DxLib.h"
 
-GAMEMAIN_RESTART::GAMEMAIN_RESTART(bool restart, int halfway_time, const char* stage_name, int now_graph) : AbstractScene(false) {
-	this->restart = restart;
-	this->halfway_time = halfway_time;
-	this->stage_name = stage_name;
-	this->now_graph = now_graph;
+GAMEMAIN_RESTART::GAMEMAIN_RESTART(bool reStart, int halfwayTime, const char* stageName, int nowGraph) : AbstractScene(false) {
+	this->reStart = reStart;
+	this->halfwayTime = halfwayTime;
+	this->stageName = stageName;
+	this->nowGraph = nowGraph;
 }
 
 GAMEMAIN_RESTART::~GAMEMAIN_RESTART()
 {
-	DeleteGraph(now_graph);
+	DeleteGraph(nowGraph);
 
 }
 
 AbstractScene* GAMEMAIN_RESTART::Update() {
-		return new GAMEMAIN(restart, halfway_time, stage_name);
+		return new GAMEMAIN(reStart, halfwayTime, stageName);
 }
 
 
 void GAMEMAIN_RESTART::Draw()const {
-	DrawGraph(0, 0, now_graph, FALSE);
+	DrawGraph(0, 0, nowGraph, FALSE);
 }

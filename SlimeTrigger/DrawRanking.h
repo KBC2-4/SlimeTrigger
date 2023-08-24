@@ -5,12 +5,12 @@ class DRAW_RANKING :
 	public AbstractScene
 {
 private:
-	int wait_time;
-	int best_time[3];
-	int title_font,time_font;
+	int waitTime;
+	int bestTime[3];
+	int titleFont,timeFont;
 	int image;
-	int ok_se;
-	int background_image;
+	int okSe;
+	int backGraundImage;
 public:
 	/// <summary>
 	/// コンストラクタ

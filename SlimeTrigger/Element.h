@@ -15,41 +15,41 @@ public:
 	{
 		float x, y;
 		int type;
-		bool flg = false;
-		int animtimer = 0;
+		bool flag = false;
+		int animTimer = 0;
 		
-		float lift_init_x, lift_init_y;		//動く床の初期座標
-		float lift_goal_x, lift_goal_y;		//動く床の目標位置
-		int lift_vector_x;					//動く床の移動方向(横)
-		int lift_vector_y;					//動く床の移動方向(縦)
-		int lift_wait_time;					//動く床待機時間
+		float leftInitX, leftInitY;		//動く床の初期座標
+		float leftGoalX, leftGoalY;		//動く床の目標位置
+		int leftVectorX;					//動く床の移動方向(横)
+		int leftVectorY;					//動く床の移動方向(縦)
+		int liftWaitTimer;					//動く床待機時間
 		
-		int pair_num;						//ボタンとドアのペア番号
+		int pairNum;						//ボタンとドアのペア番号
 	};
 	
 private:
-	int guid_font,guid_timer;
+	int guidFont,guidTimer;
 	std::vector<ELEMENT_DATA> hook;			//フック
 	std::vector<ELEMENT_DATA> button;		//ボタン
 	std::vector<ELEMENT_DATA> door;			//ドア
 	std::vector<ELEMENT_DATA> lift;			//動く床
 	std::vector<ELEMENT_DATA> manhole;		//マンホール
-	std::vector<ELEMENT_DATA> acidrain_puddles;			//酸性雨の水たまり
-	float player_map_x, player_map_y;
-	int player_state;
+	std::vector<ELEMENT_DATA> acidrainPuddles;			//酸性雨の水たまり
+	float playerMapX, playerMapY;
+	int playerState;
 	
-	//mutable int animtimer;
-	bool keep_pushing;						//ボタンを押し続けているかフラグ
-	bool hook_flg; //近くにあるフックにガイド表示させる為のフラグ。
-	int door_close_se, press_the_button_se, switch_se, walk_puddle_se, manhole_opened_se;
-	int acidrain_puddles_anitimer;		//酸性雨の水たまりの切り替えアニメーション用タイマー
-	int underground_effects;			//地下エフェクト用タイマー
+	//mutable int animTimer;
+	bool keepPushing;						//ボタンを押し続けているかフラグ
+	bool hookFlag; //近くにあるフックにガイド表示させる為のフラグ。
+	int doorCloseSe, pressTheButtonSe, switchSe, walkPuddleSe, manholeOpenedSe;
+	int acidrainPuddlesAniTimer;		//酸性雨の水たまりの切り替えアニメーション用タイマー
+	int underGroundEffects;			//地下エフェクト用タイマー
 
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ELEMENT(const char* stage_name = "StageSelect");
+	ELEMENT(const char* stageName = "StageSelect");
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -115,6 +115,6 @@ public:
 	/// <summary>
 	/// 酸性雨の水たまり構造体のGetter
 	/// </summary>
-	std::vector<ELEMENT_DATA>GetAcidrain_puddles() { return acidrain_puddles; }
+	std::vector<ELEMENT_DATA>GetAcidrain_puddles() { return acidrainPuddles; }
 };
 

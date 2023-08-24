@@ -4,21 +4,21 @@
 class RESULT : public AbstractScene
 {
 private:
-	int time_font;
-	int title_image, background_image;
-	int background_music;
-	int count_se, ok_se, good_se[4];
-	int menu_font, guid_font, button_guid_font;
-	int timer, guide_timer;
+	int timeFont;
+	int titleImage, backGroundImage;
+	int backGraundMusic;
+	int countSe, okSe, goodSe[4];
+	int menuFont, guidFont, buttonGuidFont;
+	int timer, guideTimer;
 	bool win;
-	int clear_time;
-	int se_randnum;
-	int effect_timer[2];
-	float string_effect_timer;
-	bool high_score;
+	int clearTime;
+	int serandNum;
+	int effectTimer[2];
+	float stringEffectTimer;
+	bool highScore;
 
 public:
-	RESULT(bool issue, int clear_time = -1, const char* stage_name = "StageSelect");
+	RESULT(bool issue, int clearTime = -1, const char* stageName = "StageSelect");
 	~RESULT();
 	AbstractScene* Update() override;
 	void Draw() const override;

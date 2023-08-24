@@ -5,13 +5,13 @@
 
 ITEMBALL::ITEMBALL()
 {
-	map_x = 0;
-	map_y = 0;
+	mapX = 0;
+	mapY = 0;
 	player = nullptr;
-	item_x = 0;
-	item_y = 0;
+	itemX = 0;
+	itemY = 0;
 	item = 0;
-	scrool_x = 0;
+	scroolX = 0;
 }
 
 ITEMBALL::ITEMBALL(float enemy_x, float enemy_y, int e_mapy, int e_mapx, PLAYER* r_player, STAGE* r_stage, float scroolx,float scrooly)
@@ -20,14 +20,14 @@ ITEMBALL::ITEMBALL(float enemy_x, float enemy_y, int e_mapy, int e_mapx, PLAYER*
 	{
 		throw "Resource/Images/Enemy/ThrowSlime.png";
 	}
-	map_x = e_mapx;
-	map_y = e_mapy;
+	mapX = e_mapx;
+	mapY = e_mapy;
 	player = r_player;
-	scrool_x = scroolx;
-	scrool_y = scrooly;
+	scroolX = scroolx;
+	scroolY = scrooly;
 	stage = r_stage;
-	item_x = enemy_x;
-	item_y = enemy_y;
+	itemX = enemy_x;
+	itemY = enemy_y;
 }
 
 ITEMBALL::~ITEMBALL() {
@@ -65,7 +65,7 @@ void ITEMBALL::PlayerHit()
 		if (player->GetLife() < 5)
 		{
 			player->SetLife(player->GetLife() + 1);
-			delete_flg = true;
+			deleteFlag = true;
 		}
 	}
 
@@ -73,13 +73,13 @@ void ITEMBALL::PlayerHit()
 
 float ITEMBALL::GetDrawX() const
 {
-	float ret = (item_x - scrool_x) + (static_cast<double>(scrool_x) + stage->GetScrollX());
+	float ret = (itemX - scroolX) + (static_cast<double>(scroolX) + stage->GetScrollX());
 	return ret;
 }
 
 float ITEMBALL::GetDrawY() const
 {
-	float ret = (item_y - scrool_y) + (static_cast<double>(scrool_y) + stage->GetScrollY());
+	float ret = (itemY - scroolY) + (static_cast<double>(scroolY) + stage->GetScrollY());
 
 	return ret;
 }
