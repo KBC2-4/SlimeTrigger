@@ -5,7 +5,6 @@
 LEMON::LEMON()
 {
 	//画像の取得
-	image = nullptr;
 	damageSe = 0;
 
 	shootCount = 0;
@@ -32,12 +31,14 @@ LEMON::LEMON(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 	deleteFlg = false;
 
 	//画像の取得
-	image = new int[15];
-	if (LoadDivGraph("Resource/Images/Enemy/lemon.png", 9, 9, 1, 80, 80, image) == -1)
+	images.resize(2);
+	images[0].resize(9);
+	images[1].resize(6);
+	if (LoadDivGraph("Resource/Images/Enemy/lemon.png", 9, 9, 1, 80, 80, &images[0][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/lemon.png";
 	}
-	if (LoadDivGraph("Resource/Images/Enemy/lemon_break.png", 6, 6, 1, 80, 80, image + 9) == -1)
+	if (LoadDivGraph("Resource/Images/Enemy/lemon_break.png", 6, 6, 1, 80, 80, &images[1][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/lemon_break.png";
 	}
@@ -58,7 +59,7 @@ LEMON::LEMON(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 	this->stage = stage;
 
 
-	nowImage = image[3];
+	nowImage = images[0][0];
 	state = ENEMY_STATE::IDOL;
 	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), damageSe);
 	ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 0.9), pressSe);
@@ -69,13 +70,19 @@ LEMON::LEMON(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 LEMON::~LEMON()
 {
 
-	for (int i = 0; i < 15; i++)
+	if (!images.empty())
 	{
-		DeleteGraph(image[i]);
+		for (int i = 0; i < images.size(); i++)
+		{
+			for (int j = 0; j < images[i].size(); j++)
+			{
+				DeleteGraph(images[i][j]);
+			}
+
+			images[i].clear();
+		}
+		images.clear();
 	}
-
-
-	delete[] image;
 	if (bullet != nullptr)
 	{
 		delete bullet;
@@ -172,7 +179,7 @@ void LEMON::Update()
 	{
 		state = ENEMY_STATE::IDOL;	//ステートをアイドル状態へ
 		//アイドル状態の画像に変更
-		nowImage = image[3];
+		nowImage = images[0][0];
 	}
 	else if (state == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
 	{
@@ -232,6 +239,7 @@ void LEMON::Hit()
 		}
 	}
 }
+
 bool LEMON::PressAnimation()
 {
 
@@ -242,12 +250,9 @@ bool LEMON::PressAnimation()
 		{
 			if (animationType < 2)
 			{
-				nowImage = image[(animationType++ % 7) + 4];
+				nowImage = images[0][(animationType++ % 3) + 2];
 			}
-			else
-			{
-				nowImage = image[0];
-			}
+			
 
 		}
 	}
@@ -261,15 +266,17 @@ bool LEMON::PressAnimation()
 bool LEMON::ReturnAnimation()
 {
 	bool ret = false;
-	if (animationTimer < 50) //50フレーム間アニメーションをする
+	if (animationTimer < 30) //50フレーム間アニメーションをする
 	{
 		if (animationTimer % (ANIMATION_TIME * 2) == 0)
 		{
-			nowImage = image[(animationType++ % 7)];
+			nowImage = images[0][(animationType++ % 3) + 2];
 		}
+		
 	}
 	else //アニメーションの終了
 	{
+		nowImage = images[0][0];
 		ret = true;
 	}
 	return ret;
@@ -279,7 +286,7 @@ void LEMON::FallAnimation()
 {
 	if (animationTimer % ANIMATION_TIME == 0)
 	{
-		nowImage = image[(++animationType % 2) + 7];
+		nowImage = images[0][(++animationType % 2) + 7];
 	}
 }
 
@@ -291,7 +298,7 @@ bool LEMON::DethAnimation()
 		//アニメーション
 		if (animationTimer % ANIMATION_TIME == 0)
 		{
-			nowImage = image[(++animationType % 6) + 9];
+			nowImage = images[1][(++animationType % 6)];
 		}
 	}
 	else //アニメーションの終了
