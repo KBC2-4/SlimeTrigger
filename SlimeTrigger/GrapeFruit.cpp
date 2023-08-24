@@ -9,8 +9,7 @@
 //コンストラクタ
 GRAPEFRUIT::GRAPEFRUIT()
 {
-	image = new int[100];
-	if (image[0] = LoadGraph("Resource/Images/Enemy/gurepon.png") == -1)
+	if (images[0][0] = LoadGraph("Resource/Images/Enemy/gurepon.png") == -1)
 		throw "Resource/Images/Enemy/gurepon.png";
 	shootCount = 0;
 	deleteFlg = false;
@@ -51,8 +50,10 @@ GRAPEFRUIT::GRAPEFRUIT(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 		flag[i] = false;
 	}
 	deleteFlg = false;
-	image = new int[24];
-	if (LoadDivGraph("Resource/Images/Enemy/gurepon.png", 24, 6, 4, 80, 80, image) == -1)
+
+	images.resize(1);
+	images[0].resize(24);
+	if (LoadDivGraph("Resource/Images/Enemy/gurepon.png", 24, 6, 4, 80, 80, &images[0][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/gurepon.png";
 	}
@@ -70,8 +71,8 @@ GRAPEFRUIT::GRAPEFRUIT(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 
 	for (int i = 0; i < 2; i++)
 	{
-		faceImage[i] = image[i];
-		fruitImage[i] = image[(i + 1) * 6];
+		faceImage[i] = images[0][i];
+		fruitImage[i] = images[0][(i + 1) * 6];
 	}
 	for (int i = 0; i < 3; i++)
 	{
@@ -90,11 +91,19 @@ GRAPEFRUIT::GRAPEFRUIT(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 GRAPEFRUIT::~GRAPEFRUIT()
 {
 
-	for (int i = 0; i < 24; i++) {
-		DeleteGraph(image[i]);
-	}
+	if (!images.empty())
+	{
+		for (int i = 0; i < images.size(); i++)
+		{
+			for (int j = 0; j < images[i].size(); j++)
+			{
+				DeleteGraph(images[i][j]);
+			}
 
-	delete[] image;
+			images[i].clear();
+		}
+		images.clear();
+	}
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -221,8 +230,8 @@ void GRAPEFRUIT::Update()
 		//アイドル状態の画像に変更
 		for (int i = 0; i < 2; i++)
 		{
-			faceImage[i] = image[i];
-			fruitImage[i] = image[(i + 1) * 6];
+			faceImage[i] = images[0][i];
+			fruitImage[i] = images[0][(i + 1) * 6];
 		}
 	}
 	else if (state == ENEMY_STATE::IDOL)	//画面内にいて、アイドル状態のとき敵の方向を向くようにする
@@ -312,14 +321,14 @@ bool GRAPEFRUIT::PressAnimation()
 
 			for (int i = 0; i < 2; i++)
 			{
-				faceImage[i] = image[i];
+				faceImage[i] = images[0][i];
 				if (animationType % 3 == 0)
 				{
-					fruitImage[i] = image[(6 * (i + 2) - 1)];
+					fruitImage[i] = images[0][(6 * (i + 2) - 1)];
 				}
 				else
 				{
-					fruitImage[i] = image[((animationType % 3) * 2) + (6 * (i + 1))];
+					fruitImage[i] = images[0][((animationType % 3) * 2) + (6 * (i + 1))];
 				}
 			}
 
@@ -344,14 +353,14 @@ bool GRAPEFRUIT::ReturnAnimation()
 
 			for (int i = 0; i < 2; i++)
 			{
-				faceImage[i] = image[i];
+				faceImage[i] = images[0][i];
 				if (animationType % 3 == 0)
 				{
-					fruitImage[i] = image[(i + 1) * 6];
+					fruitImage[i] = images[0][(i + 1) * 6];
 				}
 				else
 				{
-					fruitImage[i] = image[(6 * (i + 2) - 1) - (animationType % 6)];
+					fruitImage[i] = images[0][(6 * (i + 2) - 1) - (animationType % 6)];
 				}
 			}
 		}
@@ -360,8 +369,8 @@ bool GRAPEFRUIT::ReturnAnimation()
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			faceImage[i] = image[i];
-			fruitImage[i] = image[(i + 1) * 6];
+			faceImage[i] = images[0][i];
+			fruitImage[i] = images[0][(i + 1) * 6];
 		}
 		ret = true;
 	}
@@ -378,8 +387,8 @@ void GRAPEFRUIT::FallAnimation()
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				faceImage[i] = image[(2 + (animationType % 2) +  (i  * 2))];
-				fruitImage[i] = image[(i + 1) * 6];
+				faceImage[i] = images[0][(2 + (animationType % 2) +  (i  * 2))];
+				fruitImage[i] = images[0][(i + 1) * 6];
 			}
 			animationType++;
 		}
@@ -399,7 +408,7 @@ bool GRAPEFRUIT::DethAnimation()
 			{
 				faceImage[i] = 0;
 			}
-			fruitImage[0] = image[(animationType % 6) + (6 * 3)];
+			fruitImage[0] = images[0][(animationType % 6) + (6 * 3)];
 			fruitImage[1] = 0;
 			animationType++;
 		}
