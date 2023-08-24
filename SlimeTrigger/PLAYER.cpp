@@ -107,7 +107,7 @@ PLAYER::PLAYER(STAGE* stage) {
 		animation[6].animation_indexes.push_back(i);
 	}
 
-	if ((throw_ball_image = LoadGraph("Resource/Images/Player/Slime_Bullet.png")) == -1) {
+	if ((throwBallImage = LoadGraph("Resource/Images/Player/Slime_Bullet.png")) == -1) {
 		throw "Resource/Images/Player/Slime_Bullet.png";
 	}
 	if ((idleNobiImage = LoadGraph("Resource/Images/Player/FuckAnim2.png")) == -1) {
@@ -147,7 +147,7 @@ PLAYER::PLAYER(STAGE* stage) {
 	ChangeVolumeSoundMem(Option::GetSEVolume(), throwBallSe);
 
 	//アニメーションの初期化
-	animation_state = PLAYER_ANIM_STATE::IDLE;
+	animationState = PLAYER_ANIM_STATE::IDLE;
 	animation[2].is_loop = false;
 	animation[6].is_loop = false;
 }
@@ -271,7 +271,7 @@ void PLAYER::Draw(STAGE* stage)const {
 	//プレイヤーの表示
 	if (playerState != PLAYER_MOVE_STATE::HOOK && !isHookMove) {
 		//描画する画像のセット
-		int image_type = static_cast<int>(animation_state);
+		int image_type = static_cast<int>(animationState);
 		int now_image = animation[image_type].images[animation[image_type].animation_indexes[animation[image_type].current_index]];
 
 		DrawRotaGraphF(playerX + stage->GetScrollX(), (playerY - 20 + stage->GetScrollY()) + (1.6 - playerScale) * 40, playerScale, 0.0, now_image, TRUE, moveType);
@@ -287,12 +287,12 @@ void PLAYER::Draw(STAGE* stage)const {
 			if (moveType == 0) {
 				DrawRotaGraph3F(hookX + nX + stage->GetScrollX(), hookY + nY + stage->GetScrollY(), 80, 80,
 					(distance) / MAP_CEllSIZE / 2, 0.6f, (double)angle,
-					animation[3].images[1], TRUE, move_type);
+					animation[3].images[1], TRUE, moveType);
 			}
 			else {
 				DrawRotaGraph3F(hookX + nX + stage->GetScrollX(), hookY + nY + stage->GetScrollY(), 80, 80,
 					(distance) / MAP_CEllSIZE / 2, 0.6f, (double)angle,
-					animation[3].images[0], TRUE, move_type);
+					animation[3].images[0], TRUE, moveType);
 			}
 		}
 		//伸びる時
@@ -346,31 +346,31 @@ void PLAYER::Move()
 	/*if (input_lx > 0) {
 		move_x = 1.0f;
 	}*/
-	move_x = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
+	moveX = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
 
 	//移動するとき
 	if (fabs(input_lx) > DEVIATION)
 	{
 		//ジャンプ中のとき
-		if (player_state == PLAYER_MOVE_STATE::JUMP || player_state == PLAYER_MOVE_STATE::FALL)
+		if (playerState == PLAYER_MOVE_STATE::JUMP || playerState == PLAYER_MOVE_STATE::FALL)
 		{
-			if (jump_move_x == 0) jump_move_x = move_x;	// ジャンプの方向
-			move_type = (jump_move_x > 0) ? 0 : 1;		// 画像の向きの設定
+			if (jumpMoveX == 0) jumpMoveX = moveX;	// ジャンプの方向
+			moveType = (jumpMoveX > 0) ? 0 : 1;		// 画像の向きの設定
 
 			// 停止ジャンプ・反対方向への移動時
-			if (jump_mode == 1 || jump_move_x != move_x)
+			if (jumpMode == 1 || jumpMoveX != moveX)
 			{
-				player_speed /= 2.0f;
+				playerSpeed /= 2.0f;
 			}
 
-			player_x += jump_move_x * player_speed;
+			playerX += jumpMoveX * playerSpeed;
 		}
 		else
 		{
-			move_type = (move_x > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
-			player_x += move_x * player_speed;
-			jump_move_x = move_x;
-			player_state = PLAYER_MOVE_STATE::MOVE;	//ステートをMoveに切り替え
+			moveType = (moveX > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
+			playerX += moveX * playerSpeed;
+			jumpMoveX = moveX;
+			playerState = PLAYER_MOVE_STATE::MOVE;	//ステートをMoveに切り替え
 			ChangeAnimation(PLAYER_ANIM_STATE::MOVE); //アニメーションの切り替え
 		}
 	}
@@ -380,7 +380,7 @@ void PLAYER::Move()
 		moveX = 0;
 		//移動アニメーションを後半へ移行
 		int move = static_cast<int>(PLAYER_ANIM_STATE::MOVE);
-		if (animation_state == PLAYER_ANIM_STATE::MOVE) {
+		if (animationState == PLAYER_ANIM_STATE::MOVE) {
 			int current_index = animation[move].current_index;
 			if (current_index == 0) {
 				ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
@@ -672,8 +672,8 @@ void PLAYER::JumpMove() {
 				jumpVelocity = 0;
 			}
 		}
-		if (animation_state == PLAYER_ANIM_STATE::LANDING) {
-			if (animation[static_cast<int>(animation_state)].end_animation) {
+		if (animationState == PLAYER_ANIM_STATE::LANDING) {
+			if (animation[static_cast<int>(animationState)].end_animation) {
 				ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
 			}
 		}
@@ -883,9 +883,9 @@ void PLAYER::ChangeAnimation(PLAYER_ANIM_STATE anim, bool compelChange) {
 	int now_anim_type = static_cast<int>(animationState);	//今のアニメーション
 	int next_anim_type = static_cast<int>(anim);			//切り替えるアニメーション
 	
-	if (animation_state != anim && player_state != PLAYER_MOVE_STATE::HOOK && !is_hook_move || compelChange) {
+	if (animationState != anim && playerState != PLAYER_MOVE_STATE::HOOK && !isHookMove || compelChange) {
 		if (animation[now_anim_type].priority <= animation[next_anim_type].priority || animation[now_anim_type].end_animation || compelChange) {
-			animation_state = anim;
+			animationState = anim;
 			int anim_type = static_cast<int>(anim);
 			animation[anim_type].frame_count = 0;
 			animation[anim_type].current_index = 0;
@@ -899,7 +899,7 @@ void PLAYER::ChangeAnimation(PLAYER_ANIM_STATE anim, bool compelChange) {
 /// </summary>
 void PLAYER::MoveAnimation() {
 	//画像の切り替えタイミングのとき
-	int type = static_cast<int>(animation_state);
+	int type = static_cast<int>(animationState);
 	if (++animation[type].frame_count >= animation[type].switch_frame) {
 		animation[type].frame_count = 0;
 		if (++animation[type].current_index >= animation[type].animation_indexes.size()) {
