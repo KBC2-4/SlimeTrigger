@@ -336,27 +336,19 @@ void PLAYER::Move()
 	int input_lx = PAD_INPUT::GetPadThumbLX();
 
 	//移動方向
-	if (input_lx > 0) {
+	/*if (input_lx > 0) {
 		move_x = 1.0f;
-	}
+	}*/
 	move_x = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
 
 	//移動するとき
-	if (input_lx < -DEVIATION || input_lx > DEVIATION)
+	if (fabs(input_lx) > DEVIATION)
 	{
-		//ジャンプじゃないとき
-		if (player_state != PLAYER_MOVE_STATE::JUMP && player_state != PLAYER_MOVE_STATE::FALL)
+		//ジャンプ中のとき
+		if (player_state == PLAYER_MOVE_STATE::JUMP || player_state == PLAYER_MOVE_STATE::FALL)
 		{
-			move_type = (move_x > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
-			player_x += move_x * player_speed;
-			jump_move_x = move_x;
-			player_state = PLAYER_MOVE_STATE::MOVE;	//ステートをMoveに切り替え
-			ChangeAnimation(PLAYER_ANIM_STATE::MOVE); //アニメーションの切り替え
-		}
-		else
-		{
-			if (jump_move_x == 0) jump_move_x = move_x;
-			move_type = (jump_move_x > 0) ? 0 : 1;
+			if (jump_move_x == 0) jump_move_x = move_x;	// ジャンプの方向
+			move_type = (jump_move_x > 0) ? 0 : 1;		// 画像の向きの設定
 
 			// 停止ジャンプ・反対方向への移動時
 			if (jump_mode == 1 || jump_move_x != move_x)
@@ -365,6 +357,14 @@ void PLAYER::Move()
 			}
 
 			player_x += jump_move_x * player_speed;
+		}
+		else
+		{
+			move_type = (move_x > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
+			player_x += move_x * player_speed;
+			jump_move_x = move_x;
+			player_state = PLAYER_MOVE_STATE::MOVE;	//ステートをMoveに切り替え
+			ChangeAnimation(PLAYER_ANIM_STATE::MOVE); //アニメーションの切り替え
 		}
 	}
 	//移動してない時
