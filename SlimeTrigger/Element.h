@@ -46,10 +46,9 @@ private:
 	int acidrainPuddlesAniTimer;		//酸性雨の水たまりの切り替えアニメーション用タイマー
 	int underGroundEffects;			//地下エフェクト用タイマー
 
-	int acidImage[11];
+	int acidImage[12];
 	int acidAnimation;
 	int foamAnimation;
-	int acid;
 
 public:
 	/// <summary>

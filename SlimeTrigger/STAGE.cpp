@@ -356,7 +356,7 @@ bool STAGE::SetScrollPos(int moveX) {
 	if (scrollX >= 0 || scrollX <= -(80 * static_cast<int>(mapData.at(0).size()) - 640)) {
 		scrollX += 5 * moveX;
 		return true;
-	}*/
+	}
 	return false;
 }
 
