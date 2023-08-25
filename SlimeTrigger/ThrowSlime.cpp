@@ -4,18 +4,18 @@
 #include<math.h>
 #include "Tomato.h"
 
-ThrowSlime::ThrowSlime(float player_x, float player_y, float throw_rad, STAGE* stage) : ve(110.0f) {
+ThrowSlime::ThrowSlime(float playerX, float playerY, float throwRad, STAGE* stage) : ve(110.0f) {
 	if ((image = LoadGraph("Resource/Images/Player/Slime_Bullet.png")) == -1) {
 		throw "Resource/Images/Player/Slime_Bullet.png";
 	}
 
 	throw_del = false;
 
-	vx0 = ve * cosf(throw_rad);
-	vy0 = ve * sinf(throw_rad);
+	vx0 = ve * cosf(throwRad);
+	vy0 = ve * sinf(throwRad);
 
-	x0 = player_x;
-	y0 = player_y;
+	x0 = playerX;
+	y0 = playerY;
 
 	vx = vx0;
 	vy = vy0;
@@ -28,7 +28,7 @@ void ThrowSlime::Finalize() {
 	DeleteGraph(image);
 }
 
-void ThrowSlime::Update(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomaton_count) {
+void ThrowSlime::Update(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomatonCount) {
 	x0 = x0 + vx * dt;
 	y0 = y0 - vy * dt;
 	vy = vy - g * dt;
@@ -41,7 +41,7 @@ void ThrowSlime::Update(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int to
 		throw_del = true;
 	}
 	else {
-		Hit(stage, element, tomaton, tomaton_count);
+		Hit(stage, element, tomaton, tomatonCount);
 	}
 }
 
@@ -49,7 +49,7 @@ void ThrowSlime::Draw(STAGE *stage) const {
 	DrawRotaGraph(x0 + stage->GetScrollX(), y0 + stage->GetScrollY(), 1.0, 0.0, image, TRUE);
 }
 
-void ThrowSlime::Hit(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomaton_count) {
+void ThrowSlime::Hit(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomatonCount) {
 	//ƒ}ƒbƒv‚Ìã•”‚ğ‰z‚¦‚½‚ç“–‚½‚è”»’è‚ğ–³‹
 	if (y0 <= 0) {
 		return;
@@ -65,7 +65,7 @@ void ThrowSlime::Hit(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomat
 		}
 	}
 
-	for (int i = 0; i < tomaton_count; i++) {
+	for (int i = 0; i < tomatonCount; i++) {
 		float tomaton_x = tomaton[i]->GetX();
 		float tomaton_y = tomaton[i]->GetY();
 		if (x0 - BULLETRADIUS <= tomaton_x + MAP_CEllSIZE / 2 && x0 + BULLETRADIUS >= tomaton_x - MAP_CEllSIZE / 2 &&

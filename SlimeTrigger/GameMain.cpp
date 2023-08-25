@@ -7,61 +7,61 @@
 
 //#define DEBUG_PV
 
-GAMEMAIN::GAMEMAIN(bool restart, int halfway_time, const char* stage_name)
+GAMEMAIN::GAMEMAIN(bool reStart, int halfwayTime, const char* stageName)
 {
 	ChangeFontType(DX_FONTTYPE_ANTIALIASING_4X4);
-	std::vector<std::vector<int>> spawn_point;
-	hp_img = LoadGraph("Resource/Images/Player/hp.png");
+	std::vector<std::vector<int>> spawnPoint;
+	hpImage = LoadGraph("Resource/Images/Player/hp.png");
 
-	if (stage_name == "Stage01") {
+	if (stageName == "Stage01") {
 
-		if ((background_image[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
+		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
 			throw "Resource/Images/Stage/BackImage1.png";
 		}
 
-		if ((background_music[0] = LoadSoundMem("Resource/Sounds/BGM/stage1.wav")) == -1) {
+		if ((backGraundMusic[0] = LoadSoundMem("Resource/Sounds/BGM/stage1.wav")) == -1) {
 			throw "Resource/Sounds/BGM/stage1.wav";
 		}
 	}
-	else if (stage_name == "Stage02") {
+	else if (stageName == "Stage02") {
 
-		if ((background_image[1] = LoadGraph("Resource/Images/Stage/BackImage2.png")) == -1) {
+		if ((backGraundImage[1] = LoadGraph("Resource/Images/Stage/BackImage2.png")) == -1) {
 			throw "Resource/Images/Stage/BackImage2.png";
 		}
 
-		if ((background_music[1] = LoadSoundMem("Resource/Sounds/BGM/stage2.wav")) == -1) {
+		if ((backGraundMusic[1] = LoadSoundMem("Resource/Sounds/BGM/stage2.wav")) == -1) {
 			throw "Resource/Sounds/BGM/stage2.wav";
 		}
 	}
-	else if (stage_name == "Stage03") {
+	else if (stageName == "Stage03") {
 
-		if ((background_image[2] = LoadGraph("Resource/Images/Stage/BackImage3.png")) == -1) {
+		if ((backGraundImage[2] = LoadGraph("Resource/Images/Stage/BackImage3.png")) == -1) {
 			throw "Resource/Images/Stage/BackImage2.png";
 		}
 
-		if ((background_music[2] = LoadSoundMem("Resource/Sounds/BGM/stage3.wav")) == -1) {
+		if ((backGraundMusic[2] = LoadSoundMem("Resource/Sounds/BGM/stage3.wav")) == -1) {
 			throw "Resource/Sounds/BGM/stage3.wav";
 		}
 	}
 	else {
-		if ((background_image[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
+		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
 			throw "Resource/Images/Stage/BackImage1.png";
 		}
 	}
 
-	if ((cursor_move_se = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1) {
+	if ((cursorMoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1) {
 		throw "Resource/Sounds/SE/cursor_move.wav";
 	}
 
-	if ((ok_se = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
+	if ((okSe = LoadSoundMem("Resource/Sounds/SE/ok.wav")) == -1) {
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
-	if ((count_se = LoadSoundMem("Resource/Sounds/SE/321.wav")) == -1) {
+	if ((countSe = LoadSoundMem("Resource/Sounds/SE/321.wav")) == -1) {
 		throw "Resource/Sounds/SE/321.wav";
 	}
 
-	if ((start_se = LoadSoundMem("Resource/Sounds/SE/start.wav")) == -1) {
+	if ((startSe = LoadSoundMem("Resource/Sounds/SE/start.wav")) == -1) {
 		throw "Resource/Sounds/SE/start.wav";
 	}
 
@@ -69,31 +69,31 @@ GAMEMAIN::GAMEMAIN(bool restart, int halfway_time, const char* stage_name)
 	char dis_clear_se[30];
 	sprintf_s(dis_clear_se, sizeof(dis_clear_se), "Resource/Sounds/SE/clear%d.wav", clear_se_random + 1);
 
-	if ((clear_se = LoadSoundMem(dis_clear_se)) == -1) {
+	if ((clearSe = LoadSoundMem(dis_clear_se)) == -1) {
 		throw dis_clear_se;
 	}
 
-	now_graph = 0;
+	nowGraph = 0;
 
-	start_time_font = CreateFontToHandle("メイリオ", 160, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
-	time_font = LoadFontDataToHandle("Resource/Fonts/TimeAttack_HUD.dft", 2);
-	this->stage_name = stage_name;
-	elapsed_time = halfway_time;
-	start_addtime = 0;
-	lemoner_count = 0;
-	tomaton_count = 0;
-	item_count = 0;
-	item_num = 0;
-	item_rand = 0;
+	startTimeFont = CreateFontToHandle("メイリオ", 160, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	timeFont = LoadFontDataToHandle("Resource/Fonts/TimeAttack_HUD.dft", 2);
+	this->stageName = stageName;
+	elapsedTime = halfwayTime;
+	startAddTime = 0;
+	lemonerCount = 0;
+	tomatonCount = 0;
+	itemCount = 0;
+	itemNum = 0;
+	itemRand = 0;
 
-	start_time = 0;
-	start_effect_timer = 120;
-	clear_interval = 480;
+	startTime = 180;
+	startEffectTimer = 120;
+	clearInterval = 480;
 
-	this->restart = restart;
+	this->reStart = reStart;
 
 
-	stage = new STAGE(stage_name, this->restart);
+	stage = new STAGE(stageName, this->reStart);
 	player = new PLAYER(stage);
 	pause = new PAUSE;
 	lemoner = nullptr;
@@ -108,27 +108,27 @@ GAMEMAIN::GAMEMAIN(bool restart, int halfway_time, const char* stage_name)
 		{
 			if (stage->GetMapData(i, j) == 93)
 			{
-				tomaton_count++;
-				item_count++;
-				spawn_point.push_back(std::vector<int>(2));
-				spawn_point[point][0] = i;
-				spawn_point[point][1] = j;
+				tomatonCount++;
+				itemCount++;
+				spawnPoint.push_back(std::vector<int>(2));
+				spawnPoint[point][0] = i;
+				spawnPoint[point][1] = j;
 				point++;
 			}
 		}
 	}
 	//とまトンの生成
-	if (tomaton_count > 0)
+	if (tomatonCount > 0)
 	{
-		tomaton = new TOMATO * [tomaton_count];
-		for (int i = 0; i < tomaton_count; i++)
+		tomaton = new TOMATO * [tomatonCount];
+		for (int i = 0; i < tomatonCount; i++)
 		{
-			tomaton[i] = new TOMATO(player, stage, spawn_point[i][0], spawn_point[i][1]);
+			tomaton[i] = new TOMATO(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
 		}
 	}
 
 	//スポーンポイントを削除
-	spawn_point.clear();
+	spawnPoint.clear();
 
 	//グレポンを生成する数を数える
 	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
@@ -137,27 +137,27 @@ GAMEMAIN::GAMEMAIN(bool restart, int halfway_time, const char* stage_name)
 		{
 			if (stage->GetMapData(i, j) == 92)
 			{
-				gurepon_count++;
-				spawn_point.push_back(std::vector<int>(2));
-				spawn_point[point][0] = i;
-				spawn_point[point][1] = j;
+				gureponCount++;
+				spawnPoint.push_back(std::vector<int>(2));
+				spawnPoint[point][0] = i;
+				spawnPoint[point][1] = j;
 				point++;
 			}
 		}
 	}
 
 	//グレポンの生成
-	if (gurepon_count > 0)
+	if (gureponCount > 0)
 	{
-		gurepon = new GRAPEFRUIT * [gurepon_count];
-		for (int i = 0; i < gurepon_count; i++)
+		gurepon = new GRAPEFRUIT * [gureponCount];
+		for (int i = 0; i < gureponCount; i++)
 		{
-			gurepon[i] = new GRAPEFRUIT(player, stage, spawn_point[i][0], spawn_point[i][1]);
+			gurepon[i] = new GRAPEFRUIT(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
 		}
 	}
 
 	//スポーンポイントを削除
-	spawn_point.clear();
+	spawnPoint.clear();
 
 	//レモナー生成する数を数える
 	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
@@ -166,38 +166,38 @@ GAMEMAIN::GAMEMAIN(bool restart, int halfway_time, const char* stage_name)
 		{
 			if (stage->GetMapData(i, j) == 91)
 			{
-				lemoner_count++;
-				spawn_point.push_back(std::vector<int>(2));
-				spawn_point[point][0] = i;
-				spawn_point[point][1] = j;
+				lemonerCount++;
+				spawnPoint.push_back(std::vector<int>(2));
+				spawnPoint[point][0] = i;
+				spawnPoint[point][1] = j;
 				point++;
 			}
 		}
 	}
 	//レモナーの生成
-	if (lemoner_count > 0)
+	if (lemonerCount > 0)
 	{
-		lemoner = new LEMON * [lemoner_count];
-		for (int i = 0; i < lemoner_count; i++)
+		lemoner = new LEMON * [lemonerCount];
+		for (int i = 0; i < lemonerCount; i++)
 		{
-			lemoner[i] = new LEMON(player, stage, spawn_point[i][0], spawn_point[i][1]);
+			lemoner[i] = new LEMON(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
 		}
 	}
 
 	//アイテムのカウント＆生成
-	item_count = gurepon_count + lemoner_count;
-	if (item_count > 0)
+	itemCount = gureponCount + lemonerCount;
+	if (itemCount > 0)
 	{
-		item = new ITEMBALL * [item_count];
-		for (int i = 0; i < item_count; i++) {
+		item = new ITEMBALL * [itemCount];
+		for (int i = 0; i < itemCount; i++) {
 			item[i] = nullptr;
 		}
 	}
-	element = new ELEMENT(stage_name);
+	element = new ELEMENT(stageName);
 
 
 
-	if (restart == true) {
+	if (reStart == true) {
 		int scrollx = -(stage->GetHalfwayPoint().x - 500);
 		stage->SetScrollX(scrollx);	//スポーン地点をセット
 		stage->SetScrollY(-(stage->GetHalfwayPoint().y - MAP_CEllSIZE - 400));
@@ -214,68 +214,68 @@ GAMEMAIN::GAMEMAIN(bool restart, int halfway_time, const char* stage_name)
 	}
 
 	//BGM
-	if (stage_name == "Stage01") {
-		PlaySoundMem(background_music[0], DX_PLAYTYPE_LOOP);
-		ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music[0]);
+	if (stageName == "Stage01") {
+		PlaySoundMem(backGraundMusic[0], DX_PLAYTYPE_LOOP);
+		ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic[0]);
 	}
-	else if (stage_name == "Stage02") {
-		PlaySoundMem(background_music[1], DX_PLAYTYPE_LOOP);
-		ChangeVolumeSoundMem(Option::GetBGMVolume() * 0.9, background_music[1]);
+	else if (stageName == "Stage02") {
+		PlaySoundMem(backGraundMusic[1], DX_PLAYTYPE_LOOP);
+		ChangeVolumeSoundMem(Option::GetBGMVolume() * 0.9, backGraundMusic[1]);
 	}
-	else if (stage_name == "Stage03") {
-		PlaySoundMem(background_music[2], DX_PLAYTYPE_LOOP);
-		ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music[2]);
+	else if (stageName == "Stage03") {
+		PlaySoundMem(backGraundMusic[2], DX_PLAYTYPE_LOOP);
+		ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic[2]);
 	}
 
 
 	//SE
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursor_move_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, ok_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, count_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, start_se);
-	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, clear_se);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursorMoveSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, okSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, countSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, startSe);
+	ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, clearSe);
 
-	PlaySoundMem(count_se, DX_PLAYTYPE_BACK, TRUE);
+	PlaySoundMem(countSe, DX_PLAYTYPE_BACK, TRUE);
 
 
 	//PV制作用（完成次第即座に消去）
-	input_margin = 0;
-	scroll_speed = 4;
-	player_visible = true;
+	inputMargin = 0;
+	scrollSpeed = 4;
+	playerVisible = true;
 
 }
 
 GAMEMAIN::~GAMEMAIN()
 {
-	DeleteGraph(hp_img);
+	DeleteGraph(hpImage);
 
-	if (stage_name == "Stage01") {
-		StopSoundMem(background_music[0]);
-		DeleteSoundMem(background_music[0]);
-		DeleteGraph(background_image[0]);
+	if (stageName == "Stage01") {
+		StopSoundMem(backGraundMusic[0]);
+		DeleteSoundMem(backGraundMusic[0]);
+		DeleteGraph(backGraundImage[0]);
 	}
-	else if (stage_name == "Stage02") {
-		StopSoundMem(background_music[1]);
-		DeleteSoundMem(background_music[1]);
-		DeleteGraph(background_image[1]);
+	else if (stageName == "Stage02") {
+		StopSoundMem(backGraundMusic[1]);
+		DeleteSoundMem(backGraundMusic[1]);
+		DeleteGraph(backGraundImage[1]);
 	}
-	else if (stage_name == "Stage03") {
-		StopSoundMem(background_music[2]);
-		DeleteSoundMem(background_music[2]);
-		DeleteGraph(background_image[2]);
+	else if (stageName == "Stage03") {
+		StopSoundMem(backGraundMusic[2]);
+		DeleteSoundMem(backGraundMusic[2]);
+		DeleteGraph(backGraundImage[2]);
 	}
 	else {
-		DeleteGraph(background_image[0]);
+		DeleteGraph(backGraundImage[0]);
 	}
 
-	DeleteFontToHandle(start_time_font);
-	DeleteFontToHandle(time_font);
+	DeleteFontToHandle(startTimeFont);
+	DeleteFontToHandle(timeFont);
 
-	DeleteSoundMem(cursor_move_se);
-	DeleteSoundMem(ok_se);
-	DeleteSoundMem(count_se);
-	DeleteSoundMem(start_se);
-	DeleteSoundMem(clear_se);
+	DeleteSoundMem(cursorMoveSe);
+	DeleteSoundMem(okSe);
+	DeleteSoundMem(countSe);
+	DeleteSoundMem(startSe);
+	DeleteSoundMem(clearSe);
 
 	delete player;
 	delete stage;
@@ -283,26 +283,26 @@ GAMEMAIN::~GAMEMAIN()
 	delete element;
 
 	//レモナーの削除
-	for (int i = 0; i < lemoner_count; i++)
+	for (int i = 0; i < lemonerCount; i++)
 	{
 		delete lemoner[i];
 	}
 	delete[] lemoner;
 
 	//とまトンの削除
-	for (int i = 0; i < tomaton_count; i++)
+	for (int i = 0; i < tomatonCount; i++)
 	{
 		delete tomaton[i];
 	}
 	delete[] tomaton;
 	//グレポンの削除
-	for (int i = 0; i < gurepon_count; i++) {
+	for (int i = 0; i < gureponCount; i++) {
 		delete gurepon[i];
 
 	}
 	delete[] gurepon;
 
-	for (int i = 0; i < item_count; i++)
+	for (int i = 0; i < itemCount; i++)
 	{
 		if (item[i] != nullptr)
 		{
@@ -315,81 +315,81 @@ GAMEMAIN::~GAMEMAIN()
 AbstractScene* GAMEMAIN::Update()
 {
 
-	if (start_time > 0) {
+	if (startTime > 0) {
 
-		if (restart == true) { SetDrawBright(255 - start_time, 255 - start_time, 255 - start_time); }
+		if (reStart == true) { SetDrawBright(255 - startTime, 255 - startTime, 255 - startTime); }
 		//カウント音再生
-		//if (start_time % 60 == 0) {
-			//PlaySoundMem(cursor_move_se, DX_PLAYTYPE_BACK, TRUE);
+		//if (startTime % 60 == 0) {
+			//PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 		//}
 
-		start_time--;
+		startTime--;
 
 		char dis_start_time[2];	//文字列合成バッファー
 
-		sprintf_s(dis_start_time, sizeof(dis_start_time), "%d", start_time / 60);
+		sprintf_s(dis_start_time, sizeof(dis_start_time), "%d", startTime / 60);
 
 		//プレイヤーのX座標の動きを止める
-		//int player_x = player->GetPlayerX();
-		player->Update(element, stage, tomaton, tomaton_count, true);
-		//player->SetPlayerX(player_x);
+		//int playerX = player->GetPlayerX();
+		player->Update(element, stage, tomaton, tomatonCount, true);
+		//player->SetPlayerX(playerX);
 
 		//START音再生
-		if (start_time == 0) {
-			if (restart == false) { start_addtime = GetNowCount(); }
-			else { start_addtime = GetNowCount() - elapsed_time; }
-			PlaySoundMem(start_se, DX_PLAYTYPE_BACK, TRUE);
+		if (startTime == 0) {
+			if (reStart == false) { startAddTime = GetNowCount(); }
+			else { startAddTime = GetNowCount() - elapsedTime; }
+			PlaySoundMem(startSe, DX_PLAYTYPE_BACK, TRUE);
 		}
 	}
-	else if (start_effect_timer > 0) {
+	else if (startEffectTimer > 0) {
 
-		start_effect_timer--;
+		startEffectTimer--;
 	}
 
 
-	if (start_time <= 0) {
+	if (startTime <= 0) {
 
 		pause->Update();
 
 		if (pause->IsPause() == false) {
 
 			//経過時間の加算
-			if (!stage->GetClearFlg()) { elapsed_time = GetNowCount() - start_addtime; }
+			if (!stage->GetClearFlg()) { elapsedTime = GetNowCount() - startAddTime; }
 
-			player->Update(element, stage, tomaton, tomaton_count);
+			player->Update(element, stage, tomaton, tomatonCount);
 			stage->Update(player, element);	//ステージクリア用
 			element->Update(player, stage);
-			for (int i = 0; i < lemoner_count; i++)
+			for (int i = 0; i < lemonerCount; i++)
 			{
 				if (lemoner[i] != nullptr)
 				{
 					lemoner[i]->Update();
 					if (lemoner[i]->GetDeleteFlag())
 					{
-						item_rand = GetRand(5);
+						itemRand = GetRand(5);
 						//アイテムを生成
-						if (item_rand == 0)
+						if (itemRand == 0)
 						{
-							item[item_num++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+							item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
 						}
 						delete lemoner[i];
 						lemoner[i] = nullptr;
 					}
 				}
 			}
-			for (int i = 0; i < tomaton_count; i++)
+			for (int i = 0; i < tomatonCount; i++)
 			{
 				tomaton[i]->Update();
 			}
-			for (int i = 0; i < gurepon_count; i++)
+			for (int i = 0; i < gureponCount; i++)
 			{
 				if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg())
 				{
-					item_rand = GetRand(5);
+					itemRand = GetRand(5);
 					//アイテムを生成
-					if (item_rand == 0)
+					if (itemRand == 0)
 					{
-						item[item_num++] = new ITEMBALL(gurepon[i]->GetX(), gurepon[i]->GetY(), gurepon[i]->GetSpawnMapX(), gurepon[i]->GetSpawnMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+						item[itemNum++] = new ITEMBALL(gurepon[i]->GetX(), gurepon[i]->GetY(), gurepon[i]->GetSpawnMapX(), gurepon[i]->GetSpawnMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
 					}
 					delete gurepon[i];
 					gurepon[i] = nullptr;
@@ -403,7 +403,7 @@ AbstractScene* GAMEMAIN::Update()
 				}
 			}
 			//アイテムのアップデート
-			for (int i = 0; i < item_count; i++)
+			for (int i = 0; i < itemCount; i++)
 			{
 				if (item[i] != nullptr)
 				{
@@ -425,22 +425,22 @@ AbstractScene* GAMEMAIN::Update()
 
 				//ゲームオーバー
 				if (player->IsDeath()) {
-					if (!restart && stage->GetHalfwayPointFlg()) {
-						now_graph = MakeGraph(1280, 720);
-						GetDrawScreenGraph(0, 0, 1280, 720, now_graph);
-						return new GAMEMAIN_RESTART(true, elapsed_time, stage_name, now_graph);
+					if (!reStart && stage->GetHalfwayPointFlg()) {
+						nowGraph = MakeGraph(1280, 720);
+						GetDrawScreenGraph(0, 0, 1280, 720, nowGraph);
+						return new GAMEMAIN_RESTART(true, elapsedTime, stageName, nowGraph);
 					}
-					return new GameOver(stage_name);
+					return new GameOver(stageName);
 				}
 
 				//ステージクリア
 				if (stage->GetClearFlg())
 				{
-					if (clear_interval == 480) { PlaySoundMem(clear_se, DX_PLAYTYPE_BACK, TRUE); }
-					if (clear_interval > 0) { clear_interval--; }
+					if (clearInterval == 480) { PlaySoundMem(clearSe, DX_PLAYTYPE_BACK, TRUE); }
+					if (clearInterval > 0) { clearInterval--; }
 					player->SetPlayerX(player->GetOldPlayerX());
-					if (clear_interval <= 0 && !CheckSoundMem(clear_se)) {
-						return new RESULT(true, elapsed_time, stage_name);
+					if (clearInterval <= 0 && !CheckSoundMem(clearSe)) {
+						return new RESULT(true, elapsedTime, stageName);
 					}
 				}
 			}
@@ -449,28 +449,28 @@ AbstractScene* GAMEMAIN::Update()
 
 			if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::STAGE_SELECT) { return new STAGE_SELECT(); }
 			else if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::RESTART) {
-				now_graph = MakeGraph(1280, 720);
-				GetDrawScreenGraph(0, 0, 1280, 720, now_graph);
-				return new GAMEMAIN_RESTART(false, 0, stage_name, now_graph);
+				nowGraph = MakeGraph(1280, 720);
+				GetDrawScreenGraph(0, 0, 1280, 720, nowGraph);
+				return new GAMEMAIN_RESTART(false, 0, stageName, nowGraph);
 			}
 			else if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::OPTION) {
 				//BGM
-				if (stage_name == "Stage01") {
-					ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music[0]);
+				if (stageName == "Stage01") {
+					ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic[0]);
 				}
-				else if (stage_name == "Stage02") {
-					ChangeVolumeSoundMem(Option::GetBGMVolume() * 0.9, background_music[1]);
+				else if (stageName == "Stage02") {
+					ChangeVolumeSoundMem(Option::GetBGMVolume() * 0.9, backGraundMusic[1]);
 				}
-				else if (stage_name == "Stage03") {
-					ChangeVolumeSoundMem(Option::GetBGMVolume(), background_music[2]);
+				else if (stageName == "Stage03") {
+					ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic[2]);
 				}
 
 				//SE
-				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursor_move_se);
-				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, ok_se);
-				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, count_se);
-				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, start_se);
-				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, clear_se);
+				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursorMoveSe);
+				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
+				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, countSe);
+				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, startSe);
+				ChangeVolumeSoundMem(Option::GetSEVolume() * 1.5, clearSe);
 			}
 		}
 
@@ -482,8 +482,8 @@ AbstractScene* GAMEMAIN::Update()
 		//}
 	}
 
-	if (input_margin < 10) {
-		input_margin++;
+	if (inputMargin < 10) {
+		inputMargin++;
 	}
 	else {
 
@@ -492,9 +492,9 @@ AbstractScene* GAMEMAIN::Update()
 
 			//プレイヤー表示・非表示
 			if (CheckHitKey(KEY_INPUT_N)) {
-				player_visible = !player_visible;
+				playerVisible = !playerVisible;
 
-				if (player_visible) {
+				if (playerVisible) {
 					player->SetVisible(true);
 				}
 				else {
@@ -504,29 +504,29 @@ AbstractScene* GAMEMAIN::Update()
 
 		//スクロールスピードダウン
 			else if (CheckHitKey(KEY_INPUT_M)) {
-				if (scroll_speed > 0) { scroll_speed--; }
+				if (scrollSpeed > 0) { scrollSpeed--; }
 			}
 
 		//スクロールスピードアップ
 			else if (CheckHitKey(KEY_INPUT_L)) {
-				scroll_speed++;
+				scrollSpeed++;
 			}
-		input_margin = 0;
+		inputMargin = 0;
 	}
 
 	//スクロール移動
 	if (CheckHitKey(KEY_INPUT_UP)) {
-		stage->SetScrollY(stage->GetScrollY() + scroll_speed);
+		stage->SetScrollY(stage->GetScrollY() + scrollSpeed);
 	}
 	else if (CheckHitKey(KEY_INPUT_DOWN)) {
-		stage->SetScrollY(stage->GetScrollY() - scroll_speed);
+		stage->SetScrollY(stage->GetScrollY() - scrollSpeed);
 	}
 	else if (CheckHitKey(KEY_INPUT_LEFT)) {
-		stage->SetScrollX(stage->GetScrollX() + scroll_speed * 3);
+		stage->SetScrollX(stage->GetScrollX() + scrollSpeed * 3);
 	}
 	else if (CheckHitKey(KEY_INPUT_RIGHT)) {
 		if (stage->GetScrollX() > 0 || stage->GetScrollX() <= -(80 * static_cast<int>(stage->GetMapSize().x - 1280))) {
-			stage->SetScrollX(stage->GetScrollX() - scroll_speed * 3);
+			stage->SetScrollX(stage->GetScrollX() - scrollSpeed * 3);
 		}
 #endif // DEBUG_PV
 	}
@@ -539,40 +539,40 @@ void GAMEMAIN::Draw() const
 {
 
 	//ステージ背景
-	if (stage_name == "Stage01") {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scroll_y*/0, background_image[0], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scroll_y*/0, background_image[0], FALSE);
+	if (stageName == "Stage01") {
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
 	}
-	else if (stage_name == "Stage02") {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scroll_y*/0, background_image[1], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scroll_y*/0, background_image[1], FALSE);
+	else if (stageName == "Stage02") {
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[1], FALSE);
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[1], FALSE);
 	}
-	else if (stage_name == "Stage03") {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scroll_y*/0, background_image[2], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scroll_y*/0, background_image[2], FALSE);
+	else if (stageName == "Stage03") {
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[2], FALSE);
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[2], FALSE);
 	}
 	else {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scroll_y*/0, background_image[0], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scroll_y*/0, background_image[0], FALSE);
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
 	}
 
 
 	//地下背景描画
-	if (stage_name == "Stage01") {
+	if (stageName == "Stage01") {
 		//ステージ１
 		DrawBoxAA(stage->GetScrollX() + 6880, stage->GetScrollY() + 1380, stage->GetScrollX() + 10640, stage->GetScrollY() + 1900, 0x20251F, TRUE);
 	}
-	else if (stage_name == "Stage03") {
+	else if (stageName == "Stage03") {
 		//ステージ3
 		DrawBoxAA(0, stage->GetScrollY() + 1380, stage->GetScrollX() + 5120, stage->GetScrollY() + 4800, 0x20251F, TRUE);
 	}
 
-	/*if (stage_name == "Stage03" && stage->GetScrollY() < -960) {
+	/*if (stageName == "Stage03" && stage->GetScrollY() < -960) {
 		DrawBox(0, 0, 25600, 1280, 0x20251F, TRUE);
 	}*/
 
 	for (int i = 0; i < player->GetLife(); i++) {
-		DrawRotaGraph(30 + 50 * i, 20, 1, 0, hp_img, TRUE);
+		DrawRotaGraph(30 + 50 * i, 20, 1, 0, hpImage, TRUE);
 	}
 
 	//ステージの描画
@@ -585,7 +585,7 @@ void GAMEMAIN::Draw() const
 	player->Draw(stage);
 
 	//レモナーの描画
-	for (int i = 0; i < lemoner_count; i++)
+	for (int i = 0; i < lemonerCount; i++)
 	{
 		if (lemoner[i] != nullptr)
 		{
@@ -594,12 +594,12 @@ void GAMEMAIN::Draw() const
 		}
 	}
 	//とまトンの描画
-	for (int i = 0; i < tomaton_count; i++)
+	for (int i = 0; i < tomatonCount; i++)
 	{
 		tomaton[i]->Draw();
 	}
 	//グレポンの描画
-	for (int i = 0; i < gurepon_count; i++)
+	for (int i = 0; i < gureponCount; i++)
 	{
 		if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg() == false)
 		{
@@ -607,7 +607,7 @@ void GAMEMAIN::Draw() const
 		}
 	}
 	//アイテムの描画
-	for (int i = 0; i < item_count; i++)
+	for (int i = 0; i < itemCount; i++)
 	{
 		if (item[i] != nullptr)
 		{
@@ -621,11 +621,11 @@ void GAMEMAIN::Draw() const
 
 	//ゲームクリア時の描画
 	if (stage->GetClearFlg()) {
-		if (clear_interval >= 0) {
+		if (clearInterval >= 0) {
 
-			//DrawStringToHandle(GetDrawCenterX("ゲームクリアおめでとう！！！", start_time_font), 200, "ゲームクリアおめでとう！！！", 0xE2FE47, start_time_font);
+			//DrawStringToHandle(GetDrawCenterX("ゲームクリアおめでとう！！！", startTimeFont), 200, "ゲームクリアおめでとう！！！", 0xE2FE47, startTimeFont);
 
-			SetDrawBlendMode(DX_BLENDMODE_ADD, 255 - clear_interval);
+			SetDrawBlendMode(DX_BLENDMODE_ADD, 255 - clearInterval);
 			//DrawTriangleAA(0, 0, 0, 720, 640, 720, 0xFFFFFF, TRUE);
 			//DrawTriangleAA(1280, 0, 1280, 720, 640, 720, 0xFFFFFF, TRUE);
 
@@ -642,29 +642,29 @@ void GAMEMAIN::Draw() const
 
 	//プレイヤーのライフの描画
 	for (int i = 0; i < player->GetLife(); i++) {
-		DrawRotaGraph(30 + 50 * i, 20, 1, 0, hp_img, TRUE);
+		DrawRotaGraph(30 + 50 * i, 20, 1, 0, hpImage, TRUE);
 	}
 
 	//経過時間の描画
 	char dis_clear_time[20];	//文字列合成バッファー
 
 	//文字列合成
-	if (elapsed_time / 1000 >= 60)
+	if (elapsedTime / 1000 >= 60)
 	{
 
 		sprintf_s(dis_clear_time, sizeof(dis_clear_time), "%4d:%02d.%.3d",
-			(elapsed_time / 1000) / 60, (elapsed_time / 1000) % 60, elapsed_time % 1000);
+			(elapsedTime / 1000) / 60, (elapsedTime / 1000) % 60, elapsedTime % 1000);
 	}
 	else
 	{
 
 		sprintf_s(dis_clear_time, sizeof(dis_clear_time),
-			"%5d.%.3d", elapsed_time / 1000, elapsed_time % 1000);
+			"%5d.%.3d", elapsedTime / 1000, elapsedTime % 1000);
 	}
 
-	int str_width = GetDrawFormatStringWidthToHandle(time_font, dis_clear_time);
+	int str_width = GetDrawFormatStringWidthToHandle(timeFont, dis_clear_time);
 
-	DrawStringToHandle(1260 - str_width, 10, dis_clear_time, 0x1aff00, time_font, 0xFFFFFF);
+	DrawStringToHandle(1260 - str_width, 10, dis_clear_time, 0x1aff00, timeFont, 0xFFFFFF);
 
 
 	//デバッグ
@@ -678,22 +678,22 @@ void GAMEMAIN::Draw() const
 	//	DrawFormatString(100, 450, 0x02F896, "Jump:%f", player->GetJumpVelocity());
 	//}
 
-	if (start_time > 0) {
+	if (startTime > 0) {
 
 		char dis_start_time[2];	//文字列合成バッファー
 
-		sprintf_s(dis_start_time, sizeof(dis_start_time), "%d", start_time / 60 + 1);
+		sprintf_s(dis_start_time, sizeof(dis_start_time), "%d", startTime / 60 + 1);
 
-		DrawStringToHandle(GetDrawCenterX(dis_start_time, start_time_font), 300, dis_start_time, 0xEBA05E, start_time_font, 0xFFFFFF);
+		DrawStringToHandle(GetDrawCenterX(dis_start_time, startTimeFont), 300, dis_start_time, 0xEBA05E, startTimeFont, 0xFFFFFF);
 	}
-	else if (start_effect_timer > 0) {
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 0 + start_effect_timer * 3 - 5 % 255);
+	else if (startEffectTimer > 0) {
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 0 + startEffectTimer * 3 - 5 % 255);
 
-		if (restart == false) {
-			DrawStringToHandle(GetDrawCenterX("START", start_time_font), 300, "START", 0xF5E03D, start_time_font, 0xFFFFFF);
+		if (reStart == false) {
+			DrawStringToHandle(GetDrawCenterX("START", startTimeFont), 300, "START", 0xF5E03D, startTimeFont, 0xFFFFFF);
 		}
 		else {
-			DrawStringToHandle(GetDrawCenterX("RESTART", start_time_font), 300, "RESTART", 0xE66500, start_time_font, 0xFFFFFF);
+			DrawStringToHandle(GetDrawCenterX("RESTART", startTimeFont), 300, "RESTART", 0xE66500, startTimeFont, 0xFFFFFF);
 		}
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}

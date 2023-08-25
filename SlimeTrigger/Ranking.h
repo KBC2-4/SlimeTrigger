@@ -2,7 +2,7 @@
 class RANKING
 {
 private:
-	static int best_time[3];
+	static int bestTime[3];
 private:
 	RANKING();
 	/// <summary>
@@ -26,6 +26,6 @@ public:
 	/// </summary>
 	/// <param name="n">引数</param>
 	/// <returns>ベストタイムの値</returns>
-	static int GetBestTime(int n) { return best_time[n]; }
+	static int GetBestTime(int n) { return bestTime[n]; }
 };
 

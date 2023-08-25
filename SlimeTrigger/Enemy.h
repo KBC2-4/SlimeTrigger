@@ -2,6 +2,7 @@
 #include"Player.h"
 #include"Stage.h"
 #include"ItemBall.h"
+#include <vector>
 
 
 #define BALL_W 10
@@ -22,7 +23,7 @@ class ENEMY
 protected:
 	int x, y;			//座標
 	int mapX, mapY;	//マップ内での座標
-	int* image;			//画像保存用
+	std::vector<std::vector<int>> images;			//画像保存用
 	int animationTimer;//アニメーションの時間
 	int animationType;	//アニメーションの種類
 	double rad;          //ラジアン

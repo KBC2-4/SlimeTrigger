@@ -4,14 +4,14 @@
 class PAUSE
 {
 private:
-	int pause_graph;
-	int pause_effect_timer;
-	int cursor_move_se,ok_se, memu_open_se, memu_close_se;
-	int menu_font, title_font, buttonguid_font;
-	int selectmenu;
-	int input_margin;
-	int nextmenu;
-	bool pause_flg;	//ポーズフラグ
+	int pauseGraph;
+	int pauseEffectTimer;
+	int cursorMoveSe,okSe, menuOpenSe, menuCloseSe;
+	int menuFont, titleFont, buttonGuidFont;
+	int selectMenu;
+	int inputMargin;
+	int nextMenu;
+	bool pauseFlag;	//ポーズフラグ
 
 	Option* option;
 
@@ -20,9 +20,9 @@ public:
 	~PAUSE();
 	int Update(void);
 	void Draw();
-	bool IsPause(void) { return pause_flg; }
-	void SetPause(void) { pause_flg = !pause_flg; if (pause_flg == false) { selectmenu = 0; } }
-	int GetSelectMenu(void) { return nextmenu; }
+	bool IsPause(void) { return pauseFlag; }
+	void SetPause(void) { pauseFlag = !pauseFlag; if (pauseFlag == false) { selectMenu = 0; } }
+	int GetSelectMenu(void) { return nextMenu; }
 
 	int GetDrawCenterX(const char* string, int font_handle)const;
 

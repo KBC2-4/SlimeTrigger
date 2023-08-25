@@ -10,8 +10,8 @@ TOMATO::TOMATO()
 	spawnMapY = 0;
 
 	nowImage = 0;
-	image = new int[3];
-	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, image) == -1)
+	
+	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, &images[0][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/tomaton.png";
 	}
@@ -32,12 +32,14 @@ TOMATO::TOMATO(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 	state = ENEMY_STATE::IDOL;
 
 	nowImage = 0;
-	image = new int[9];
-	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, image) == -1)
+	images.resize(2);
+	images[0].resize(3);
+	images[1].resize(6);
+	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, &images[0][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/tomaton.png";
 	}
-	if (LoadDivGraph("Resource/Images/Enemy/tomaton_Break.png", 6, 6, 1, 80, 80, image + 3) == -1)
+	if (LoadDivGraph("Resource/Images/Enemy/tomaton_Break.png", 6, 6, 1, 80, 80, &images[1][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/tomaton_Break.png";
 	}
@@ -53,12 +55,19 @@ TOMATO::TOMATO(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 TOMATO::~TOMATO()
 {
 
-	for (int i = 0; i < 9; i++)
+	if (!images.empty())
 	{
-		DeleteGraph(image[i]);
-	}
+		for (int i = 0; i < images.size(); i++)
+		{
+			for (int j = 0; j < images[i].size(); j++)
+			{
+				DeleteGraph(images[i][j]);
+			}
 
-	delete[] image;
+			images[i].clear();
+		}
+		images.clear();
+	}
 
 	DeleteSoundMem(splashSe);
 
@@ -163,7 +172,7 @@ bool TOMATO::IdolAnimation()
 			imageRate = 1.0;
 			ret = true;
 		}
-		nowImage = image[0];
+		nowImage = images[0][0];
 	}
 	return ret;
 }
@@ -172,7 +181,7 @@ void TOMATO::FallAnimation()
 	//アニメーション
 	if (animationTimer % ANIMATION_TIME == 0)
 	{
-		nowImage = image[(++animationType % 2) + 1];
+		nowImage = images[0][(++animationType % 2) + 1];
 	}
 }
 
@@ -185,7 +194,7 @@ bool TOMATO::DethAnimation()
 	{
 		if (animationTimer % ANIMATION_TIME == 0)
 		{
-			nowImage = image[(++animationType % 6) + 1];
+			nowImage = images[1][(++animationType % 6)];
 		}
 	}
 	else //アニメーションの終了

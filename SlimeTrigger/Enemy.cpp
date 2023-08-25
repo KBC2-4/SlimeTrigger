@@ -3,6 +3,7 @@
 #include<math.h>
 #include "Enemy.h"
 
+
 ENEMY::ENEMY()
 {
 	player = nullptr;
@@ -14,7 +15,6 @@ ENEMY::ENEMY()
 	y = 0;
 	mapX = 0;
 	mapY = 0;
-	image = nullptr;
 	animationTimer = 0;
 	animationType = 0;
 
