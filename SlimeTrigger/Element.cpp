@@ -693,7 +693,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 			manhole[i].pairNum = 1;
 
 			if ((playerMapX >= manhole[i].x) && (playerMapX <= manhole[i].x + MAP_CEllSIZE) && (playerMapY <= manhole[i].y + MAP_CEllSIZE) && (playerMapY >= manhole[i].y)) {
-				if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
+				if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
 					stage->SetTemporary_Hit(999);
 					manhole[i].flag = true;
 				}
@@ -781,7 +781,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 
 			//マンホールの出口の左端から右端までのx座標かつマンホールの出口よりも下にいる場合
 			if ((playerMapX >= manhole[i].x - MAP_CEllSIZE / 2) && (playerMapX <= manhole[i].x + MAP_CEllSIZE / 2) && (playerMapY > manhole[i].y)) {
-				if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { manhole[i].flag = true; }
+				if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { manhole[i].flag = true; }
 
 
 				//Bボタンを押してflgがtrueになった時
