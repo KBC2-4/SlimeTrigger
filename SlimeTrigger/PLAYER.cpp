@@ -115,7 +115,7 @@ PLAYER::PLAYER(STAGE* stage) {
 	}
 
 	//SEÇÃì«Ç›çûÇ›
-	/*if ((damageSE = LoadSoundMem("Resource/Sounds/SE/Player/damage.wav")) == -1) {
+	if ((damageSE = LoadSoundMem("Resource/Sounds/SE/Player/damage.wav")) == -1) {
 		throw "Resource/Sounds/SE/Player/damage.wav";
 	}
 	if ((jumpSE = LoadSoundMem("Resource/Sounds/SE/Player/jump.wav")) == -1) {
@@ -123,7 +123,7 @@ PLAYER::PLAYER(STAGE* stage) {
 	}
 	if ((landingSE = LoadSoundMem("Resource/Sounds/SE/Player/landing.wav")) == -1) {
 		throw "Resource/Sounds/SE/Player/jump2.wav";
-	}*/
+	}
 	if ((hookMoveSe = LoadSoundMem("Resource/Sounds/SE/Player/hook_move.wav")) == -1) {
 		throw "Resource/Sounds/SE/Player/hook_move.wav";
 	}
