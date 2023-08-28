@@ -354,13 +354,18 @@ void PLAYER::Move()
 		//ジャンプ中のとき
 		if (playerState == PLAYER_MOVE_STATE::JUMP || playerState == PLAYER_MOVE_STATE::FALL)
 		{
-			if (jumpMoveX == 0) jumpMoveX = moveX;	// ジャンプの方向
+			//if (jumpMoveX == 0) jumpMoveX = moveX;	// ジャンプの方向セット（-1　or　1）
+			jumpMoveX = moveX;
 			moveType = (jumpMoveX > 0) ? 0 : 1;		// 画像の向きの設定
 
 			// 停止ジャンプ・反対方向への移動時
-			if (jumpMode == 1 || jumpMoveX != moveX)
+			/*if (jumpMode == 1 || jumpMoveX != moveX)
 			{
 				playerSpeed /= 2.0f;
+			}*/
+			if (jumpMode == 2)
+			{
+				playerSpeed /= 1.5f;
 			}
 
 			playerX += jumpMoveX * playerSpeed;
@@ -619,7 +624,7 @@ void PLAYER::JumpMove() {
 			jumpRequest = false;
 			isJump = true;			//ジャンプ中に移行
 			jumpVelocity = JUMP_VELOCITY * jumpPower;
-			//横移動してない時
+			//横移動してない時(垂直ジャンプ
 			if (playerState == PLAYER_MOVE_STATE::IDLE) {
 				jumpMode = 1;
 			}
