@@ -418,6 +418,13 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 	//スティック入力の取得
 	int input_lx = PAD_INPUT::GetPadThumbLX();
 
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_LEFT)) {
+		input_lx = -20000;
+	}
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_RIGHT)) {
+		input_lx = 20000;
+	}
+
 	//Bボタン押したとき
 	if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
 		if (playerState != PLAYER_MOVE_STATE::HOOK) {
