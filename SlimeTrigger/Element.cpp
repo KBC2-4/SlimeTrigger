@@ -29,7 +29,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 		throw "Resource/Sounds/SE/Stage/manhole_opened.wav";
 	}
 
-	LoadDivGraph("Resource/Images/Stage/acid2.png",12,12,1,80,80,acidImage);
+	LoadDivGraph("Resource/Images/Stage/acid.png",12,12,1,80,80,acidImage);
 
 	foamAnimation = 4;
 
@@ -264,7 +264,10 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 
 	}
 
-	acidrainPuddles.at(0).image = 1;
+	if (0 < acidrainPuddles.size())
+	{
+		acidrainPuddles.at(0).image = 1;
+	}
 
 	playerMapX = 0;
 	playerMapY = 0;
