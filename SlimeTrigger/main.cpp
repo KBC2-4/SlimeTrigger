@@ -32,9 +32,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	;	SetDrawScreen(DX_SCREEN_BACK);	// 描画先画面を裏にする
 
 	SceneManager* sceneMng;
+	PAD_INPUT* padInput;
 	try
 	{
 		sceneMng = new SceneManager((AbstractScene*)new Title());
+		padInput = new PAD_INPUT();
 
 	}
 	catch (const char* err)
@@ -57,7 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 		ClearDrawScreen();		// 画面の初期化
-		PAD_INPUT::UpdateKey();	//パッドの入力状態の更新
+		padInput->UpdateKey();	//パッドの入力状態の更新
 		sceneMng->Draw();
 
 		ScreenFlip();			// 裏画面の内容を表画面に反映

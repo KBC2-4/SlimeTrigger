@@ -17,9 +17,16 @@ private:
 	static int oldKey;
 	static PAD_STATE state;
 	static XINPUT_STATE Input;
-	PAD_INPUT(); //コンストラクタ
+	static DINPUT_JOYSTATE dInput;
+
 public:
-	static void UpdateKey();	//パッド入力の更新
+	PAD_INPUT(); //コンストラクタ
+	void UpdateKey();	//パッド入力の更新
+	/**
+	* @brief	DirectInputからXinputへの変換器
+	* @param input DINPUT_JOYSTATE dInput構造体
+	*/
+	void InputConverter(const DINPUT_JOYSTATE& dInput);
 	static int GetPadThumbLX(){ return Input.ThumbLX; }	 //左スティックの横軸値
 	static int GetPadThumbLY() { return Input.ThumbLY; }	//左スティックの縦軸値
 	static int GetPadThumbRX() { return Input.ThumbRX; }	//右スティックの横軸値
