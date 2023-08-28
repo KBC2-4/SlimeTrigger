@@ -62,26 +62,17 @@ void PAD_INPUT::InputConverter(const DINPUT_JOYSTATE& dInput) const
 
 void PAD_INPUT::KeyInput(XINPUT_STATE& input) const
 {
-	//if (CheckHitKey(KEY_INPUT_UP))
-	//{
-	//	Input.ThumbLY = 32767;
-	//}
 
-	//if (CheckHitKey(KEY_INPUT_A))
-	//{
-	//	Input.Buttons[XINPUT_BUTTON_A] = 1;
-	//	printfDx("aa");
-	//}
-
-	const std::array <int, 14> KeyIndices = { 16, 8192, 3, 4, 6, 7, 8, 9, 10, 11, 1, 2, 4, 8 };
+	const std::array <int, 14> KeyIndices = { 16, 8192, 3, 4, 6, 7, 4096, 9, 10, 11, 1, 2, 4, 8 };
 	const std::array <int, 14> xInputButtonIndices = { XINPUT_BUTTON_A, XINPUT_BUTTON_B, XINPUT_BUTTON_Y, XINPUT_BUTTON_X,
 		XINPUT_BUTTON_LEFT_SHOULDER, XINPUT_BUTTON_RIGHT_SHOULDER,
 		XINPUT_BUTTON_BACK, XINPUT_BUTTON_START,
 		XINPUT_BUTTON_LEFT_THUMB, XINPUT_BUTTON_RIGHT_THUMB,
 		XINPUT_BUTTON_DPAD_DOWN, XINPUT_BUTTON_DPAD_LEFT, XINPUT_BUTTON_DPAD_RIGHT, XINPUT_BUTTON_DPAD_UP
 	};
+
 	for (int i = 0; i < 14; ++i) {
-		input.Buttons[xInputButtonIndices[i]] = (GetJoypadInputState(DX_INPUT_KEY) == KeyIndices[i]) ? 1 : 0;
+		input.Buttons[xInputButtonIndices[i]] = (GetJoypadInputState(DX_INPUT_KEY) & KeyIndices[i]) ? 1 : 0;
 	}
 
 	//printfDx("%d\n", GetJoypadInputState(DX_INPUT_KEY));
