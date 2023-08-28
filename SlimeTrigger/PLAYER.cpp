@@ -665,7 +665,7 @@ void PLAYER::JumpMove() {
 				jumpVelocity = 0;
 				grabbedHookArray.clear();
 				playerState = PLAYER_MOVE_STATE::IDLE;
-				if (PAD_INPUT::GetNowKey() != (Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B) && !jumpRequest) {
+				if (!PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B) && !jumpRequest) {
 					ChangeAnimation(PLAYER_ANIM_STATE::LANDING);
 				}
 				PlaySoundMem(landingSE, DX_PLAYTYPE_BACK);
