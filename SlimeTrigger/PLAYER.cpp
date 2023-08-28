@@ -665,13 +665,16 @@ void PLAYER::JumpMove() {
 				jumpVelocity = 0;
 				grabbedHookArray.clear();
 				playerState = PLAYER_MOVE_STATE::IDLE;
-				ChangeAnimation(PLAYER_ANIM_STATE::LANDING);
+				if (PAD_INPUT::GetNowKey() != (Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B) && !jumpRequest) {
+					ChangeAnimation(PLAYER_ANIM_STATE::LANDING);
+				}
 				PlaySoundMem(landingSE, DX_PLAYTYPE_BACK);
 			}
 			if (playerState == PLAYER_MOVE_STATE::HOOK || isHookMove) {
 				jumpVelocity = 0;
 			}
 		}
+		// 着地アニメーションが終わったら、アイドルアニメーションに変更する
 		if (animationState == PLAYER_ANIM_STATE::LANDING) {
 			if (animation[static_cast<int>(animationState)].endAnimation) {
 				ChangeAnimation(PLAYER_ANIM_STATE::IDLE);

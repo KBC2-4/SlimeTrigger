@@ -29,6 +29,10 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 		throw "Resource/Sounds/SE/Stage/manhole_opened.wav";
 	}
 
+	LoadDivGraph("Resource/Images/Stage/acid.png",12,12,1,80,80,acidImage);
+
+	foamAnimation = 4;
+
 	ELEMENT_DATA data;
 	for (int i = 0; i < mapData.size(); i++)
 	{
@@ -172,6 +176,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.type = 2;
 				data.animTimer = 0;
 				data.flag = false;
+				data.image = 99;
 				acidrainPuddles.push_back(data);
 				break;
 
@@ -257,6 +262,11 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 
 		}
 
+	}
+
+	if (0 < acidrainPuddles.size())
+	{
+		acidrainPuddles.at(0).image = 1;
 	}
 
 	playerMapX = 0;
@@ -420,38 +430,50 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 	//é_ê´âJÇÃêÖÇΩÇ‹ÇË
 	for (int i = 0; i < acidrainPuddles.size(); i++) {
 
-		if (stageName == "Stage02") { DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[7], TRUE); }
+		/*if (stageName == "Stage02") { DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[7], TRUE); }
 		else if (stageName == "Stage03") { DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[11], TRUE); }
-		else { DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[3], TRUE); }
+		else { DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[3], TRUE); }*/
+
+		int imageNum = acidrainPuddles.at(i).image;
+		if (imageNum == 99)
+		{
+			imageNum = 0;
+		}
 
 		switch (acidrainPuddles[i].type)
 		{
-		case 1:		//ç∂í[
-			if (acidrainPuddlesAniTimer > 5) {
-				DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[74], TRUE);
-			}
-			else {
-				DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[73], TRUE);
-			}
-			break;
+		//case 1:		//ç∂í[
+		//	if (acidrainPuddlesAniTimer > 5) {
+		//		DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[74], TRUE);
+		//	}
+		//	else {
+		//		DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[73], TRUE);
+		//	}
+		//	break;
 
 		case 2:		//íÜâõ
-			if (acidrainPuddlesAniTimer > 5) {
+			/*if (acidrainPuddlesAniTimer > 5) {
 				DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[76], TRUE);
 			}
 			else {
 				DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[75], TRUE);
-			}
+			}*/
+
+			DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), acidImage[imageNum], TRUE);
+			DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), acidImage[foamAnimation], TRUE);
+			DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY()+80.0f, acidImage[0], TRUE);
+			//DrawBoxAA(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY() + 80.0f, acidrainPuddles[i].x + stage->GetScrollX()+80.0f, acidrainPuddles[i].y + stage->GetScrollY() + 160.0f, 0xc731e8, TRUE);
+			//DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), acid, TRUE);
 			break;
 
-		case 3:		//âEí[
-			if (acidrainPuddlesAniTimer > 5) {
-				DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[78], TRUE);
-			}
-			else {
-				DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[77], TRUE);
-			}
-			break;
+		//case 3:		//âEí[
+		//	if (acidrainPuddlesAniTimer > 5) {
+		//		DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[78], TRUE);
+		//	}
+		//	else {
+		//		DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[77], TRUE);
+		//	}
+		//	break;
 		default:
 			break;
 		}
@@ -819,15 +841,62 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 /// é_ê´âJÇÃêÖÇΩÇ‹ÇËÇÃèàóù
 /// </summary>
 void ELEMENT::Acidrain_puddles(PLAYER* player) {
-	if (acidrainPuddlesAniTimer < 10) { acidrainPuddlesAniTimer++; }
-	else { acidrainPuddlesAniTimer = 0; }
-	for (int i = 0; i < acidrainPuddles.size(); i++) {
+	if (acidrainPuddlesAniTimer < 5) { acidrainPuddlesAniTimer++; }
+	else
+	{
+		acidrainPuddlesAniTimer = 0;
 
-		if (acidrainPuddles[i].flag == false)acidrainPuddles[0].animTimer++;
+		if (foamAnimation < 10)
+		{
+			foamAnimation++;
+		}
+		else
+		{
+			foamAnimation = 5;
+		}
+		
+	}
+	int acidSize = acidrainPuddles.size();
+	for (int i = 0; i < acidSize; i++) {
+		if (acidrainPuddles[i].image < 5)
+		{
+			if (acidrainPuddles[i].animTimer < 6)
+			{
+				acidrainPuddles[i].animTimer++;
+			}
+			else
+			{
+				acidrainPuddles.at(i).animTimer = 0;
+				if (i < acidSize - 1)
+				{
+					if (acidrainPuddles.at(i + 1).image == 99)
+					{
+						acidrainPuddles.at(i + 1).image = 1;
+					}
+				}
+
+				if (acidrainPuddles[i].image < 4)
+				{
+					acidrainPuddles[i].image++;
+
+					/*else if (acidrain_puddles[i - 1].image < acidrain_puddles[i].image)
+					{
+						acidrain_puddles[i].image++;
+					}*/
+				}
+				else
+				{
+					acidrainPuddles[i].image = 1;
+				}
+
+			}
+		}
+
+		/*if (acidrainPuddles[i].flag == false)acidrainPuddles[0].animTimer++;
 		if (acidrainPuddles[0].animTimer > 120) {
 			acidrainPuddles[0].animTimer = 0;
 			acidrainPuddles[i].flag = true;
-		}
+		}*/
 		//é_ê´âJÇÃêÖÇΩÇ‹ÇË
 		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y - MAP_CEllSIZE / 2) && (playerMapY <= acidrainPuddles[i].y)) {
 			if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
