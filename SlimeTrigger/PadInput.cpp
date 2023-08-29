@@ -18,6 +18,10 @@ void PAD_INPUT::UpdateKey()
 	oldKey = nowKey;
 	nowKey.reset();
 
+	// 入力状態をリセット
+	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &input);
+
+	// 入力状態を更新
 	UpdateInputMode();
 
 	for (int i = 0; i < BUTTONS; ++i) {
