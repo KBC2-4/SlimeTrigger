@@ -16,10 +16,15 @@ PLAYER::PLAYER(STAGE* stage) {
 	mapX = 0;
 	mapY = 0;
 	life = MAX_LIFE;
+	
+	hasFinishedInertiaMove = true;
+	InertiaCount = 0.0f;
+	amountOfDeceleration = 0.0;
+	
 	jumpPower = 0.0f;
 	jumpVelocity = 0.0f;
 	jumpMode = 0;
-	jumpMoveX = 0;
+	jumpmoveDirection = 0;
 	jumpRequest = false;
 	isJump = false;
 	isGravity = true;
@@ -342,39 +347,33 @@ void PLAYER::Move()
 		input_lx = 20000;
 	}
 
-	//移動方向
-	/*if (input_lx > 0) {
-		move_x = 1.0f;
-	}*/
-	moveX = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
+	moveDirection = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
+
+	/*if (input_lx > 20000)moveDirection = 1.0f;		//ここがおかしいかコントローラーがおかしい
+	if (-10000 > input_lx)moveDirection = -1.0f;*/
 
 	//移動するとき
 	if (fabs(input_lx) > DEVIATION)
 	{
+		hasFinishedInertiaMove = false;
 		//ジャンプ中のとき
 		if (playerState == PLAYER_MOVE_STATE::JUMP || playerState == PLAYER_MOVE_STATE::FALL)
 		{
-			//if (jumpMoveX == 0) jumpMoveX = moveX;	// ジャンプの方向セット（-1　or　1）
-			jumpMoveX = moveX;
-			moveType = (jumpMoveX > 0) ? 0 : 1;		// 画像の向きの設定
+			jumpmoveDirection = moveDirection;
+			moveType = (jumpmoveDirection > 0) ? 0 : 1;		// 画像の向きの設定
 
-			// 停止ジャンプ・反対方向への移動時
-			/*if (jumpMode == 1 || jumpMoveX != moveX)
-			{
-				playerSpeed /= 2.0f;
-			}*/
 			if (jumpMode == 2)
 			{
-				playerSpeed /= 1.5f;
+				playerSpeed /= 1.3f;
 			}
 
-			playerX += jumpMoveX * playerSpeed;
+			playerX += jumpmoveDirection * playerSpeed;
 		}
 		else
 		{
-			moveType = (moveX > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
-			playerX += moveX * playerSpeed;
-			jumpMoveX = moveX;
+			moveType = (moveDirection > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
+			playerX += moveDirection * playerSpeed;
+			jumpmoveDirection = moveDirection;
 			playerState = PLAYER_MOVE_STATE::MOVE;	//ステートをMoveに切り替え
 			ChangeAnimation(PLAYER_ANIM_STATE::MOVE); //アニメーションの切り替え
 		}
@@ -382,34 +381,81 @@ void PLAYER::Move()
 	//移動してない時
 	else
 	{
-		moveX = 0;
-		//移動アニメーションを後半へ移行
-		int move = static_cast<int>(PLAYER_ANIM_STATE::MOVE);
-		if (animationState == PLAYER_ANIM_STATE::MOVE) {
-			int current_index = animation[move].currentIndex;
-			if (current_index == 0) {
+		//減速の慣性移動
+		if (hasFinishedInertiaMove == false) {
+			InertiaCount += 0.1 * moveDirection;
+			//ジャンプ中のとき
+			if (playerState == PLAYER_MOVE_STATE::JUMP || playerState == PLAYER_MOVE_STATE::FALL)
+			{
+				jumpmoveDirection = moveDirection;
+				moveType = (jumpmoveDirection > 0) ? 0 : 1;		// 画像の向きの設定
+
+				if (jumpMode == 2)
+				{
+					playerSpeed /= 1.3f;
+				}
+				amountOfDeceleration = jumpmoveDirection * playerSpeed - InertiaCount;
+				playerX += amountOfDeceleration;
+			}
+			else
+			{
+				moveType = (moveDirection > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
+				amountOfDeceleration = moveDirection * playerSpeed - InertiaCount;
+				playerX += amountOfDeceleration;
+				jumpmoveDirection = moveDirection;
+				playerState = PLAYER_MOVE_STATE::MOVE;	//ステートをMoveに切り替え
+				ChangeAnimation(PLAYER_ANIM_STATE::MOVE); //アニメーションの切り替え
+			}
+			//減速終了の合図
+			if (moveDirection == 1.0f) 
+			{
+				if (0 >= amountOfDeceleration) 
+				{
+					hasFinishedInertiaMove = true;
+					InertiaCount = 0.0f;
+				}
+			}
+			else if(moveDirection == -1.0f)
+			{
+				if (amountOfDeceleration >= 0) 
+				{
+					hasFinishedInertiaMove = true;
+					InertiaCount = 0.0f;
+				}
+			}
+		}
+		//完全に停止した時
+		else 
+		{
+			moveDirection = 0;
+			//移動アニメーションを後半へ移行
+			int move = static_cast<int>(PLAYER_ANIM_STATE::MOVE);
+			if (animationState == PLAYER_ANIM_STATE::MOVE) {
+				int current_index = animation[move].currentIndex;
+				if (current_index == 0) {
+					ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
+				}
+				else if (current_index < 10) {
+					animation[move].currentIndex =
+						(animation[move].animationIndexArray.size() - current_index) - 1;
+				}
+			}
+			else {
 				ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
 			}
-			else if (current_index < 10) {
-				animation[move].currentIndex =
-					(animation[move].animationIndexArray.size() - current_index) - 1;
+			//ジャンプ中じゃないかったらステートを切り替える
+			if (playerState != PLAYER_MOVE_STATE::JUMP && playerState != PLAYER_MOVE_STATE::FALL) {
+				jumpmoveDirection = 0;
+				playerState = PLAYER_MOVE_STATE::IDLE;	//ステートをIdleに切り替え
 			}
-		}
-		else {
-			ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
-		}
-		//ジャンプ中じゃないかったらステートを切り替える
-		if (playerState != PLAYER_MOVE_STATE::JUMP && playerState != PLAYER_MOVE_STATE::FALL) {
-			jumpMoveX = 0;
-			playerState = PLAYER_MOVE_STATE::IDLE;	//ステートをIdleに切り替え
 		}
 	}
 
 	if (playerX < oldPlayerX) {
-		moveX = -1.0f;
+		moveDirection = -1.0f;
 	}
 	else if (playerX > oldPlayerX) {
-		moveX = 1.0f;
+		moveDirection = 1.0f;
 	}
 }
 
@@ -443,7 +489,7 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 					//フックの角度
 					float angle = atan2f(diff_y, diff_x);
 					//移動の計算
-					hookMoveX = cosf(angle) * playerSpeed * 3;
+					hookmoveDirection = cosf(angle) * playerSpeed * 3;
 					hookMoveY = sinf(angle) * playerSpeed * 3;
 					//プレイヤーの現在の位置
 					float x = playerX;
@@ -453,7 +499,7 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 						if (stage->GetMapData(y / MAP_CEllSIZE, x / MAP_CEllSIZE) == 72) {
 							break;
 						}
-						x += hookMoveX;
+						x += hookmoveDirection;
 						y += hookMoveY;
 					}
 					//配列に変換
@@ -493,10 +539,10 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 				//フック移動してない時
 				if (!isHookMove) {
 					//移動方向の計算
-					hookMoveX = cosf(hookAngle - 90.0f * (DX_PI_F / 180.0f)) * SPEED * 3;
+					hookmoveDirection = cosf(hookAngle - 90.0f * (DX_PI_F / 180.0f)) * SPEED * 3;
 					hookMoveY = sinf(hookAngle - 90.0f * (DX_PI_F / 180.0f)) * SPEED * 3;
 					//慣性的な奴
-					jumpMoveX = hookMoveX > 0 ? 1 : -1;
+					jumpmoveDirection = hookmoveDirection > 0 ? 1 : -1;
 					jumpMode == 2;
 					//PlaySoundMem(hookMoveSe, DX_PLAYTYPE_BACK);
 				}
@@ -505,7 +551,7 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 				}
 				//フックについてない時
 				if (hookDistance > 40) {
-					playerX += hookMoveX;
+					playerX += hookmoveDirection;
 					playerY += hookMoveY;
 				}
 				//フックについたら移動処理の終了
@@ -579,17 +625,17 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 			grabbedHookArray.push_back(hookIndex);
 
 			if (input_lx < -DEVIATION) {
-				jumpMoveX = -1;
+				jumpmoveDirection = -1;
 			}
 			else if (input_lx > DEVIATION) {
-				jumpMoveX = 1;
+				jumpmoveDirection = 1;
 			}
 			else {
 				if (nX < 0) {
-					jumpMoveX = -1;
+					jumpmoveDirection = -1;
 				}
 				else {
-					jumpMoveX = 1;
+					jumpmoveDirection = 1;
 				}
 			}
 			if (playerState == PLAYER_MOVE_STATE::HOOK) {
@@ -861,14 +907,14 @@ void PLAYER::Hit(ELEMENT* element, STAGE* stage) {
 					}
 					if (hitCeil && !isGround && y == i) continue;
 					//ドアの判定
-					if ((block_type == 66 || block_type == 67) && moveX > 0) {
+					if ((block_type == 66 || block_type == 67) && moveDirection > 0) {
 						if (fabsf(player_left - block_right) < playerSpeed) {
 							return;
 						}
 					}
 					playerX = oldPlayerX;
 					if (isHear) {
-						playerX -= moveX * playerSpeed * 2.0f;
+						playerX -= moveDirection * playerSpeed * 2.0f;
 					}
 					break;
 				}

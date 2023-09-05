@@ -330,9 +330,7 @@ AbstractScene* GAMEMAIN::Update()
 		sprintf_s(dis_start_time, sizeof(dis_start_time), "%d", startTime / 60);
 
 		//プレイヤーのX座標の動きを止める
-		//int playerX = player->GetPlayerX();
 		player->Update(element, stage, tomaton, tomatonCount, true);
-		//player->SetPlayerX(playerX);
 
 		//START音再生
 		if (startTime == 0) {

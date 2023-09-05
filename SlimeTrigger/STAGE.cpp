@@ -351,10 +351,10 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 /// <summary>
 /// 画面スクロール座標XのSetter
 /// </summary>
-bool STAGE::SetScrollPos(int moveX) {
-	scrollX -= 5 * moveX;
+bool STAGE::SetScrollPos(int moveDirection) {
+	scrollX -= 5 * moveDirection;
 	if (scrollX >= 0 || scrollX <= -(80 * static_cast<int>(mapData.at(0).size()) - 640)) {
-		scrollX += 5 * moveX;
+		scrollX += 5 * moveDirection;
 		return true;
 	}
 	return false;
