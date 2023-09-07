@@ -2,7 +2,9 @@
 #include"DxLib.h"
 #include <bitset>
 
-#define BUTTONS 16
+class PLAYER;
+
+constexpr auto BUTTONS = 16; //ボタンの数
 
 class PAD_INPUT
 {
@@ -21,16 +23,29 @@ private:
 	static DINPUT_JOYSTATE dInput;
 	// 入力デバイスの切り替え状態
 	static InputMode currentInputMode;
+	// プレイヤーが投げる状態
+	static bool isThrowing;
 
 public:
 	PAD_INPUT(); //コンストラクタ
 	void UpdateKey();	//パッド入力の更新
 	/**
 	* @brief	DirectInputからXinputへの変換器
-	* @param input DINPUT_JOYSTATE dInput構造体
+	* @param dInput DINPUT_JOYSTATE dInput構造体
 	*/
 	void InputConverter(const DINPUT_JOYSTATE& dInput) const;
+
+	/**
+	 * \brief Xinputからキーボード入力への変換器
+	 * \param input XINPUT_STATE input構造体
+	 */
 	void KeyInput(XINPUT_STATE& input) const;
+
+	/**
+	 * \brief 右スティックの入力をプレイヤーの座標とマウスカーソルの座標の角度に変換
+	 * \param player プレイヤー
+	 */
+	static void ConvertStickInputToMouseCursorAngle(PLAYER& player);
 	static int GetPadThumbLX(){ return input.ThumbLX; }	 //左スティックの横軸値
 	static int GetPadThumbLY() { return input.ThumbLY; }	//左スティックの縦軸値
 	static int GetPadThumbRX() { return input.ThumbRX; }	//右スティックの横軸値
@@ -69,7 +84,7 @@ public:
 	/**
 	* @brief 入力デバイスの切り替え状態更新
 	*/
-	void UpdateInputMode();
+	void UpdateInputMode() const;
 
 };
 

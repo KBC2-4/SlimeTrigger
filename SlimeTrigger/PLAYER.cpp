@@ -178,6 +178,13 @@ PLAYER::~PLAYER() {
 /// </summary>
 void PLAYER::Update(ELEMENT* element, STAGE* stage, TOMATO** tomaton, int tomatonCount, bool is_stay) {
 
+	// キーボード入力の場合
+	if(PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+	{
+		//　右スティックの入力をプレイヤーの座標とマウスカーソルの座標の角度に変換
+		PAD_INPUT::ConvertStickInputToMouseCursorAngle(*this);
+	}
+
 	ChangeVolumeSoundMem(Option::GetSEVolume(), damageSE);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), jumpSE);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), landingSE);
@@ -616,7 +623,7 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 /// </summary>
 void PLAYER::JumpMove() {
 #ifdef _DEBUG
-	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_Y || CheckHitKey(KEY_INPUT_SPACE))return;		//デバッグ用
+	if (CheckHitKey(KEY_INPUT_G))return;		//デバッグ用
 #endif
 	//Aボタンを押したとき
 	if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B) || jumpRequest) {

@@ -1,6 +1,7 @@
 #include "PadInput.h"
 #include <array>
-#include <cmath>
+#include <corecrt_math_defines.h>
+#include "Player.h"
 
 
 std::bitset<BUTTONS> PAD_INPUT::nowKey;
@@ -8,6 +9,7 @@ std::bitset<BUTTONS> PAD_INPUT::oldKey;
 XINPUT_STATE PAD_INPUT::input;
 DINPUT_JOYSTATE PAD_INPUT::dInput;
 PAD_INPUT::InputMode PAD_INPUT::currentInputMode = InputMode::KEYBOARD;
+bool PAD_INPUT::isThrowing = false;
 
 
 PAD_INPUT::PAD_INPUT() = default;
@@ -56,7 +58,7 @@ void PAD_INPUT::InputConverter(const DINPUT_JOYSTATE& dInput) const
 	for (int i = 0; i < 10; ++i) {
 		input.Buttons[xInputButtonIndices[i]] = (dInput.Buttons[dInputButtonIndices[i]] == 128) ? 1 : 0;
 	}
-
+	
 	// トリガーの変換
 	std::array <unsigned char*, 2> triggers = { &input.LeftTrigger, &input.RightTrigger };
 	for (int i = 0; i < 2; ++i) {
@@ -67,7 +69,7 @@ void PAD_INPUT::InputConverter(const DINPUT_JOYSTATE& dInput) const
 void PAD_INPUT::KeyInput(XINPUT_STATE& input) const
 {
 
-	const std::array <int, 14> KeyIndices = { 16, 8192, 3, 4, 6, 7, 4096, 9, 10, 11, 1, 2, 4, 8 };
+	const std::array <int, 14> KeyIndices = { 16, 8192, 3, 4, 6, 7, 4096, 1096, 10, 11, 256, 128, 512, 2048 };
 	const std::array <int, 14> xInputButtonIndices = { XINPUT_BUTTON_A, XINPUT_BUTTON_B, XINPUT_BUTTON_Y, XINPUT_BUTTON_X,
 		XINPUT_BUTTON_LEFT_SHOULDER, XINPUT_BUTTON_RIGHT_SHOULDER,
 		XINPUT_BUTTON_BACK, XINPUT_BUTTON_START,
@@ -80,15 +82,67 @@ void PAD_INPUT::KeyInput(XINPUT_STATE& input) const
 	}
 
 	//printfDx("%d\n", GetJoypadInputState(DX_INPUT_KEY));
-	//printfDx("%d\n", GetJoypadInputState(DX_INPUT_PAD1));
+
+	// マウスの右クリックで右ショルダーを押す
+	if ((GetMouseInput() & MOUSE_INPUT_RIGHT) != 0) {
+		input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER] = 1;
+	}
+
 }
 
-void PAD_INPUT::UpdateInputMode()
+void PAD_INPUT::ConvertStickInputToMouseCursorAngle(PLAYER& player)
+{
+
+	isThrowing = (GetMouseInput() & MOUSE_INPUT_LEFT) != 0;
+
+
+	if(!isThrowing)return;;
+	// 右スティック
+	std::array<short*, 2> thumbValues = { &input.ThumbRX, &input.ThumbRY };
+
+	struct PlayerPoint {
+		float x;
+		float y;
+	};
+
+	struct MousePoint {
+		int x;
+		int y;
+	};
+
+	PlayerPoint playerPoint = { player.GetPlayerX(), player.GetPlayerY() };
+	MousePoint mousePoint = { 0, 0 };
+
+	// マウスの位置を取得
+	GetMousePoint(&mousePoint.x, &mousePoint.y);
+
+	// プレイヤーとマウスカーソルの座標の距離差を計算
+	float dx = static_cast<float>(mousePoint.x - playerPoint.x);
+	float dy = static_cast<float>(mousePoint.y - playerPoint.y);
+
+	// ベクトルの角度を計算
+	float angle = atan2(-dy, dx);
+
+	// 角度を度数法に変換
+	//float angleInDegrees = angle * (180.0 / M_PI);
+
+	// スケールを調整（-32768 ～ 32767）
+	short thumbRX = static_cast<short>(cos(angle) * 32767);
+	short thumbRY = static_cast<short>(sin(angle) * 32767);
+
+
+	*thumbValues[0] = thumbRX;
+	*thumbValues[1] = thumbRY;
+}
+
+void PAD_INPUT::UpdateInputMode() const
 {
 	// スティックの感度
 	const int stick_sensitivity = 20000;
 
 	if (CheckHitKeyAll(DX_CHECKINPUT_PAD)) {
+		// マウスカーソルを非表示にする
+		//SetMouseDispFlag(FALSE);
 		// XInputが使用可能かチェック
 		if (CheckJoypadXInput(DX_INPUT_KEY_PAD1)) {
 
@@ -114,7 +168,9 @@ void PAD_INPUT::UpdateInputMode()
 		}
 
 	}
-	if (CheckHitKeyAll(DX_CHECKINPUT_KEY)) {
+	if (CheckHitKeyAll(DX_CHECKINPUT_KEY) || CheckHitKeyAll(DX_CHECKINPUT_MOUSE)) {
+		// マウスカーソルを表示する
+		//SetMouseDispFlag(TRUE);
 		// キーボード入力
 		KeyInput(input);
 		currentInputMode = InputMode::KEYBOARD;

@@ -224,10 +224,18 @@ void Title::Draw()const
 			}
 			else {
 
-				DrawCircleAA(530.0f, 311.0f, 30, 20, 0xFFFFFF, 1);
+				if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
+					DrawCircleAA(530.0f, 311.0f, 30, 20, 0xFFFFFF, 1);
+					DrawStringToHandle(510, 283, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
+					DrawStringToHandle(570, 280, "‚ÅŒˆ’è", 0xEBA05E, guidFont, 0xFFFFFF);
+				}
+				else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD)) {
+					int stringX = 530;
+					stringX = Option::GetInputMode() ? 370 : 510;
+					DrawStringToHandle(stringX, 283, Option::GetInputMode() ? "SPACE" : "Z", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
+					DrawStringToHandle(570, 280, "‚ÅŒˆ’è", 0xEBA05E, guidFont, 0xFFFFFF);
 
-				DrawStringToHandle(510, 283, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				DrawStringToHandle(570, 280, "‚ÅŒˆ’è", 0xEBA05E, guidFont, 0xFFFFFF);
+				}
 			}
 		}
 	}
