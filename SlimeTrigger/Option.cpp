@@ -71,8 +71,8 @@ void Option::Update() {
 		// 操作制限のカウンターをリセット
 		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetPadThumbLY() < -20000)
 			|| (PAD_INPUT::GetPadThumbLX() > 20000) || (PAD_INPUT::GetPadThumbLX() < -20000)
-			|| (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN)
-			|| (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_LEFT) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_RIGHT)) {
+			|| PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_UP) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_DOWN)
+			|| PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_LEFT) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_RIGHT)) {
 				inputMargin = 0;
 		}
 
@@ -87,22 +87,22 @@ void Option::Update() {
 			StartJoypadVibration(DX_INPUT_PAD1, 50, 100, -1);
 		}
 
-		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP)) {
+		if ((PAD_INPUT::GetPadThumbLY() > 20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_UP)) {
 			selectMenu = (selectMenu + 3) % 4; PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 		}
 
-		if ((PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN)) {
+		if ((PAD_INPUT::GetPadThumbLY() < -20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_DOWN)) {
 			selectMenu = (selectMenu + 1) % 4; PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE); StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 		}
 
-		if ((PAD_INPUT::GetPadThumbLX() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_RIGHT)) {
+		if ((PAD_INPUT::GetPadThumbLX() > 20000) || (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_RIGHT))) {
 			if (static_cast<MENU>(selectMenu) == MENU::BGM && bgmVolume < 255 * 90 / 100) { bgmVolume += 255 * 10 / 100; }
 			else if (static_cast<MENU>(selectMenu) == MENU::SE && seVolume < 255 * 90 / 100) { seVolume += 255 * 10 / 100; }
 
 			ChangeVolumeSoundMem(GetSEVolume() * 1.6, cursorMoveSe);
 		}
 
-		if ((PAD_INPUT::GetPadThumbLX() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_LEFT)) {
+		if ((PAD_INPUT::GetPadThumbLX() < -20000) || (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_LEFT))) {
 			if (static_cast<MENU>(selectMenu) == MENU::BGM && bgmVolume > 255 * 10 / 100) { bgmVolume -= 255 * 10 / 100; }
 			else if (static_cast<MENU>(selectMenu) == MENU::SE && seVolume > 255 * 10 / 100) { seVolume -= 255 * 10 / 100; }
 		}
@@ -115,7 +115,7 @@ void Option::Update() {
 
 
 	//Aボタンでミュートまたは50%に設定する
-	if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+	if ((PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A))) {
 
 		if (static_cast<MENU>(selectMenu) == MENU::WindowMode) {
 			PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
@@ -152,7 +152,7 @@ void Option::Update() {
 
 
 	//入力方式の切り替え
-	if ((PAD_INPUT::GetNowKey() == XINPUT_BUTTON_BACK) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+	if (PAD_INPUT::OnButton(XINPUT_BUTTON_BACK)) {
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(okSe)) {}
@@ -161,7 +161,7 @@ void Option::Update() {
 	}
 
 	//戻る(戻るメニューにカーソルを合わせなくても)
-	if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+	if ((PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B))) {
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(okSe)) {}

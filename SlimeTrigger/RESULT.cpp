@@ -123,7 +123,7 @@ AbstractScene* RESULT::Update()
 		guideTimer = 0;
 	}
 
-	if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A) && PAD_INPUT::GetPadState() == PAD_STATE::ON)
+	if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A))
 	{
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_se‚ª–Â‚èI‚í‚Á‚Ä‚©‚ç‰æ–Ê„ˆÚ‚·‚éB

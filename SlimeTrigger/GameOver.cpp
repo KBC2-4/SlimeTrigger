@@ -83,7 +83,7 @@ AbstractScene* GameOver::Update()
 
 		/*上入力かつWaitTimeが20より大きい時cursorを上に、
 		最上の場合は下へ*/
-		if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP))
+		if ((PAD_INPUT::GetPadThumbLY() > 20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_UP))
 		{
 			PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
@@ -93,7 +93,7 @@ AbstractScene* GameOver::Update()
 
 		/*下入力かつWaitTimeが20より大きい時cursorを下に、
 		最上の場合は上へ*/
-		if ((PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN))
+		if ((PAD_INPUT::GetPadThumbLY() < -20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_DOWN))
 		{
 			PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 			StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
@@ -104,7 +104,7 @@ AbstractScene* GameOver::Update()
 	}
 
 
-	if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON))
+	if ((PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)))
 	{
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
