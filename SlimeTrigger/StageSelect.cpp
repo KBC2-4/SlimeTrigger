@@ -135,7 +135,7 @@ STAGE_SELECT::~STAGE_SELECT()
 AbstractScene* STAGE_SELECT::Update()
 {
 	//BACKボタンでタイトルへ戻る
-	if ((PAD_INPUT::GetNowKey() == XINPUT_BUTTON_BACK) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+	if (PAD_INPUT::OnButton(XINPUT_BUTTON_BACK)) {
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(okSe)) {}
@@ -180,36 +180,36 @@ AbstractScene* STAGE_SELECT::Update()
 
 	//戻る
 	if ((playerMapX >= stageReturn.x - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new Title(); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new Title(); }
 	}
 
 	//ステージ1
 	if ((playerMapX >= stageMove[1].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[1].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage01"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage01"); }
 	}
 
 
 	//ステージ2
 	if ((playerMapX >= stageMove[2].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[2].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage02"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage02"); }
 	}
 
 
 	//ステージ3
 	if ((playerMapX >= stageMove[3].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[3].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage03"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage03"); }
 	}
 
 #ifdef DEBUG_STAGE
 	//旧ステージ1
 	if ((playerMapX >= 11 * MAP_CEllSIZE - MAP_CEllSIZE / 2) && (playerMapX <= 11 * MAP_CEllSIZE + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage04"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage04"); }
 	}
 
 
 	//デバッグステージ
 	if ((playerMapX >= 2 * MAP_CEllSIZE - MAP_CEllSIZE / 2) && (playerMapX <= 2 * MAP_CEllSIZE + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "DebugStage"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "DebugStage"); }
 	}
 #endif // DEBUG_STAGE
 
@@ -326,6 +326,16 @@ void STAGE_SELECT::Draw() const
 	DrawStringToHandle(guid_x - 190, 668, "ジャンプ", guid_color, buttonGuidFont, 0x000000);
 	DrawCircleAA(guid_x - 210, 680, 15, 20, 0xFFFFFF, 1);
 	DrawStringToHandle(guid_x - 217, 668, Option::GetInputMode() ? "A" : "B", Option::GetInputMode() ? A_COLOR : B_COLOR, buttonGuidFont, 0xFFFFFF);
+
+	// ガイド表示
+	/*if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD)) {
+		DrawStringToHandle(guid_x + stage->GetScrollX() - 7, 200 + stage->GetScrollY() - 12, "A", A_COLOR, buttonGuidFont, 0xFFFFFF);
+		DrawStringToHandle(200, 300, "KEYBOARD", 0x00ffff, guidFont);
+	}
+	else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
+		DrawStringToHandle(guid_x + stage->GetScrollX() - 7, 200 + stage->GetScrollY() - 12, "B", B_COLOR, buttonGuidFont, 0xFFFFFF);
+		DrawStringToHandle(200, 300, "GAMEPAD", 0x00ffff, guidFont);
+	}*/
 
 	//戻る
 	if ((playerMapX >= (stageReturn.x) - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
@@ -452,4 +462,5 @@ void STAGE_SELECT::DrawStageGuid(const char* stageName, const float x, const flo
 
 	DrawCircleAA(x + stage->GetScrollX(), y + stage->GetScrollY(), 15, 20, guidTimer < 50 ? 0xFFFFFF : 0xFFCB33, 1);
 	DrawStringToHandle(x + stage->GetScrollX() - 7, y + stage->GetScrollY() - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
+
 }
