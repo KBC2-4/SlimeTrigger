@@ -349,13 +349,15 @@ void PLAYER::Move()
 
 	//moveDirection = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
 
-	if (input_lx > 10000)moveDirection = 1.0f;		//ここがおかしいかコントローラーがおかしい
-	if (-10000 > input_lx)moveDirection = -1.0f;
+	if (input_lx > DEVIATION)moveDirection = 1.0f;		//ここがおかしいかコントローラーがおかしい
+	if (-DEVIATION > input_lx)moveDirection = -1.0f;
 
 	//移動するとき
 	if (fabs(input_lx) > DEVIATION)
 	{
 		hasFinishedInertiaMove = false;
+		InertiaCount = 0.0f;
+		amountOfDeceleration = 0.0f;
 		//ジャンプ中のとき
 		if (playerState == PLAYER_MOVE_STATE::JUMP || playerState == PLAYER_MOVE_STATE::FALL)
 		{
@@ -400,6 +402,7 @@ void PLAYER::Move()
 			else
 			{
 				moveType = (moveDirection > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
+				
 				amountOfDeceleration = moveDirection * playerSpeed + InertiaCount;
 				
 				playerX += amountOfDeceleration;
