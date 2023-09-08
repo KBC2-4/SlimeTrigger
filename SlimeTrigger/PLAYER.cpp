@@ -347,10 +347,10 @@ void PLAYER::Move()
 		input_lx = 20000;
 	}
 
-	moveDirection = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
+	//moveDirection = input_lx > 0 ? 1.0f : -1.0f;	//移動方向のセット
 
-	/*if (input_lx > 20000)moveDirection = 1.0f;		//ここがおかしいかコントローラーがおかしい
-	if (-10000 > input_lx)moveDirection = -1.0f;*/
+	if (input_lx > 10000)moveDirection = 1.0f;		//ここがおかしいかコントローラーがおかしい
+	if (-10000 > input_lx)moveDirection = -1.0f;
 
 	//移動するとき
 	if (fabs(input_lx) > DEVIATION)
@@ -359,10 +359,10 @@ void PLAYER::Move()
 		//ジャンプ中のとき
 		if (playerState == PLAYER_MOVE_STATE::JUMP || playerState == PLAYER_MOVE_STATE::FALL)
 		{
-			jumpmoveDirection = moveDirection;
+			jumpmoveDirection = moveDirection;				//ジャンプ中の場合、変数[jumpmoveDirection](ジャンプの方向)を入れなおす
 			moveType = (jumpmoveDirection > 0) ? 0 : 1;		// 画像の向きの設定
 
-			if (jumpMode == 2)
+			if (jumpMode == 2)					
 			{
 				playerSpeed /= 1.3f;
 			}
@@ -383,25 +383,27 @@ void PLAYER::Move()
 	{
 		//減速の慣性移動
 		if (hasFinishedInertiaMove == false) {
-			InertiaCount += 0.1 * moveDirection;
+			InertiaCount += -0.1 * moveDirection;		//慣性用の減速量を毎フレーム増やす
 			//ジャンプ中のとき
 			if (playerState == PLAYER_MOVE_STATE::JUMP || playerState == PLAYER_MOVE_STATE::FALL)
 			{
-				jumpmoveDirection = moveDirection;
+				jumpmoveDirection = moveDirection;				//ジャンプ中の場合、変数[jumpmoveDirection](ジャンプの方向)を入れなおす
 				moveType = (jumpmoveDirection > 0) ? 0 : 1;		// 画像の向きの設定
 
-				if (jumpMode == 2)
+				if (jumpMode == 2)								//横移動中のジャンプの場合は横の移動量を減らす
 				{
 					playerSpeed /= 1.3f;
 				}
-				amountOfDeceleration = jumpmoveDirection * playerSpeed - InertiaCount;
+				amountOfDeceleration = jumpmoveDirection * playerSpeed + InertiaCount;		//減速量の計算
 				playerX += amountOfDeceleration;
 			}
 			else
 			{
 				moveType = (moveDirection > 0) ? 0 : 1;				//移動向きのセット(0: 右, 1: 左)
-				amountOfDeceleration = moveDirection * playerSpeed - InertiaCount;
+				amountOfDeceleration = moveDirection * playerSpeed + InertiaCount;
+				
 				playerX += amountOfDeceleration;
+				
 				jumpmoveDirection = moveDirection;
 				playerState = PLAYER_MOVE_STATE::MOVE;	//ステートをMoveに切り替え
 				ChangeAnimation(PLAYER_ANIM_STATE::MOVE); //アニメーションの切り替え
@@ -411,6 +413,7 @@ void PLAYER::Move()
 			{
 				if (0 >= amountOfDeceleration) 
 				{
+					amountOfDeceleration = 0.0f;
 					hasFinishedInertiaMove = true;
 					InertiaCount = 0.0f;
 				}
@@ -419,6 +422,7 @@ void PLAYER::Move()
 			{
 				if (amountOfDeceleration >= 0) 
 				{
+					amountOfDeceleration = 0.0f;
 					hasFinishedInertiaMove = true;
 					InertiaCount = 0.0f;
 				}
@@ -818,13 +822,13 @@ void PLAYER::Hit(ELEMENT* element, STAGE* stage) {
 	float player_right = playerX + 30 * playerScale;
 	float old_player_left = oldPlayerX - 30 * playerScale;
 	float old_player_right = oldPlayerX + 30 * playerScale;
-	float player_top = (playerY - (playerScale - 0.6f) * MAP_CEllSIZE / 2);
-	float player_bottom = (playerY + MAP_CEllSIZE / 2);
+	float playerTop = (playerY - (playerScale - 0.6f) * MAP_CEllSIZE / 2);
+	float playerBottom = (playerY + MAP_CEllSIZE / 2);
 
 	//天井の判定
-	bool hit_ceil_center = stage->HitMapDat((int)(player_top / MAP_CEllSIZE), (int)(oldPlayerX / MAP_CEllSIZE));
-	bool hit_ceil_left = stage->HitMapDat((int)(player_top / MAP_CEllSIZE), (int)((old_player_left + playerSpeed) / MAP_CEllSIZE));
-	bool hit_ceil_right = stage->HitMapDat((int)(player_top / MAP_CEllSIZE), (int)((old_player_right - playerSpeed) / MAP_CEllSIZE));
+	bool hit_ceil_center = stage->HitMapDat((int)(playerTop / MAP_CEllSIZE), (int)(oldPlayerX / MAP_CEllSIZE));
+	bool hit_ceil_left = stage->HitMapDat((int)(playerTop / MAP_CEllSIZE), (int)((old_player_left + playerSpeed) / MAP_CEllSIZE));
+	bool hit_ceil_right = stage->HitMapDat((int)(playerTop / MAP_CEllSIZE), (int)((old_player_right - playerSpeed) / MAP_CEllSIZE));
 	hitCeil = hit_ceil_center || hit_ceil_left || hit_ceil_right;
 
 	//地面の判定
@@ -833,20 +837,20 @@ void PLAYER::Hit(ELEMENT* element, STAGE* stage) {
 		isGround = true;
 		return;
 	}
-	if (stage->HitMapDat((int)(player_bottom / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE)) &&
-		!stage->HitMapDat((int)(player_top / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE)) &&
+	if (stage->HitMapDat((int)(playerBottom / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE)) &&
+		!stage->HitMapDat((int)(playerTop / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE)) &&
 		!stage->HitMapDat((int)(playerY / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE))) {
 		isGround = true;
 	}
 	float diff_y = fabsf(playerY - oldPlayerY);
 	if (fmodf(playerY, MAP_CEllSIZE / 2) <= diff_y) {
-		if (stage->HitMapDat((int)(player_bottom / MAP_CEllSIZE), (int)(player_left / MAP_CEllSIZE)) &&
-			!stage->HitMapDat((int)(player_top / MAP_CEllSIZE), (int)(player_left / MAP_CEllSIZE)) &&
+		if (stage->HitMapDat((int)(playerBottom / MAP_CEllSIZE), (int)(player_left / MAP_CEllSIZE)) &&
+			!stage->HitMapDat((int)(playerTop / MAP_CEllSIZE), (int)(player_left / MAP_CEllSIZE)) &&
 			!stage->HitMapDat((int)(playerY / MAP_CEllSIZE), (int)(player_left / MAP_CEllSIZE))) {
 			isGround = true;
 		}
-		if (stage->HitMapDat((int)(player_bottom / MAP_CEllSIZE), (int)(player_right / MAP_CEllSIZE)) &&
-			!stage->HitMapDat((int)(player_top / MAP_CEllSIZE), (int)(player_right / MAP_CEllSIZE)) &&
+		if (stage->HitMapDat((int)(playerBottom / MAP_CEllSIZE), (int)(player_right / MAP_CEllSIZE)) &&
+			!stage->HitMapDat((int)(playerTop / MAP_CEllSIZE), (int)(player_right / MAP_CEllSIZE)) &&
 			!stage->HitMapDat((int)(playerY / MAP_CEllSIZE), (int)(player_right / MAP_CEllSIZE))) {
 			isGround = true;
 		}
@@ -854,8 +858,8 @@ void PLAYER::Hit(ELEMENT* element, STAGE* stage) {
 
 	//マンホールの判定
 	int block_type_center = stage->GetMapData((int)(playerY / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE));
-	int block_type_top = stage->GetMapData((int)(player_top / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE));
-	int block_type_bottom = stage->GetMapData((int)(player_bottom / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE));
+	int block_type_top = stage->GetMapData((int)(playerTop / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE));
+	int block_type_bottom = stage->GetMapData((int)(playerBottom / MAP_CEllSIZE), (int)(playerX / MAP_CEllSIZE));
 	if (block_type_center == 98 || block_type_top == 98 || block_type_bottom == 98) {
 		float diff = fabsf((float)((int)(playerX / MAP_CEllSIZE) * MAP_CEllSIZE) - player_left);
 		if (diff < playerSpeed) {
@@ -897,9 +901,9 @@ void PLAYER::Hit(ELEMENT* element, STAGE* stage) {
 			float block_bottom = block_top + MAP_CEllSIZE;
 
 			if (player_right > block_left && player_left < block_right) {
-				if (player_bottom > block_top && player_top < block_bottom) {
+				if (playerBottom > block_top && playerTop < block_bottom) {
 					int block_type = stage->GetMapData(i, j);
-					int y = static_cast<int>(player_top / MAP_CEllSIZE);
+					int y = static_cast<int>(playerTop / MAP_CEllSIZE);
 					//死判定
 					if (block_type == -1) {
 						playerState = PLAYER_MOVE_STATE::DEAD;
