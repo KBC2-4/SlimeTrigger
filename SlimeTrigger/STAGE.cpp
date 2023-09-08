@@ -365,7 +365,7 @@ bool STAGE::SetScrollPos(int moveX) {
 /// </summary>
 bool STAGE::HitMapDat(int y, int x) {
 #ifdef _DEBUG
-	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_Y || CheckHitKey(KEY_INPUT_Z))return false;		//デバッグ用
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y) || CheckHitKey(KEY_INPUT_Z))return false;		//デバッグ用
 #endif
 	int block_type = GetMapData(y, x);
 	if (block_type == temporaryHit) { return true; }
