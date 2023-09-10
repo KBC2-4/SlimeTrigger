@@ -20,7 +20,6 @@
 STAGE::STAGE(const char* stageName, bool restert) {
 	//**mapData = 0;
 	*blockImage1 = 0;
-	*stageImage = 0;
 	scrollX = 0;
 	scrollY = 0;
 	scrollSpeedX = 5;
@@ -32,6 +31,31 @@ STAGE::STAGE(const char* stageName, bool restert) {
 	playerVectorX = 0;
 	playerVectorY = 0;
 
+
+	//îwåiâÊëúì«Ç›çûÇ›
+	if (stageName == "Stage01") {
+
+		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage1.png";
+		}
+	}
+	else if (stageName == "Stage02") {
+
+		if ((backGraundImage[1] = LoadGraph("Resource/Images/Stage/BackImage2.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage2.png";
+		}
+	}
+	else if (stageName == "Stage03") {
+
+		if ((backGraundImage[2] = LoadGraph("Resource/Images/Stage/BackImage3.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage2.png";
+		}
+	}
+	else {
+		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage1.png";
+		}
+	}
 
 	if (LoadDivGraph("Resource/Images/Stage/map_chips.png", 110, 10, 11, 80, 80, blockImage1) == -1) {
 		throw "Resource/Images/Stage/map_chips.png";
@@ -85,6 +109,19 @@ STAGE::~STAGE() {
 		DeleteGraph(blockImage1[i]);
 	}
 	DeleteSoundMem(halfWayPointSe);
+
+	if (stageName == "Stage01") {
+		DeleteGraph(backGraundImage[0]);
+	}
+	else if (stageName == "Stage02") {
+		DeleteGraph(backGraundImage[1]);
+	}
+	else if (stageName == "Stage03") {
+		DeleteGraph(backGraundImage[2]);
+	}
+	else {
+		DeleteGraph(backGraundImage[0]);
+	}
 }
 
 /// <summary>
@@ -104,6 +141,35 @@ void STAGE::Update(PLAYER* player, ELEMENT* element) {
 /// ÉXÉeÅ[ÉWÇÃï`âÊ
 /// </summary>
 void STAGE::Draw(ELEMENT* element)const {
+
+	//ÉXÉeÅ[ÉWîwåi
+	if (stageName == "Stage01") {
+		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+	}
+	else if (stageName == "Stage02") {
+		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[1], FALSE);
+		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[1], FALSE);
+	}
+	else if (stageName == "Stage03") {
+		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[2], FALSE);
+		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[2], FALSE);
+	}
+	else {
+		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+	}
+
+	//ínâ∫îwåiï`âÊ
+	if (stageName == "Stage01") {
+		//ÉXÉeÅ[ÉWÇP
+		DrawBoxAA(scrollX + 6880, scrollY + 1380, scrollX + 10640, scrollY + 1900, 0x20251F, TRUE);
+	}
+	else if (stageName == "Stage03") {
+		//ÉXÉeÅ[ÉW3
+		DrawBoxAA(0, scrollY + 1380, scrollX + 5120, scrollY + 4800, 0x20251F, TRUE);
+	}
+
 
 	for (int i = 0; i < mapData.size(); i++) {
 		for (int j = 0; j < mapData.at(0).size(); j++) {
@@ -149,7 +215,6 @@ void STAGE::Draw(ELEMENT* element)const {
 		if (halfWayPoint == false) { DrawGraphF(halWayPointBox.x + scrollX, halWayPointBox.y + scrollY, blockImage1[88], TRUE); }
 		else { DrawGraphF(halWayPointBox.x + scrollX, halWayPointBox.y + scrollY, blockImage1[89], TRUE); }
 	}
-
 }
 
 /// <summary>

@@ -240,14 +240,10 @@ AbstractScene* STAGE_SELECT::Update()
 
 void STAGE_SELECT::Draw() const
 {
-	//ステージ背景
-	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-
-
 	//ステージの描画
-	element->Draw(stage, player);
 	stage->Draw(element);
+	element->Draw(stage, player);
+	
 
 	for (int i = 0; i < lemonerCount; i++)
 	{
