@@ -514,10 +514,6 @@ AbstractScene* GAMEMAIN::Update()
 
 void GAMEMAIN::Draw() const
 {
-	for (int i = 0; i < player->GetLife(); i++) {
-		DrawRotaGraph(30 + 50 * i, 20, 1, 0, hpImage, TRUE);
-	}
-
 	//ステージの描画
 	stage->Draw(element);
 	element->Draw(stage, player);
