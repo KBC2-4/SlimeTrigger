@@ -468,6 +468,7 @@ bool STAGE::HitMapDat(int y, int x) {
 		|| block_type == 71	//ツル中間
 		|| block_type == 72	//ツル
 		|| block_type == 73	//ゴール
+		|| block_type == 76 //酸溜まり
 		|| block_type == 85	//クリア門
 		|| block_type == 86	//クリア門
 		|| block_type == 87	//クリア門

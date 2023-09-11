@@ -927,12 +927,17 @@ void ELEMENT::Acidrain_puddles(PLAYER* player) {
 			acidrainPuddles[0].animTimer = 0;
 			acidrainPuddles[i].flag = true;
 		}*/
-		//Ž_«‰J‚Ì…‚½‚Ü‚è
-		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y - MAP_CEllSIZE / 2) && (playerMapY <= acidrainPuddles[i].y)) {
-			if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
-			if (acidrainPuddles[i].flag == true) {
-				player->SetLife(player->GetLife() - 1);
-				acidrainPuddles[i].flag = false;
+		//Ž_—­‚Ü‚è
+		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE))
+		{
+			if ((playerMapY >= acidrainPuddles[i].y - MAP_CEllSIZE / 2) && (playerMapY <= acidrainPuddles[i].y))
+			{
+				if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
+			}
+			//Ž_—­‚Ü‚è‚É‚Â‚©‚Á‚½ƒvƒŒƒCƒ„[‚ðƒ‰ƒCƒt‚ð‚O‚É‚·‚é
+			if (acidrainPuddles[i].y + 40.0f <= playerMapY)
+			{
+				player->SetLife(0);
 			}
 		}
 	}
