@@ -29,9 +29,15 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 		throw "Resource/Sounds/SE/Stage/manhole_opened.wav";
 	}
 
+	//酸溜まりの画像読み込み
 	LoadDivGraph("Resource/Images/Stage/acid.png",12,12,1,80,80,acidImage);
-
+	//泡アニメーションの初期化
 	foamAnimation = 4;
+
+	//動く床の画像読み込み
+	LoadDivGraph("Resource/Images/Stage/MoveFloor.png", 3, 3, 1, 80, 80, moveFloorImage);
+	//泡アニメーションの初期化
+	moveFloorAnimation = 0;
 
 	ELEMENT_DATA data;
 	for (int i = 0; i < mapData.size(); i++)
@@ -224,6 +230,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.type = 1;
 				data.flag = true;
 				data.animTimer = 0;
+				data.image = 0;
 				lift.push_back(data);
 				break;
 				//動く床(横移動)
@@ -252,6 +259,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.type = 2;
 				data.flag = true;
 				data.animTimer = 0;
+				data.image = 0;
 				lift.push_back(data);
 				break;
 
@@ -360,7 +368,8 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 		//DrawFormatString(100 + i * 100, 400, 0xffffff, "%f", lift[i].x);
 		/*DrawFormatString(100+i*100, 400, 0xffffff, "%f", lift_goal_X[i].x);
 		DrawBox(lift_goal_X[i].x + stage->GetScrollX(), lift_goal_X[i].y + stage->GetScrollY(), lift_goal_X[i].x + MAP_CEllSIZE * 2 + stage->GetScrollX(), lift_goal_X[i].y + MAP_CEllSIZE / 2 + stage->GetScrollY(),0xff0000,FALSE);*/
-		DrawExtendGraphF(lift[i].x + stage->GetScrollX(), lift[i].y - 31 + stage->GetScrollY(), lift[i].x + LIFT_SIZE + stage->GetScrollX(), lift[i].y + 70 + stage->GetScrollY(), blockImage1[51], TRUE);
+		//DrawExtendGraphF(lift[i].x + stage->GetScrollX(), lift[i].y - 31 + stage->GetScrollY(), lift[i].x + LIFT_SIZE + stage->GetScrollX(), lift[i].y + 70 + stage->GetScrollY(), blockImage1[51], TRUE);
+		DrawExtendGraphF(lift[i].x + stage->GetScrollX(), lift[i].y - 50 + stage->GetScrollY(), lift[i].x + LIFT_SIZE + stage->GetScrollX(), lift[i].y + 70 + stage->GetScrollY(), moveFloorImage[lift[i].image], TRUE);
 	}
 
 	//ドア
@@ -664,8 +673,29 @@ void ELEMENT::Lift(PLAYER* player, STAGE* stage) {
 					}
 				}
 			}
+			
+			//アニメーション処理
+			if (lift[i].animTimer < 8)
+			{
+				lift[i].animTimer++;
+			}
+			else
+			{
+				if (lift[i].image < 2)
+				{
+					lift[i].image++;
+				}
+				else
+				{
+					lift[i].image = 0;
+				}
+
+				lift[i].animTimer = 0;
+			}
 		}
 	}
+
+
 
 }
 
