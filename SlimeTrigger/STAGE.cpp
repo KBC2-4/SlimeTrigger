@@ -411,6 +411,20 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 		playerYOld = player->GetPlayerY();
 	}
 	else playerVectorY = 0;
+
+
+	//カメラがステージ外へ行かないよう調整
+	if (0 < scrollY)
+	{
+		scrollY = 0;
+	}
+
+	float stageHeight = mapData.size() * MAP_CEllSIZE - 720;
+
+	if (scrollY < -stageHeight)
+	{
+		scrollY = -stageHeight;
+	}
 }
 
 /// <summary>
