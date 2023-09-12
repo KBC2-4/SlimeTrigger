@@ -228,7 +228,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 					}
 				}
 				data.type = 1;
-				data.flag = true;
+				data.flag = false;
 				data.animTimer = 0;
 				data.image = 0;
 				lift.push_back(data);
@@ -257,7 +257,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 					}
 				}
 				data.type = 2;
-				data.flag = true;
+				data.flag = false;
 				data.animTimer = 0;
 				data.image = 0;
 				lift.push_back(data);
@@ -634,19 +634,38 @@ void ELEMENT::Door(STAGE* stage) {
 /// 動く床の処理
 /// </summary>
 void ELEMENT::Lift(PLAYER* player, STAGE* stage) {
+
+	//プレイヤー座標取得
+	float pX = player->GetPlayerX() - stage->GetScrollX();
+	float pY = player->GetPlayerY() - stage->GetScrollY();
+
 	for (int i = 0; i < lift.size(); i++) {
-		if (lift[i].flag) {
+
+		if (lift[i].flag == false)
+		{
+			if (lift[i].x - MAP_CEllSIZE <= pX &&
+				lift[i].y - MAP_CEllSIZE * 2 <= pY && pY <= lift[i].y + MAP_CEllSIZE * 2)
+			{
+				lift[i].flag = true;
+			}
+		}
+		else
+		{
+			//移動処理
+
 			//動く床(縦)の動き
 			if (lift[i].type == 1) {
 				if (lift[i].y < lift[i].leftGoalY) { lift[i].leftVectorY = 1; }
 				else if (lift[i].y > lift[i].leftGoalY) { lift[i].leftVectorY = -1; }
 				else { lift[i].leftVectorY = 0; }
-				if (lift[i].y != lift[i].leftGoalY) {
+				if (lift[i].y != lift[i].leftGoalY) 
+				{
 					lift[i].y += lift[i].leftVectorY * 4;
 				}
-				else {
+				else 
+				{
 					lift[i].liftWaitTimer++;
-					if (lift[i].liftWaitTimer == 60) {
+					if (lift[i].liftWaitTimer == 90) {
 						float work = lift[i].leftGoalY;
 						lift[i].leftGoalY = lift[i].leftInitY;
 						lift[i].leftInitY = work;
@@ -655,48 +674,51 @@ void ELEMENT::Lift(PLAYER* player, STAGE* stage) {
 				}
 			}
 			//動く床(横)の動き
-			else if (lift[i].type == 2) {
+			else if (lift[i].type == 2) 
+			{
 				if (lift[i].x < lift[i].leftGoalX) { lift[i].leftVectorX = 1; }
 				else if (lift[i].x > lift[i].leftGoalX) { lift[i].leftVectorX = -1; }
 				else { lift[i].leftVectorX = 0; }
 
-				if (lift[i].x != lift[i].leftGoalX) {
-					lift[i].x += lift[i].leftVectorX * 4;
-				}
-				else {
-					lift[i].liftWaitTimer++;
-					if (lift[i].liftWaitTimer == 60) {
-						float work = lift[i].leftGoalX;
-						lift[i].leftGoalX = lift[i].leftInitX;
-						lift[i].leftInitX = work;
-						lift[i].liftWaitTimer = 0;
-					}
-				}
-			}
-			
-			//アニメーション処理
-			if (lift[i].animTimer < 8)
-			{
-				lift[i].animTimer++;
-			}
-			else
-			{
-				if (lift[i].image < 2)
+				if (lift[i].liftWaitTimer != 60)
 				{
-					lift[i].image++;
+					lift[i].liftWaitTimer++;
 				}
 				else
 				{
-					lift[i].image = 0;
+					if (lift[i].x != lift[i].leftGoalX)
+					{
+						lift[i].x += lift[i].leftVectorX * 4;
+					}
+					else
+					{
+						lift[i].liftWaitTimer = 0;
+						float work = lift[i].leftGoalX;
+						lift[i].leftGoalX = lift[i].leftInitX;
+						lift[i].leftInitX = work;
+					}
 				}
-
-				lift[i].animTimer = 0;
 			}
 		}
+		//アニメーション処理
+		if (lift[i].animTimer < 8)
+		{
+			lift[i].animTimer++;
+		}
+		else
+		{
+			if (lift[i].image < 2)
+			{
+				lift[i].image++;
+			}
+			else
+			{
+				lift[i].image = 0;
+			}
+
+			lift[i].animTimer = 0;
+		}
 	}
-
-
-
 }
 
 /// <summary>

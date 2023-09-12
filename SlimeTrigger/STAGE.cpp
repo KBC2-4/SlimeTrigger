@@ -258,7 +258,7 @@ void STAGE::LoadMapData(const char* stageName) {
 		exit(1);
 	}
 
-	char str[642];		//一行の長さ
+	char str[2000];		//一行の長さ
 	char* context;
 	int i = 0, j = 0;
 
@@ -391,10 +391,10 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 	if (player->GetPlayerY() >= 560 &&player->GetPlayerY()-scrollY<=mapData.size()*MAP_CEllSIZE&& GetMapData((player->GetPlayerY() - scrollY) / MAP_CEllSIZE + 3, (player->GetPlayerX() - scrollX) / MAP_CEllSIZE) != -1) {
 		if (player->GetPlayerMoveState() == PLAYER_MOVE_STATE::FALL) {
 			//プレイヤーの落下速度に応じてスクロールYを下げる
-			if (player->GetJumpVelocity() > 0)scrollY -= player->GetJumpVelocity();
+			if (player->GetJumpVelocity() > 0)scrollY -= player->GetJumpVelocity() + 10.0f;
 		}
 		else {
-			scrollY -= 5;
+			scrollY -= 80.0f;
 		}
 	}
 	else if (player->GetPlayerY() <= 320) {
