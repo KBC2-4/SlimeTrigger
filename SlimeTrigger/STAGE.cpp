@@ -11,6 +11,8 @@
 #include "Player.h"
 #include "Result.h"
 #include "Option.h"
+//円周率
+#define PI    3.1415926535897932384626433832795f
 
 //#define _DEBUG
 
@@ -57,8 +59,8 @@ STAGE::STAGE(const char* stageName, bool restert) {
 		}
 	}
 
-	if (LoadDivGraph("Resource/Images/Stage/map_chips.png", 110, 10, 11, 80, 80, blockImage1) == -1) {
-		throw "Resource/Images/Stage/map_chips.png";
+	if (LoadDivGraph("Resource/Images/Stage/map_chips2.png", 110, 10, 11, 80, 80, blockImage1) == -1) {
+		throw "Resource/Images/Stage/map_chips2.png";
 	}
 
 	if ((halfWayPointSe = LoadSoundMem("Resource/Sounds/SE/Stage/halfwaypoint.wav")) == -1) {
@@ -200,7 +202,31 @@ void STAGE::Draw(ELEMENT* element)const {
 						////89～90番台を描画しない
 						|| mapData.at(i).at(j) >= 100 && mapData.at(i).at(j) != 777)
 					) {
-					DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[mapData.at(i).at(j) - 1], TRUE);
+					
+					int chipNum = mapData.at(i).at(j);
+
+					//横に連なる気は回転させて描画
+					if (chipNum == 22||chipNum==23|| chipNum == 25|| chipNum == 26|| chipNum == 28 || chipNum == 29 || chipNum == 31 || chipNum == 32)
+					{
+						//左側の設定
+						//調整距離
+						float shiftDistance = 9.0f;
+						//画像回転角度
+						float angle = PI / 180 * -90;
+						//右側の設定
+						if (chipNum == 23 || chipNum == 26 || chipNum == 29 || chipNum == 32)
+						{
+							shiftDistance = -9.0f;
+							angle = PI / 180 * 90;
+							chipNum -= 1;
+						}
+
+						DrawRotaGraphF(j * MAP_CEllSIZE + scrollX + MAP_CEllSIZE / 2 + shiftDistance, i * MAP_CEllSIZE + scrollY + MAP_CEllSIZE / 2, 1.0f, angle, blockImage1[chipNum - 2], TRUE);
+					}
+					else
+					{
+						DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[mapData.at(i).at(j) - 1], TRUE);
+					}
 				}
 			}
 			//レモナーとグレポンはツルだけ描画する
@@ -451,11 +477,18 @@ bool STAGE::HitMapDat(int y, int x) {
 	if (
 		block_type == -1 //範囲外
 		|| block_type == 0	//水玉草
-		|| block_type == 21 //フロー木
-		|| block_type == 22 //アカシア木
-		|| block_type == 23 //オーク木
-		|| block_type == 24 //先生作木
-		|| block_type == 31 //葉っぱ
+		|| block_type == 21 //木1
+		|| block_type == 22 //木1(横左)
+		|| block_type == 23 //木1(横右)
+		|| block_type == 24 //木2
+		|| block_type == 25 //木2(横左)
+		|| block_type == 26 //木2(横右)
+		|| block_type == 27 //木3
+		|| block_type == 28 //木3(横左)
+		|| block_type == 39 //木3(横右)
+		|| block_type == 30 //木4
+		|| block_type == 31 //木4(横左)
+		|| block_type == 32 //木4(横右)
 		|| block_type == 51	//動く床(縦)
 		|| block_type == 52	//動く床(横)
 		|| block_type == 53	//動く床(ゴール縦)
