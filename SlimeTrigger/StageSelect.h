@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "Stage.h"
 #include "Lemon.h"
+#include "GrapeFruit.h"
+#include "Tomato.h"
 
 class STAGE_SELECT :
 	public AbstractScene
@@ -28,7 +30,17 @@ private:
 	STAGE* stage;	//ステージ
 	ELEMENT* element;	//ステージ内要素
 	LEMON** lemoner;	//レモナー
+	GRAPEFRUIT** gurepon;	//グレぽん
+	TOMATO** tomaton;	//とまトン
+	ITEMBALL** item;     //アイテム
+
+	//レモナー数用の変数
 	int lemonerCount;
+	//とまとんの数用の変数
+	int tomatonCount;
+
+	//グレポンの数用の変数
+	int gureponCount;
 
 	float playerMapX, playerMapY;	//プレイヤーマップ内座標計算用
 	POINT stageReturn;		//タイトルへ戻る座標

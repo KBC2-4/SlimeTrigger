@@ -870,7 +870,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 					}
 
 					if (underGroundEffects > 0) {
-						underGroundEffects -= manhole[i].liftWaitTimer + 1;
+						underGroundEffects -= manhole[i].liftWaitTimer + 2;
 					}
 					//SetGravity‚ð—LŒø‰»‚·‚é‚ÆGetter‚Ì’l‚ª•Ï‚í‚ç‚È‚¢
 					//printfDx("%f\n", player->GetPlayerY());
@@ -882,6 +882,10 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 						//player->SetGravity(true);
 						player->SetVisible(true);
 						manhole[i].flag = false;
+						if (underGroundEffects != 0)
+						{
+							underGroundEffects = 0;
+						}
 					}
 				}
 			}

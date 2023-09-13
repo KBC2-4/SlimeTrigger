@@ -171,6 +171,10 @@ void STAGE::Draw(ELEMENT* element)const {
 		//ステージ3
 		DrawBoxAA(0, scrollY + 1380, scrollX + 5120, scrollY + 4800, 0x20251F, TRUE);
 	}
+	else
+	{
+		DrawBoxAA(scrollX + 3000, scrollY + 1280, scrollX + 8640, scrollY + 1800, 0x20251F, TRUE);
+	}
 
 
 	for (int i = 0; i < mapData.size(); i++) {
@@ -302,7 +306,7 @@ void STAGE::LoadMapData(const char* stageName) {
 		exit(1);
 	}
 
-	char str[2000];		//一行の長さ
+	char str[3000];		//一行の長さ
 	char* context;
 	int i = 0, j = 0;
 

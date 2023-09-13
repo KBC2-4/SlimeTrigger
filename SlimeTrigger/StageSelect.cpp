@@ -29,8 +29,70 @@ STAGE_SELECT::STAGE_SELECT()
 	element = new ELEMENT();
 	lemoner = nullptr;
 	lemonerCount = 0;
+	gurepon = nullptr;
+	gureponCount = 0;
+	tomaton = nullptr;
+	tomatonCount = 0;
 
 	std::vector<std::vector<int>> spawnPoint;
+
+	//とまトン生成する数を数える
+	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
+	{
+		for (int j = 0; j < stage->GetMapSize().y; j++)
+		{
+			if (stage->GetMapData(i, j) == 93)
+			{
+				tomatonCount++;
+				spawnPoint.push_back(std::vector<int>(2));
+				spawnPoint[point][0] = i;
+				spawnPoint[point][1] = j;
+				point++;
+			}
+		}
+	}
+	//とまトンの生成
+	if (tomatonCount > 0)
+	{
+		tomaton = new TOMATO * [tomatonCount];
+		for (int i = 0; i < tomatonCount; i++)
+		{
+			tomaton[i] = new TOMATO(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
+		}
+	}
+
+	//スポーンポイントを削除
+	spawnPoint.clear();
+
+	//グレポンを生成する数を数える
+	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
+	{
+		for (int j = 0; j < stage->GetMapSize().y; j++)
+		{
+			if (stage->GetMapData(i, j) == 92)
+			{
+				gureponCount++;
+				spawnPoint.push_back(std::vector<int>(2));
+				spawnPoint[point][0] = i;
+				spawnPoint[point][1] = j;
+				point++;
+			}
+		}
+	}
+
+	//グレポンの生成
+	if (gureponCount > 0)
+	{
+		gurepon = new GRAPEFRUIT * [gureponCount];
+		for (int i = 0; i < gureponCount; i++)
+		{
+			gurepon[i] = new GRAPEFRUIT(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
+		}
+	}
+
+	//スポーンポイントを削除
+	spawnPoint.clear();
+
 	//レモナー生成する数を数える
 	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
 	{
@@ -46,7 +108,6 @@ STAGE_SELECT::STAGE_SELECT()
 			}
 		}
 	}
-
 	//レモナーの生成
 	if (lemonerCount > 0)
 	{
@@ -59,7 +120,7 @@ STAGE_SELECT::STAGE_SELECT()
 
 	//スポーン地点をセット
 	stage->SetScrollX(-(stage->GetSpawnPoint().y - MAP_CEllSIZE));
-	stage->SetScrollY(-(stage->GetSpawnPoint().x - MAP_CEllSIZE * stage->GetMapSize().y));
+	stage->SetScrollY(-(stage->GetSpawnPoint().x - MAP_CEllSIZE - 400.0f));
 	player->SetPlayer_Screen(stage->GetSpawnPoint());
 
 	playerMapX = 0;
@@ -90,16 +151,19 @@ STAGE_SELECT::STAGE_SELECT()
 			case 103:
 				stageMove[1].x = j * MAP_CEllSIZE;
 				stageMove[1].y = i * MAP_CEllSIZE;
+				break;
 
 			case 104:
 			case 105:
 				stageMove[2].x = j * MAP_CEllSIZE;
 				stageMove[2].y = i * MAP_CEllSIZE;
+				break;
 
 			case 106:
 			case 107:
 				stageMove[3].x = j * MAP_CEllSIZE;
 				stageMove[3].y = i * MAP_CEllSIZE;
+				break;
 			}
 		}
 	}
@@ -130,6 +194,19 @@ STAGE_SELECT::~STAGE_SELECT()
 		delete lemoner[i];
 	}
 	delete[] lemoner;
+
+	//とまトンの削除
+	for (int i = 0; i < tomatonCount; i++)
+	{
+		delete tomaton[i];
+	}
+	delete[] tomaton;
+	//グレポンの削除
+	for (int i = 0; i < gureponCount; i++) {
+		delete gurepon[i];
+
+	}
+	delete[] gurepon;
 }
 
 AbstractScene* STAGE_SELECT::Update()
@@ -150,6 +227,7 @@ AbstractScene* STAGE_SELECT::Update()
 	//プレイヤーを死なせない。
 	if (player->GetLife() < 2) { player->SetLife(2); }
 
+	//レモナーUpdate
 	for (int i = 0; i < lemonerCount; i++)
 	{
 		if (lemoner[i] != nullptr)
@@ -157,18 +235,31 @@ AbstractScene* STAGE_SELECT::Update()
 			lemoner[i]->Update();
 			if (lemoner[i]->GetDeleteFlag())
 			{
-				//itemRand = GetRand(5);
-				//アイテムを生成
-				/*if (itemRand == 0)
-				{
-					item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
-				}*/
 				delete lemoner[i];
 				lemoner[i] = nullptr;
 			}
 		}
 	}
 
+	//とまとんUpdate
+	for (int i = 0; i < tomatonCount; i++)
+	{
+		tomaton[i]->Update();
+	}
+
+	//グレポンUpdate
+	for (int i = 0; i < gureponCount; i++)
+	{
+		if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg())
+		{
+			delete gurepon[i];
+			gurepon[i] = nullptr;
+		}
+		else if (gurepon[i] != nullptr && !gurepon[i]->GetDeleteFlg())
+		{
+			gurepon[i]->Update();
+		}
+	}
 
 	playerMapX = roundf(player->GetPlayerX() - stage->GetScrollX());
 	playerMapY = floorf(player->GetPlayerY());
@@ -243,7 +334,6 @@ void STAGE_SELECT::Draw() const
 	//ステージの描画
 	stage->Draw(element);
 	element->Draw(stage, player);
-	
 
 	for (int i = 0; i < lemonerCount; i++)
 	{
@@ -251,6 +341,20 @@ void STAGE_SELECT::Draw() const
 		{
 			lemoner[i]->Draw();
 
+		}
+	}
+
+	//とまトンの描画
+	for (int i = 0; i < tomatonCount; i++)
+	{
+		tomaton[i]->Draw();
+	}
+	//グレポンの描画
+	for (int i = 0; i < gureponCount; i++)
+	{
+		if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg() == false)
+		{
+			gurepon[i]->Draw();
 		}
 	}
 
