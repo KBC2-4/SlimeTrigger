@@ -177,7 +177,7 @@ void STAGE::Draw(ELEMENT* element)const {
 		for (int j = 0; j < mapData.at(0).size(); j++) {
 			//if (mapData.at(i).at(j) == 72)DrawFormatString(100 + j * 20, 50, 0xffffff, "%d %d", i, j);
 			//‰æ–ÊŠO‚Í•`‰æ‚µ‚È‚¢
-			if (j * MAP_CEllSIZE + scrollX >= -80 && j * MAP_CEllSIZE + scrollX <= 1280 && i * MAP_CEllSIZE + scrollY >= -80 && i * MAP_CEllSIZE + scrollY <= 720) {
+			if (j * MAP_CEllSIZE + scrollX >= -160 && j * MAP_CEllSIZE + scrollX <= 1360 && i * MAP_CEllSIZE + scrollY >= -160 && i * MAP_CEllSIZE + scrollY <= 800) {
 				if (
 					mapData.at(i).at(j) != 68		//ƒ}ƒ“ƒz[ƒ‹(ã)
 					&& mapData.at(i).at(j) != 62	 //ƒ{ƒ^ƒ“
@@ -205,28 +205,46 @@ void STAGE::Draw(ELEMENT* element)const {
 					
 					int chipNum = mapData.at(i).at(j);
 
-					//‰¡‚É˜A‚È‚é‹C‚Í‰ñ“]‚³‚¹‚Ä•`‰æ
-					if (chipNum == 22||chipNum==23|| chipNum == 25|| chipNum == 26|| chipNum == 28 || chipNum == 29 || chipNum == 31 || chipNum == 32)
+					//–Ø‚Ì•`‰æ
+					if (22 <= chipNum && chipNum <= 32)
 					{
-						//¶‘¤‚ÌÝ’è
-						//’²®‹——£
-						float shiftDistance = 9.0f;
-						//‰æ‘œ‰ñ“]Šp“x
-						float angle = PI / 180 * -90;
-						//‰E‘¤‚ÌÝ’è
-						if (chipNum == 23 || chipNum == 26 || chipNum == 29 || chipNum == 32)
+						//¶‰E‚ÉL‚Ñ‚é‹C‚Ì•`‰æ
+						if (chipNum != 24 && chipNum != 27 && chipNum != 30)
 						{
-							shiftDistance = -9.0f;
-							angle = PI / 180 * 90;
-							chipNum -= 1;
-						}
+							//’²®‹——£
+							float shiftDistance = 0.0f;
+							//‰æ‘œ‰ñ“]Šp“x
+							float angle = PI / 180.0f * -90.0f;
+							//¶‘¤‚ÌÝ’è
+							if (chipNum == 22 || chipNum == 25 || chipNum == 28 || chipNum == 31)
+							{
+								shiftDistance = 9.0f;
+							}//‰E‘¤‚ÌÝ’è
+							else
+							{
+								shiftDistance = -9.0f;
+							}
 
-						DrawRotaGraphF(j * MAP_CEllSIZE + scrollX + MAP_CEllSIZE / 2 + shiftDistance, i * MAP_CEllSIZE + scrollY + MAP_CEllSIZE / 2, 1.0f, angle, blockImage1[chipNum - 2], TRUE);
+							chipNum = 20 + (chipNum - 21) / 3;
+							DrawRotaGraphF(j * MAP_CEllSIZE + scrollX + MAP_CEllSIZE / 2 + shiftDistance, i * MAP_CEllSIZE + scrollY + MAP_CEllSIZE / 2, 1.0f, angle, blockImage1[chipNum], TRUE);
+						}
+						else
+						{
+							//‚’¼‚ÉL‚Ñ‚é‹C‚Ì•`‰æ
+							chipNum = 20 + (chipNum - 21) / 3;
+							DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[chipNum], TRUE);
+						}
+					}
+					else if (chipNum == 71 || chipNum == 72)
+					{
+						DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY - 9.0f, blockImage1[chipNum - 1], TRUE);
 					}
 					else
 					{
-						DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[mapData.at(i).at(j) - 1], TRUE);
+						DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[chipNum - 1], TRUE);
 					}
+
+
 				}
 			}
 			//ƒŒƒ‚ƒi[‚ÆƒOƒŒƒ|ƒ“‚Íƒcƒ‹‚¾‚¯•`‰æ‚·‚é
@@ -476,7 +494,7 @@ bool STAGE::HitMapDat(int y, int x) {
 	if (block_type == temporaryHit) { return true; }
 	if (
 		block_type == -1 //”ÍˆÍŠO
-		|| block_type == 0	//…‹Ê‘
+		|| block_type == 0	//‹ó
 		|| block_type == 21 //–Ø1
 		|| block_type == 22 //–Ø1(‰¡¶)
 		|| block_type == 23 //–Ø1(‰¡‰E)
