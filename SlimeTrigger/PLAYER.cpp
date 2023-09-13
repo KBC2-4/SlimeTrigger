@@ -845,7 +845,11 @@ void PLAYER::Hit(ELEMENT* element, STAGE* stage) {
 		}
 		if (hit_lift_num >= 0) {
 			playerY = (lift[hit_lift_num].y - MAP_CEllSIZE / 2 + lift[hit_lift_num].leftVectorY * 4);
-			playerX += lift[hit_lift_num].leftVectorX * 4;
+			//“®‚­°‚ª“®‚¢‚Ä‚¢‚ê‚ÎƒvƒŒƒCƒ„[‚à“®‚©‚·
+			if (lift[hit_lift_num].liftWaitTimer == 60)
+			{
+				playerX += lift[hit_lift_num].leftVectorX * 4;
+			}
 			isGround = true;
 		}
 	}

@@ -394,7 +394,7 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 			if (player->GetJumpVelocity() > 0)scrollY -= player->GetJumpVelocity() + 10.0f;
 		}
 		else {
-			scrollY -= 80.0f;
+			scrollY -= 10.0f;
 		}
 	}
 	else if (player->GetPlayerY() <= 320) {
