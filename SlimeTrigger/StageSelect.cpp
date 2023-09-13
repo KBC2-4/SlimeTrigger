@@ -472,7 +472,7 @@ void STAGE_SELECT::Draw() const
 	SetDrawBright(255, 255, 255);
 
 	//ステージ3 ポータル描画
-	SetDrawBright(255 - effectTimer[1], 255, 255);
+	//SetDrawBright(255 - effectTimer[1], 255, 255);
 	DrawGraph(stageMove[3].x + stage->GetScrollX(), stageMove[3].y + -MAP_CEllSIZE + stage->GetScrollY(), stage->GetMapImage(105), TRUE);
 	DrawGraph(stageMove[3].x + stage->GetScrollX(), stageMove[3].y + stage->GetScrollY(), stage->GetMapImage(106), TRUE);
 	SetDrawBright(255, 255, 255);
