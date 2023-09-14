@@ -219,24 +219,35 @@ void Title::Draw()const
 		if (timer % 120 < 60)
 		{
 
-			if (GetJoypadNum() == 0) {
-				DrawStringToHandle(GetDrawCenterX("コントローラーを接続してください", guidFont), 280, "コントローラーを接続してください", 0xFF5446, guidFont, 0xF53E27);
-			}
-			else {
-
-				if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
-					DrawCircleAA(530.0f, 311.0f, 30, 20, 0xFFFFFF, 1);
-					DrawStringToHandle(510, 283, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-					DrawStringToHandle(570, 280, "で決定", 0xEBA05E, guidFont, 0xFFFFFF);
+				if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::INPUT_MODE::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::INPUT_MODE::DIRECTINPUT_GAMEPAD)) {
+					const std::vector<guideElement> gamepadGuides = {
+						guideElement({Option::GetInputMode() ? "B" : "A"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE, guidFont, 0xFFFFFF, Option::GetInputMode() ? B_COLOR : A_COLOR,
+						 0xEBA05E, 0xFFFFFF ,10, 200.0f,30.0f,20.0f, 5.0f),
+						};
+					DrawGuides(gamepadGuides, 505.0f, 280.0f, 5.0f, 60.0f);
 				}
-				else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD)) {
-					int stringX = 530;
-					stringX = Option::GetInputMode() ? 370 : 510;
-					DrawStringToHandle(stringX, 283, Option::GetInputMode() ? "SPACE" : "Z", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-					DrawStringToHandle(570, 280, "で決定", 0xEBA05E, guidFont, 0xFFFFFF);
+				else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::INPUT_MODE::KEYBOARD))
+				{
+					if (Option::GetInputMode())
+					{
+						const std::vector<guideElement> keyboardGuidesSpace = {
+							guideElement({"SPACE"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, guidFont, 0xFFFFFF,
+							             B_COLOR,
+							             0xEBA05E, 0xFFFFFF, 200.0f, 30.0f, 20.0f, 20.0f, 2.5f),
+						};
+						DrawGuides(keyboardGuidesSpace, 450.0f, 280.0f, 5.0f, 60.0f);
+					}
+					else
+					{
+						const std::vector<guideElement> keyboardGuidesSpaceZ = {
+							guideElement({"Z"}, "で決定", GUIDE_SHAPE_TYPE::FIXED_BOX,
+							             guidFont, 0xFFFFFF, A_COLOR,
+							             0xEBA05E, 0xFFFFFF, 200.0f, 60.0f, 60.0f, 20.0f, 2.5f),
+						};
 
+						DrawGuides(keyboardGuidesSpaceZ, 510.0f, 280.0f, 5.0f, 60.0f);
+					}
 				}
-			}
 		}
 	}
 }

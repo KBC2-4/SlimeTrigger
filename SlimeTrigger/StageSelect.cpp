@@ -3,6 +3,7 @@
 #include "GameMain.h"
 #include "DxLib.h"
 #include "Option.h"
+//#include "../Scene/Guide.h"
 
 #define callout_backcolor 0xFFFFFF
 
@@ -25,7 +26,7 @@ STAGE_SELECT::STAGE_SELECT()
 	moveToTitleFont = CreateFontToHandle("メイリオ", 18, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	stageNameFont = CreateFontToHandle("メイリオ", 31, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8, -1, 4);
 	stage = new STAGE("StageSelect");
-	player = new PLAYER(stage);
+	player = new Player(stage);
 	element = new ELEMENT();
 	lemoner = nullptr;
 	lemonerCount = 0;
@@ -240,10 +241,14 @@ AbstractScene* STAGE_SELECT::Update()
 
 void STAGE_SELECT::Draw() const
 {
+	//ステージ背景
+	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+
+
 	//ステージの描画
-	stage->Draw(element);
 	element->Draw(stage, player);
-	
+	stage->Draw(element);
 
 	for (int i = 0; i < lemonerCount; i++)
 	{
@@ -253,15 +258,6 @@ void STAGE_SELECT::Draw() const
 
 		}
 	}
-
-	//DrawCircleAA(player->GetPlayerX(), player->GetPlayerY(), 900.0F, 32, 0x000000, FALSE, 1200.0F);
-
-	//if (effectTimer[0] < 100) {
-	//	DrawCircleAA(player->GetPlayerX(), player->GetPlayerY(), 60 + effectTimer[0] * 20, 28, 0x000000, FALSE, 80.0F + effectTimer[0] * 20);
-	//	SetDrawArea(player->GetPlayerX() - MAP_CEllSIZE / 2 - effectTimer[0] * 10, player->GetPlayerY() - MAP_CEllSIZE / 2 - effectTimer[0] * 10,
-	//		player->GetPlayerX() + MAP_CEllSIZE / 2 + effectTimer[0] * 10, player->GetPlayerY() + MAP_CEllSIZE / 2 + effectTimer[0] * 10);
-	//	
-	//}
 
 	//ガイド表示
 
@@ -273,13 +269,6 @@ void STAGE_SELECT::Draw() const
 		const int start_x = guid_x - 600;
 		const int start_y = 665;
 
-		//{//大枠
-		//	const int x = 20;
-		//	const int y = 30;
-		//	DrawBoxAA(start_x - x, start_y - y, start_x + 55 + x, start_y + 30 + y, 0x99F000, TRUE, 1.0F);
-		//	DrawCircleAA(start_x + 65, start_y + 14.6, 15 + y, 20, 0x99F000, TRUE, 1.0F);	//右端
-		//}
-
 
 		const int y = 10;
 		DrawBoxAA(start_x, start_y + y, start_x + 70, start_y + 30 + y, 0xFFFFFF, TRUE, 1.0F);
@@ -289,67 +278,42 @@ void STAGE_SELECT::Draw() const
 		DrawStringToHandle(start_x, start_y - 18, "タイトルへ", guid_color, moveToTitleFont, 0x000000);
 
 	// ガイド表示
-	if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
+	if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::INPUT_MODE::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::INPUT_MODE::DIRECTINPUT_GAMEPAD)) {
 
 		DrawStringToHandle(start_x + 2, start_y + 3 + y, "BACK", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
-		{//ジョイスティック：移動
-			const int joystick_x = guid_x - 340;
-			const int joystick_y = 670;
 
-			DrawOvalAA(joystick_x, joystick_y + 6, 18, 10, 20, 0x000000, TRUE);
-			//アニメーション有り
-			//DrawOval(joystick_x + joysAniTimer * 0.8, joystick_y + 6 + abs(joysAniTimer * 0.6), 18, 10, 0x000000, 1);
-			DrawBoxAA(joystick_x - 5, joystick_y, joystick_x + 7, joystick_y + 23, 0x000000, TRUE);
-			//アニメーション有り
-			//DrawQuadrangle(joystick_x - 5 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), joystick_x + 7 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), joystick_x + 7, joystick_y + 23, joystick_x - 5, joystick_y + 23, 0x000000, TRUE);
-			DrawOvalAA(joystick_x, joystick_y + 23, 22, 8, 20, 0x000000, TRUE);
-			DrawString(joystick_x - 2, joystick_y - 2, "L", 0xFFFFFF);
-			//アニメーション有り
-			//DrawString(joystick_x - 5 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), "L", 0xFFFFFF);
-			DrawStringToHandle(joystick_x + 30, 668, "移動", guid_color, buttonGuidFont, 0x000000);
-		}
-
-		DrawStringToHandle(guid_x + 250, 668, "[ゲーム中]ポーズ", guid_color, buttonGuidFont, 0x000000);
-		DrawBoxAA(guid_x + 160, 665, guid_x + 230, 695, 0xFFFFFF, TRUE, 1.0F);
-		DrawCircleAA(guid_x + 165, 679.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//左端
-		DrawCircleAA(guid_x + 225, 679.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//右端
-		DrawStringToHandle(guid_x + 155, 668, "START", START_COLOR, buttonGuidFont, 0xFFFFFF);
-
-		DrawStringToHandle(guid_x - 10, 668, "アクション", guid_color, buttonGuidFont, 0x000000);
-		DrawCircleAA(guid_x - 30, 680, 15, 20, 0xFFFFFF, 1);
-		DrawStringToHandle(guid_x - 37, 668, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
-
-		DrawStringToHandle(guid_x - 190, 668, "ジャンプ", guid_color, buttonGuidFont, 0x000000);
-		DrawCircleAA(guid_x - 210, 680, 15, 20, 0xFFFFFF, 1);
-		DrawStringToHandle(guid_x - 217, 668, Option::GetInputMode() ? "A" : "B", Option::GetInputMode() ? A_COLOR : B_COLOR, buttonGuidFont, 0xFFFFFF);
-
-		//DrawStringToHandle(200, 300, "GAMEPAD", 0x00ffff, guidFont);
-
-		
+		std::vector<guideElement> gamepadGuides = {
+					guideElement({"L"}, "移動", GUIDE_SHAPE_TYPE::JOYSTICK, buttonGuidFont, 0x000000,
+						 0xFFFFFF, 0xFFFFFF),
+						 //GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),
+						 guideElement({Option::GetInputMode() ? "A" : "B"}, "ジャンプ", GUIDE_SHAPE_TYPE::FIXED_CIRCLE, buttonGuidFont, guid_color,
+									  Option::GetInputMode() ? A_COLOR : B_COLOR, guid_color),
+						 guideElement({Option::GetInputMode() ? "B" : "A"}, "アクション", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE, buttonGuidFont, guid_color,
+									  Option::GetInputMode() ? B_COLOR : A_COLOR, guid_color),
+						 guideElement({"START"}, "[ゲーム中]ポーズ", GUIDE_SHAPE_TYPE::ROUNDED_BOX, buttonGuidFont, guid_color, START_COLOR,
+									  guid_color, 0x000000,10.f,30.f,30.f, 0, 2.f)
+		};
+		DrawGuides(gamepadGuides, 280.0f, 668.0f, 5.0f, 60.0f);
 	}
-	else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD)) {
+	else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::INPUT_MODE::KEYBOARD)) {
 
 		DrawStringToHandle(start_x + 12, start_y + 3 + y, "ESC", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
-		DrawStringToHandle(208, 668, "WASD", 0x000000, buttonGuidFont, 0xFFFFFF);
-		DrawStringToHandle(260 + 30, 668, "移動", guid_color, buttonGuidFont, 0x000000);
-
-		DrawStringToHandle(guid_x + 250, 668, "[ゲーム中]ポーズ", guid_color, buttonGuidFont, 0x000000);
-		//DrawBoxAA(guid_x + 210, 665, guid_x + 240, 695, 0xFFFFFF, TRUE, 1.0F);
-		DrawStringToHandle(guid_x + 220, 668, "Q", START_COLOR, buttonGuidFont, 0xFFFFFF);
-
-		DrawStringToHandle(guid_x + 50, 668, "アクション", guid_color, buttonGuidFont, 0x000000);
-		//DrawBoxAA(guid_x - 30, 665, guid_x, 695, 0xFFFFFF, TRUE, 1.0F);
-		DrawStringToHandle(guid_x - 52, 668, Option::GetInputMode() ? "SPACE" : "Z", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
-
-		DrawStringToHandle(guid_x - 190, 668, "ジャンプ", guid_color, buttonGuidFont, 0x000000);
-		//DrawBoxAA(guid_x - 180, 665, guid_x - 150, 695, 0xFFFFFF, TRUE, 1.0F);
-		DrawStringToHandle(guid_x - 217, 668, Option::GetInputMode() ? "Z" : "SPACE", Option::GetInputMode() ? A_COLOR : B_COLOR, buttonGuidFont, 0xFFFFFF);
-
-		//DrawStringToHandle(200, 300, "KEYBOARD", 0x00ffff, guidFont);
+		std::vector<guideElement> keyboardGuides = {
+			guideElement({"W", "A", "S", "D"}, "移動", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
+			             buttonGuidFont),
+			//GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),	
+			guideElement({Option::GetInputMode() ? "Z" : "SPACE"}, "ジャンプ", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
+			             Option::GetInputMode() ? A_COLOR : B_COLOR, guid_color),
+			guideElement({Option::GetInputMode() ? "SPACE" : "Z"}, "アクション", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
+			             Option::GetInputMode() ? B_COLOR : A_COLOR, guid_color),
+			guideElement({"Q"}, "[ゲーム中]ポーズ", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, guid_color, START_COLOR,
+			             guid_color),
+		};
+		DrawGuides(keyboardGuides, 200.0f, 668.0f, 5.0f, 60.0f);
 	}
-
+	
 	//戻る
 	if ((playerMapX >= (stageReturn.x) - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
 		DrawStageGuid("タイトルへ", stageReturn.x - MAP_CEllSIZE / 2, stageReturn.y - 30, stageNameFont, 0x1FCF6E, callout_backcolor, 0, -10, -1, "戻る", 55, 30);

@@ -10,6 +10,8 @@ class STAGE_SELECT :
 private:
 	//背景画像
 	int backGraundImage[5];
+
+	int image_test;
 	//BGM
 	int backGraundMusic;
 
@@ -24,7 +26,7 @@ private:
 	int joysAniTimer;
 	bool joyStickDelta;
 
-	PLAYER* player;	//プレイヤー
+	Player* player;	//プレイヤー
 	STAGE* stage;	//ステージ
 	ELEMENT* element;	//ステージ内要素
 	LEMON** lemoner;	//レモナー
