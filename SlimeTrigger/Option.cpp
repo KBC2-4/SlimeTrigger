@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "PadInput.h"
 #include "Title.h"
+#include  "Guide.h"
 
 #include <fstream>
 #include <string>
@@ -228,45 +229,66 @@ void Option::Draw() {
 	DrawBoxAA(start_x, start_y, start_x + 70, start_y + 30, 0xFFFFFF, TRUE, 1.0F);
 	DrawCircleAA(start_x + 5, start_y + 14.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//左端
 	DrawCircleAA(start_x + 65, start_y + 14.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//右端
-	DrawStringToHandle(start_x + 2, start_y + 3, "BACK", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
 	DrawStringToHandle(100, 300 + 3, "入力方式", 0xEB8F63, buttonGuidFont, 0xFFFFFF);
 
-	{//ボタンの動作内容
-		const int x = 110;
+	const Guide guide;
+		// ガイド表示
+	if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
 
-		DrawCircleAA(x + 7, 362, 15, 20, 0xFFFFFF, 1);
-		DrawStringToHandle(x, 350, "A", A_COLOR, buttonGuidFont, 0xFFFFFF);
-		DrawStringToHandle(x + 30, 350, Option::GetInputMode() ? "戻る／ジャンプ" : "決定／アクション", B_COLOR, buttonGuidFont, 0xFFFFFF);
-		DrawCircleAA(x + 7, 402, 15, 20, 0xFFFFFF, 1);
-		DrawStringToHandle(x, 390, "B", B_COLOR, buttonGuidFont, 0xFFFFFF);
-		DrawStringToHandle(x + 30, 390, Option::GetInputMode() ? "決定／アクション" : "戻る／ジャンプ", B_COLOR, buttonGuidFont, 0xFFFFFF);
+		DrawStringToHandle(start_x + 2, start_y + 3, "BACK", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
+		//ボタンの動作内容
+		const std::vector<guideElement> gamepadOperationA = {
+guideElement({"A"}, GetInputMode() ? "戻る／ジャンプ" : "決定／アクション", GUIDE_SHAPE_TYPE::FIXED_CIRCLE, buttonGuidFont, 0xFFFFFF,
+             GetInputMode() ? A_COLOR : B_COLOR, B_COLOR, 0xFFFFFF, 10, 30, 30, 0, 0, -2.0f, 10.0f),
+};
+		guide.DrawGuides(gamepadOperationA, 100.0f, 360.0f, 5.0f, 60.0f);
+		
+
+		const std::vector<guideElement> gamepadOperationB = {
+			guideElement({"B"}, GetInputMode() ? "決定／アクション" : "戻る／ジャンプ", GUIDE_SHAPE_TYPE::FIXED_CIRCLE, buttonGuidFont, 0xFFFFFF,
+	Option::GetInputMode() ? B_COLOR : A_COLOR, B_COLOR, 0xFFFFFF, 10, 30, 30, 0, 0, -2.0f, 10.0f),
+			};
+		guide.DrawGuides(gamepadOperationB, 100.0f, 400.0f, 15.0f, 60.0f);
+		
+		const std::vector<guideElement> gamepadGuides = {
+						 guideElement({"START"}, "入力方式切替", GUIDE_SHAPE_TYPE::ROUNDED_BOX, buttonGuidFont, 0xFFFFFF, START_COLOR,
+									  0xFFFFFF, 0x000000,10.f,30.f,30.f, 0, 2.f),
+			guideElement({Option::GetInputMode() ? "B" : "A"}, "ミュート／ミュート解除", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE, buttonGuidFont, 0xFFFFFF,
+			 Option::GetInputMode() ? B_COLOR : A_COLOR, 0xFFFFFF),
+			guideElement({Option::GetInputMode() ? "A" : "B"}, "戻る", GUIDE_SHAPE_TYPE::FIXED_CIRCLE, buttonGuidFont, 0xFFFFFF,
+									  Option::GetInputMode() ? A_COLOR : B_COLOR, 0xFFFFFF),
+		};
+		guide.DrawGuides(gamepadGuides, 280.0f, 668.0f, 5.0f, 60.0f);
 	}
+	else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD)) {
 
+		DrawStringToHandle(start_x + 10, start_y + 3, "ESC", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
+		//ボタンの動作内容
+		const std::vector<guideElement> keyboardOperationA = {
+			guideElement({"SPACE"}, GetInputMode() ? "戻る／ジャンプ" : "決定／アクション", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
+						 GetInputMode() ? A_COLOR : B_COLOR, B_COLOR, 0xFFFFFF, 10, 75, 30, 0, 0, -2.0f, 10.0f),
+			};
+		guide.DrawGuides(keyboardOperationA, 100.0f, 360.0f, 5.0f, 60.0f);
+		
 
-	const int guid_center_x = 640;
-
-	//ガイド表示
-
-	const int back_guid_x = 220;
-	const int back_guid_y = 665;
-
-	DrawBoxAA(back_guid_x, back_guid_y, back_guid_x + 70, back_guid_y + 30, 0xFFFFFF, TRUE, 1.0F);
-	DrawCircleAA(back_guid_x + 5, back_guid_y + 14.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//左端
-	DrawCircleAA(back_guid_x + 65, back_guid_y + 14.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//右端
-	DrawStringToHandle(back_guid_x + 2, back_guid_y + 3, "BACK", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
-	DrawStringToHandle(back_guid_x + 85, 668, "入力方式切替", 0xFFFFFF, buttonGuidFont, 0x000000);
-
-	const int mute_guid_x = 560;
-	DrawStringToHandle(mute_guid_x, 668, "ミュート／ミュート解除", 0xFFFFFF, buttonGuidFont, 0x000000);
-	DrawCircleAA(mute_guid_x - 20, 680, 15, 20, 0xFFFFFF, 1);
-	DrawStringToHandle(mute_guid_x - 27, 668, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
-
-	const int return_center_x = 940;
-	DrawStringToHandle(return_center_x, 668, "戻る", 0xFFFFFF, buttonGuidFont, 0x000000);
-	DrawCircleAA(return_center_x - 20, 680, 15, 20, 0xFFFFFF, 1);
-	DrawStringToHandle(return_center_x - 27, 668, Option::GetInputMode() ? "A" : "B", Option::GetInputMode() ? A_COLOR : B_COLOR, buttonGuidFont, 0xFFFFFF);
+		const std::vector<guideElement> keyboardOperationB = {
+			guideElement({"Z"}, GetInputMode() ? "決定／アクション" : "戻る／ジャンプ", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
+	Option::GetInputMode() ? B_COLOR : A_COLOR, B_COLOR, 0xFFFFFF, 10, 30, 30, 0, 0, -2.0f, 10.0f),
+			};
+		guide.DrawGuides(keyboardOperationB, 100.0f, 400.0f, 5.0f, 60.0f);
+		
+		const std::vector<guideElement> keyboardGuides = {
+			guideElement({"ESC"}, "入力方式切替", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, 0xFFFFFF, START_COLOR,
+			             0xFFFFFF),
+			guideElement({Option::GetInputMode() ? "SPACE" : "Z"}, "ミュート／ミュート解除", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, 0xFFFFFF,
+			 Option::GetInputMode() ? B_COLOR : A_COLOR, 0xFFFFFF),
+			guideElement({Option::GetInputMode() ? "Z" : "SPACE"}, "戻る", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, 0xFFFFFF,
+						 Option::GetInputMode() ? A_COLOR : B_COLOR, 0xFFFFFF),
+		};
+		guide.DrawGuides(keyboardGuides, 280.0f, 668.0f, 5.0f, 60.0f);
+	}
 }
 
 
@@ -307,7 +329,7 @@ void Option::LoadData(void) {
 					if (value > 10 || value < 0) { continue; }
 					seVolume = value * 25 + 2;
 				}
-				else if (key == "INPUT_MODE") {
+				else if (key == "InputMode") {
 					line_stream >> value;
 					if (value != 0 && value != 1) { continue; }
 					inputMode = value;
@@ -337,7 +359,7 @@ void Option::SaveData(void) {
 		config_file << "BGM : " << bgm_buf << std::endl;
 		config_file << " SE : " << se_buf << std::endl;
 		config_file << u8"\n0[A:決定 B:戻る], 1[A:戻る B:決定]" << std::endl;
-		config_file << "INPUT_MODE : " << inputMode << std::endl;
+		config_file << "InputMode : " << inputMode << std::endl;
 		config_file << u8"\n0[全画面表示], 1[ウィンドウ表示]" << std::endl;
 		config_file << "WINDOW_MODE : " << windowMode << std::endl;
 		config_file.close();
