@@ -165,6 +165,7 @@
     <ClCompile Include="GameMainRestart.cpp" />
     <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="GrapeFruit.cpp" />
+    <ClCompile Include="Guide.cpp" />
     <ClCompile Include="ItemBall.cpp" />
     <ClCompile Include="Lemon.cpp" />
     <ClCompile Include="main.cpp">
@@ -196,6 +197,7 @@
     <ClInclude Include="GameMainRestart.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GrapeFruit.h" />
+    <ClInclude Include="Guide.h" />
     <ClInclude Include="ItemBall.h" />
     <ClInclude Include="Lemon.h" />
     <ClInclude Include="Option.h" />

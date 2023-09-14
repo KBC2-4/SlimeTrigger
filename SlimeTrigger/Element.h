@@ -58,6 +58,8 @@ private:
 	//動く床のアニメーション
 	int moveFloorAnimation;
 
+	//プレイヤーが地下にいるかどうか
+	bool isInUnder;
 
 public:
 	/// <summary>
@@ -130,5 +132,7 @@ public:
 	/// 酸性雨の水たまり構造体のGetter
 	/// </summary>
 	std::vector<ELEMENT_DATA>GetAcidrain_puddles() { return acidrainPuddles; }
+
+	bool GetIsInUnder() { return isInUnder; }
 };
 

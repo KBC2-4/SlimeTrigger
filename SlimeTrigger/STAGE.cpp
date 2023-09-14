@@ -145,33 +145,36 @@ void STAGE::Update(PLAYER* player, ELEMENT* element) {
 void STAGE::Draw(ELEMENT* element)const {
 
 	//ステージ背景
-	if (stageName == "Stage01") {
-		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-	}
-	else if (stageName == "Stage02") {
-		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[1], FALSE);
-		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[1], FALSE);
-	}
-	else if (stageName == "Stage03") {
-		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[2], FALSE);
-		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[2], FALSE);
-	}
-	else {
-		DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-		DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+	if (element->GetIsInUnder() == false)
+	{
+		if (stageName == "Stage01") {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		}
+		else if (stageName == "Stage02") {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[1], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[1], FALSE);
+		}
+		else if (stageName == "Stage03") {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[2], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[2], FALSE);
+		}
+		else {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		}
 	}
 
 	//地下背景描画
-	if (stageName == "Stage03") 
-	{
-		//ステージ3
-		DrawBoxAA(0, scrollY + 1380, scrollX + 5120, scrollY + 4800, 0x20251F, TRUE);
-	}
-	else if (stageName == "StageSelect")
-	{
-		DrawBoxAA(scrollX + 3000, scrollY + 1280, scrollX + 8640, scrollY + 1800, 0x20251F, TRUE);
-	}
+	//if (stageName == "Stage03") 
+	//{
+	//	//ステージ3
+	//	DrawBoxAA(0, scrollY + 1380, scrollX + 5120, scrollY + 4800, 0x20251F, TRUE);
+	//}
+	//else if (stageName == "StageSelect")
+	//{
+	//	DrawBoxAA(scrollX + 3000, scrollY + 1280, scrollX + 8640, scrollY + 1800, 0x20251F, TRUE);
+	//}
 
 
 	for (int i = 0; i < mapData.size(); i++) {
@@ -436,7 +439,7 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 	if (player->GetPlayerY() >= 560 &&player->GetPlayerY()-scrollY<=mapData.size()*MAP_CEllSIZE&& GetMapData((player->GetPlayerY() - scrollY) / MAP_CEllSIZE + 3, (player->GetPlayerX() - scrollX) / MAP_CEllSIZE) != -1) {
 		if (player->GetPlayerMoveState() == PLAYER_MOVE_STATE::FALL) {
 			//プレイヤーの落下速度に応じてスクロールYを下げる
-			if (player->GetJumpVelocity() > 0)scrollY -= player->GetJumpVelocity() + 15.0f;
+			if (player->GetJumpVelocity() > 0)scrollY -= player->GetJumpVelocity() + 25.0f;
 		}
 		else {
 			scrollY -= 10.0f;
@@ -504,7 +507,7 @@ bool STAGE::HitMapDat(int y, int x) {
 		|| block_type == 26 //木2(横右)
 		|| block_type == 27 //木3
 		|| block_type == 28 //木3(横左)
-		|| block_type == 39 //木3(横右)
+		|| block_type == 29 //木3(横右)
 		|| block_type == 30 //木4
 		|| block_type == 31 //木4(横左)
 		|| block_type == 32 //木4(横右)
