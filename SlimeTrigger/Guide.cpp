@@ -1,69 +1,30 @@
-#include "AbstractScene.h"
+ï»¿#include "Guide.h"
 #include "DxLib.h"
 
-AbstractScene::AbstractScene() {
-	static short initialized = 0;
-
-	//ƒvƒƒOƒ‰ƒ€ŠJn‚É2‰ñŒÄ‚Î‚ê‚é‚Ì‚ğ–³Œø‰»
-	if (initialized > 1 ) {
-		CommonProcess();
-	}
-	else {
-		initialized++;
-	}
-}
-
-
-void AbstractScene::CommonProcess() {
-	
-	//ƒŠƒ\[ƒX‚ğƒŠƒZƒbƒg
-	InitFontToHandle();
-	InitGraph();
-	InitSoundMem();
-}
-
-int AbstractScene::GetDrawCenterX(const char* string, int fontHandle, int margin)const {
-
-	//‰æ–Ê•
-	const int screenX = 1280;
-
-	if (margin >= screenX || margin <= -screenX) {
-		margin = 0;
-	}
-
-	if (fontHandle == -1) {
-		fontHandle = DX_DEFAULT_FONT_HANDLE;
-	}
-
-
-	const int w = screenX / 2 + margin - (GetDrawFormatStringWidthToHandle(fontHandle, string) / 2);
-	return w;
-}
-
-void AbstractScene::DrawGuides(const std::vector<guideElement>& guides, float x, float y, float padding, float elementSpacing) const
+void Guide::DrawGuides(const std::vector<guideElement>& guides, float x, float y, float padding,
+    float elementSpacing) const
 {
+    float currentX = x;
+    float centerY = y + 15;
 	
-	float currentX = x;
-	float centerY = y + 15;
-	
-	for (const auto& guide : guides)
-	{
-		int font = guide.font;
-		if (font == NULL) {
-			font = DX_DEFAULT_FONT_HANDLE;
-		}
+    for (const auto& guide : guides)
+    {
+        int font = guide.font;
+        if (font == NULL) {
+            font = DX_DEFAULT_FONT_HANDLE;
+        }
 		
-		DrawGuideElement(guide, currentX, y);
+        DrawGuideElement(guide, currentX, y);
 
-		int textWidth, textHeight;
-		GetDrawStringSizeToHandle(&textWidth, &textHeight, nullptr, guide.description.c_str(), guide.description.length(), font);
-		float stringY = centerY - (textHeight / 2) + guide.offsetStringY;
-		DrawStringToHandle(currentX, stringY, guide.description.c_str(), guide.color, font, guide.edgeColor);
-		currentX += textWidth + elementSpacing;
-	}
+        int textWidth, textHeight;
+        GetDrawStringSizeToHandle(&textWidth, &textHeight, nullptr, guide.description.c_str(), guide.description.length(), font);
+        float stringY = centerY - (textHeight / 2) + guide.offsetStringY;
+        DrawStringToHandle(currentX, stringY, guide.description.c_str(), guide.color, font, guide.edgeColor);
+        currentX += textWidth + elementSpacing;
+    }
 }
 
-void AbstractScene::DrawGuideElement(const guideElement& guide, float& currentX, float y) const
+void Guide::DrawGuideElement(const guideElement& guide, float& currentX, float y) const
 {
 	
 	int font = guide.font;
@@ -77,24 +38,23 @@ void AbstractScene::DrawGuideElement(const guideElement& guide, float& currentX,
 			int textWidth, textHeight;
 			GetDrawStringSizeToHandle(&textWidth, &textHeight, nullptr, button.c_str(), button.length(), font);
 			
-			float padding = 2.f;
+			float padding = guide.padding;
 
 			if (guide.shapeType == GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE) {
-				// ƒT[ƒNƒ‹‚Ì”¼Œa‚ğ•¶š—ñ‚Ì•‚ÉŠî‚Ã‚¢‚ÄŒvZ
+				// ã‚µãƒ¼ã‚¯ãƒ«ã®åŠå¾„ã‚’æ–‡å­—åˆ—ã®å¹…ã«åŸºã¥ã„ã¦è¨ˆç®—
 				float radius = (std::max)(textHeight, textWidth) / 2 + padding + guide.radiusOffset;
 				
 				DrawCircleAA(currentX + radius, y + radius, radius, 32, guide.lineColor, FALSE, guide.lineWidth);
 				DrawCircleAA(currentX + radius, y + radius, radius, 32, guide.buttonColor, TRUE);
 				float stringY = y + radius - (textHeight / 2) + guide.offsetButtonStringY;
-				// •¶š—ñ‚ğƒT[ƒNƒ‹‚Ì’†‰›‚É”z’u
+				// æ–‡å­—åˆ—ã‚’ã‚µãƒ¼ã‚¯ãƒ«ã®ä¸­å¤®ã«é…ç½®
 				DrawStringToHandle(currentX + radius - textWidth / 2, stringY, button.c_str(), guide.buttonStringColor, font, 0xFFFFFF);
 				currentX += radius * 2;
 			} else if (guide.shapeType == GUIDE_SHAPE_TYPE::DYNAMIC_BOX) {
-				float boxWidth = textWidth + 2 * padding; 
+				float boxWidth = textWidth + 2 * padding;
 				float boxHeight = textHeight + 2 * padding;
 
-				// c’·‚É‚È‚ç‚È‚¢‚æ‚¤‚É§ŒÀ‚·‚é
-				// c’·‚É‚È‚éê‡‚ÍAboxWidth ‚ğ boxHeight ‚Æ“¯‚¶‚É‚·‚é
+
 				if (boxHeight > boxWidth) {
 					boxWidth = boxHeight;
 				}
@@ -121,51 +81,51 @@ void AbstractScene::DrawGuideElement(const guideElement& guide, float& currentX,
 			}
 			else if (guide.shapeType == GUIDE_SHAPE_TYPE::ROUNDED_BOX) {
 				
-				// ƒeƒLƒXƒg‚ÌƒTƒCƒY‚ğæ“¾
+				// ãƒ†ã‚­ã‚¹ãƒˆã®ã‚µã‚¤ã‚ºã‚’å–å¾—
 				int textWidth, textHeight;
 				GetDrawStringSizeToHandle(&textWidth, &textHeight, nullptr, button.c_str(), button.length(), font);
 
-				// }Œ`‚ÌƒTƒCƒY‚ğ“®“I‚ÉŒvZ
+				// å›³å½¢ã®ã‚µã‚¤ã‚ºã‚’å‹•çš„ã«è¨ˆç®—
 				float dynamicHeight = textHeight + 5;
 				float dynamicWidth = textWidth + 5;
-				float radius = dynamicHeight / 2;  // ‚‚³‚ÉŠî‚Ã‚¢‚Ä”¼Œa‚ğİ’è
+				float radius = dynamicHeight / 2;  // é«˜ã•ã«åŸºã¥ã„ã¦åŠå¾„ã‚’è¨­å®š
 
 				float rectX = currentX;
 				float rectY = y;
 
-				// ‹éŒ`‚Ì¶ã‚Æ‰E‰º‚ÌÀ•W‚ğŒvZ
+				// çŸ©å½¢ã®å·¦ä¸Šã¨å³ä¸‹ã®åº§æ¨™ã‚’è¨ˆç®—
 				float rectLeft = rectX + radius;
 				float rectTop = rectY;
 				float rectRight = rectX + dynamicWidth - radius;
 				float rectBottom = rectY + dynamicHeight + 1.0f;
 
-				// ŠO˜g‚ÌF‚Æ‘¾‚³‚ğİ’è
+				// å¤–æ ã®è‰²ã¨å¤ªã•ã‚’è¨­å®š
 				unsigned int borderColor = 0xEFEAF6;
-				float borderWidth = 4.0f; // ‘¾‚³
+				float borderWidth = 4.0f; // å¤ªã•
 
-				// ŠO˜g‚Ì‹éŒ`‚ğ•`‰æ
+				// å¤–æ ã®çŸ©å½¢ã‚’æç”»
 				DrawBoxAA(rectLeft, rectTop, rectRight, rectBottom, borderColor, FALSE, borderWidth);
 
-				// ¶‘¤‚Ì‰~‚ğ•`‰æ
+				// å·¦å´ã®å††ã‚’æç”»
 				float circleLeftCenterX = rectLeft;
 				float circleLeftCenterY = rectY + radius;
-				// ¶‘¤‚Ì‰~‚ÌŠO˜g‚ğ•`‰æ
+				// å·¦å´ã®å††ã®å¤–æ ã‚’æç”»
 				DrawCircleAA(circleLeftCenterX, circleLeftCenterY, radius, 20, borderColor, FALSE, borderWidth);
 				
 				DrawCircleAA(circleLeftCenterX, circleLeftCenterY, radius, 20, guide.color, TRUE);
 
-				// ‰E‘¤‚Ì‰~‚ğ•`‰æ
+				// å³å´ã®å††ã‚’æç”»
 				float circleRightCenterX = rectRight;
 				float circleRightCenterY = rectY + radius;
-				// ‰E‘¤‚Ì‰~‚ÌŠO˜g‚ğ•`‰æ
+				// å³å´ã®å††ã®å¤–æ ã‚’æç”»
 				DrawCircleAA(circleRightCenterX, circleRightCenterY, radius, 20, borderColor, FALSE, borderWidth);
 				DrawCircleAA(circleRightCenterX, circleRightCenterY, radius, 20, guide.color, TRUE);
 				
-				// ‹éŒ`‚ğ•`‰æ
+				// çŸ©å½¢ã‚’æç”»
 				DrawBoxAA(rectLeft, rectTop, rectRight, rectBottom, guide.color, TRUE);
 
 				float stringY = rectY + dynamicHeight / 2 - (textHeight / 2) + guide.offsetButtonStringY;
-				// ƒeƒLƒXƒg‚ğ•`‰æ
+				// ãƒ†ã‚­ã‚¹ãƒˆã‚’æç”»
 				DrawStringToHandle(rectX + dynamicWidth / 2 - textWidth / 2, stringY, button.c_str(), guide.buttonStringColor, font, 0xFFFFFF);
 
 				currentX += dynamicWidth;
@@ -177,7 +137,7 @@ void AbstractScene::DrawGuideElement(const guideElement& guide, float& currentX,
 				DrawBoxAA(joystickX - 5.0f, joystickY, joystickX + 7, joystickY + 23, guide.buttonColor, TRUE);
 				DrawOvalAA(joystickX, joystickY + 23.0f, 22, 8, 20, guide.buttonColor, TRUE);
 				DrawString(joystickX - 2.0f, joystickY - 2.0f, button.c_str(), guide.buttonStringColor);
-				currentX += 25.0f;  // ƒWƒ‡ƒCƒXƒeƒBƒbƒN‚Ì•
+				currentX += 25.0f;  // ã‚¸ãƒ§ã‚¤ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å¹…
 
 			} 
 			else { // Text
@@ -185,16 +145,15 @@ void AbstractScene::DrawGuideElement(const guideElement& guide, float& currentX,
 				currentX += textWidth;
 			}
 
-			//•¡”‚Ìƒ{ƒ^ƒ“‚ª‚ ‚éê‡ÅŒã‚Ìƒ{ƒ^ƒ“ˆÈŠO‚ÌŒã‚É“à•”ƒpƒfƒBƒ“ƒO‚ğ’Ç‰Á
+			//è¤‡æ•°ã®ãƒœã‚¿ãƒ³ãŒã‚ã‚‹å ´åˆæœ€å¾Œã®ãƒœã‚¿ãƒ³ä»¥å¤–ã®å¾Œã«å†…éƒ¨ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã‚’è¿½åŠ 
 			if (i < guide.buttons.size() - 1)
 			{
 				currentX += guide.innerPadding;
 			}
 			else
 			{
-				// ƒ{ƒ^ƒ“‚Æà–¾‚ÌŠÔ‚ÌƒpƒfƒBƒ“ƒO‚ğ’Ç‰Á
+				// ãƒœã‚¿ãƒ³ã¨èª¬æ˜ã®é–“ã®ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã‚’è¿½åŠ 
 				currentX += padding;
 			}
 		}
 }
-
