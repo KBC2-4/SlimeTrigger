@@ -79,7 +79,7 @@ void ThrowSlime::Hit(STAGE* stage, ELEMENT* element, TOMATO** tomaton, int tomat
 	if (stage->HitThrowSlime(static_cast<int>(floor(y0 / MAP_CEllSIZE)), static_cast<int>(x0 / MAP_CEllSIZE)) == true) {
 		if (object == 91 || object == 92 || object == 93) { return; } //敵
 		if (object == 51 || object == 52 || object == 53 || object == 54) return; //リフト
-		if (object == 21 || object == 22 || object == 23 || object == 24) { return; } //木
+		if (21 <= object && object <= 32) { return; } //木
 		if (object == 64 || object == 65) { return; } //開いたドア
 
 		throw_del = true;

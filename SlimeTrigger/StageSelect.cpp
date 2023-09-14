@@ -8,7 +8,7 @@
 
 //#define DEBUG_STAGE
 
-STAGE_SELECT::STAGE_SELECT()
+STAGE_SELECT::STAGE_SELECT(short lastStageNum)
 {
 	//backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImpause_cash.bmp");
 	backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png");
@@ -118,11 +118,6 @@ STAGE_SELECT::STAGE_SELECT()
 		}
 	}
 
-	//スポーン地点をセット
-	stage->SetScrollX(-(stage->GetSpawnPoint().y - MAP_CEllSIZE));
-	stage->SetScrollY(-(stage->GetSpawnPoint().x - MAP_CEllSIZE - 400.0f));
-	player->SetPlayer_Screen(stage->GetSpawnPoint());
-
 	playerMapX = 0;
 	playerMapY = 0;
 
@@ -167,6 +162,19 @@ STAGE_SELECT::STAGE_SELECT()
 			}
 		}
 	}
+
+	//プレイヤーのスポーン地点をセット
+	POINT spawnPointPlayer = stage->GetSpawnPoint();
+
+	if (lastStageNum != 0)
+	{
+		spawnPointPlayer.x = stageMove[lastStageNum].y;
+		spawnPointPlayer.y = stageMove[lastStageNum].x - MAP_CEllSIZE;
+	}
+
+	stage->SetScrollX(-(spawnPointPlayer.y - MAP_CEllSIZE * 4));
+	stage->SetScrollY(-(spawnPointPlayer.x - MAP_CEllSIZE - 400.0f));
+	player->SetPlayer_Screen(spawnPointPlayer);
 
 	PlaySoundMem(backGraundMusic, DX_PLAYTYPE_LOOP);
 
@@ -266,7 +274,7 @@ AbstractScene* STAGE_SELECT::Update()
 
 	//落ちたらリスタート
 	if (player->IsDeath() == true) {
-		return new STAGE_SELECT();
+		return new STAGE_SELECT(0);
 	}
 
 	//戻る

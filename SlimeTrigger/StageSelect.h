@@ -32,7 +32,6 @@ private:
 	LEMON** lemoner;	//レモナー
 	GRAPEFRUIT** gurepon;	//グレぽん
 	TOMATO** tomaton;	//とまトン
-	ITEMBALL** item;     //アイテム
 
 	//レモナー数用の変数
 	int lemonerCount;
@@ -46,11 +45,14 @@ private:
 	POINT stageReturn;		//タイトルへ戻る座標
 	POINT stageMove[4];	//ステージポータル座標
 
+	//前回のステージ番号 0 == Title
+	short lastStageNum;
+
 public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	STAGE_SELECT();
+	STAGE_SELECT(short lastStageNum);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>

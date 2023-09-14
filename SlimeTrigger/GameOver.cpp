@@ -111,6 +111,9 @@ AbstractScene* GameOver::Update()
 		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
 
+		//前回のステージ番号
+		short lastStageNum = 0;
+
 		switch (static_cast<GAMEOVER_MENU>(selectMenu))
 		{
 
@@ -119,7 +122,12 @@ AbstractScene* GameOver::Update()
 			break;
 
 		case  GAMEOVER_MENU::ReSelect:
-			return new STAGE_SELECT();
+			if (stageName != "StageSelect")
+			{
+				lastStageNum = stageName[6] - '0';
+			}
+
+			return new STAGE_SELECT(lastStageNum);
 			break;
 
 		default:

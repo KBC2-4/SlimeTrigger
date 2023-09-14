@@ -16,6 +16,9 @@ private:
 	int effectTimer[2];
 	float stringEffectTimer;
 	bool highScore;
+	
+	//前回のステージ番号 0 == Title
+	short lastStageNum;
 
 public:
 	RESULT(bool issue, int clearTime = -1, const char* stageName = "StageSelect");

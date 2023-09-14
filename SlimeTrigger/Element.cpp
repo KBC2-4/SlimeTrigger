@@ -248,11 +248,11 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 						data.leftGoalX = static_cast<float>((lift_pos * MAP_CEllSIZE));
 						data.leftGoalY = static_cast<float>((i * MAP_CEllSIZE));
 						break;
-					}
-					if (mapData.at(i).at(lift_pos) > 0 && (mapData.at(i).at(lift_pos) < 21 || mapData.at(i).at(lift_pos) > 24)) {
+					}//i˜H•ûŒü‚ÉáŠQ•¨‚ª‚ ‚ê‚ÎƒS[ƒ‹’TõˆÊ’u‚ğ‹t‚É‚·‚é
+					if (0 < mapData.at(i).at(lift_pos) && (mapData.at(i).at(lift_pos) < 21 || 32 < mapData.at(i).at(lift_pos) && mapData.at(i).at(lift_pos) != 71 && mapData.at(i).at(lift_pos) != 72 && mapData.at(i).at(lift_pos) < 91 && 93 < mapData.at(i).at(lift_pos))) {
 						if (search_vector < 0) { break; }
 						lift_pos = j - 1;
-						search_vector = -1;
+						search_vector *= -1;
 						continue;
 					}
 				}

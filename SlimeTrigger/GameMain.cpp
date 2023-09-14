@@ -424,7 +424,18 @@ AbstractScene* GAMEMAIN::Update()
 		}
 		else {	//ポーズ画面のセレクター
 
-			if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::STAGE_SELECT) { return new STAGE_SELECT(); }
+			if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::STAGE_SELECT)
+			{
+				//前回のステージ番号
+				short lastStageNum = 0;
+
+				if (stageName != "StageSelect")
+				{
+					lastStageNum = stageName[6] - '0';
+				}
+
+				return new STAGE_SELECT(lastStageNum); 
+			}
 			else if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::RESTART) {
 				nowGraph = MakeGraph(1280, 720);
 				GetDrawScreenGraph(0, 0, 1280, 720, nowGraph);

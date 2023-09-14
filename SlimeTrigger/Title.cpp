@@ -145,7 +145,7 @@ AbstractScene* Title::Update()
 				{
 
 				case MENU::GAME_SELECT:
-					return new STAGE_SELECT();
+					return new STAGE_SELECT(0);
 					break;
 
 				case MENU::RANKING:
