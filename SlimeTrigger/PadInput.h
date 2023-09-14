@@ -3,7 +3,7 @@
 #include <bitset>
 
 class PLAYER;
-
+	
 constexpr auto BUTTONS = 16; //ボタンの数
 
 class PAD_INPUT
@@ -85,6 +85,11 @@ public:
 	* @brief 入力デバイスの切り替え状態更新
 	*/
 	void UpdateInputMode() const;
+
+	/**
+	* \brief ゲームパッド入力に切り替わる為の入力チェックヘルパー 
+	*/
+	bool CheckInput() const;
 
 };
 

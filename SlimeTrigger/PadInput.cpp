@@ -137,8 +137,6 @@ void PAD_INPUT::ConvertStickInputToMouseCursorAngle(PLAYER& player)
 
 void PAD_INPUT::UpdateInputMode() const
 {
-	// スティックの感度
-	const int stick_sensitivity = 20000;
 
 	if (CheckHitKeyAll(DX_CHECKINPUT_PAD)) {
 		// マウスカーソルを非表示にする
@@ -149,8 +147,7 @@ void PAD_INPUT::UpdateInputMode() const
 			// 入力キー取得
 			GetJoypadXInputState(DX_INPUT_KEY_PAD1, &input);
 
-			if (std::abs(GetPadThumbLX()) > stick_sensitivity || std::abs(GetPadThumbLY()) > stick_sensitivity
-				|| std::abs(GetPadThumbRX()) > stick_sensitivity || std::abs(GetPadThumbRY()) > stick_sensitivity) {
+			if (CheckInput()) {
 				currentInputMode = InputMode::XINPUT_GAMEPAD;
 				//printfDx("XINPUT_GAMEPAD\n");
 			}
@@ -160,8 +157,7 @@ void PAD_INPUT::UpdateInputMode() const
 			GetJoypadDirectInputState(DX_INPUT_KEY_PAD1, &dInput);
 			InputConverter(dInput);
 
-			if (std::abs(GetPadThumbLX()) > stick_sensitivity || std::abs(GetPadThumbLY()) > stick_sensitivity
-				|| std::abs(GetPadThumbRX()) > stick_sensitivity || std::abs(GetPadThumbRY()) > stick_sensitivity) {
+			if (CheckInput()) {
 				currentInputMode = InputMode::DIRECTINPUT_GAMEPAD;
 				//printfDx("DIRECTINPUT_GAMEPAD\n");
 			}
@@ -176,4 +172,40 @@ void PAD_INPUT::UpdateInputMode() const
 		currentInputMode = InputMode::KEYBOARD;
 		//printfDx("KEYBOARD\n");
 	}
+}
+
+bool PAD_INPUT::CheckInput() const
+{
+	// ボタンのリスト
+	std::array<int, 10> buttonList = {
+		XINPUT_BUTTON_A,
+		XINPUT_BUTTON_B,
+		XINPUT_BUTTON_X,
+		XINPUT_BUTTON_Y,
+		XINPUT_BUTTON_BACK,
+		XINPUT_BUTTON_START,
+		XINPUT_BUTTON_DPAD_UP,
+		XINPUT_BUTTON_DPAD_RIGHT,
+		XINPUT_BUTTON_DPAD_DOWN,
+		XINPUT_BUTTON_DPAD_LEFT
+	};
+
+	// スティックの感度
+	const int stick_sensitivity = 20000;
+
+	if (std::abs(GetPadThumbLX()) > stick_sensitivity || std::abs(GetPadThumbLY()) > stick_sensitivity
+		|| std::abs(GetPadThumbRX()) > stick_sensitivity || std::abs(GetPadThumbRY()) > stick_sensitivity)
+	{
+		return true;
+	}
+
+	for (auto button : buttonList)
+	{
+		if (input.Buttons[button] == 1)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
