@@ -45,9 +45,6 @@ private:
 	POINT stageReturn;		//タイトルへ戻る座標
 	POINT stageMove[4];	//ステージポータル座標
 
-	//前回のステージ番号 0 == Title
-	short lastStageNum;
-
 public:
 	/// <summary>
 	/// コンストラクタ

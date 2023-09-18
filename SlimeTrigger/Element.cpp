@@ -45,6 +45,8 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 		for (int j = 0; j < mapData.at(0).size(); j++)
 		{
 			int search_vector = 1;
+			//íTçıç¿ïW
+			int lift_pos = i + 1;
 			int button_num_1 = 0;
 			int button_num_2 = 0;
 			int door_num = 0;
@@ -213,18 +215,29 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.leftVectorX = 0;
 				data.leftVectorY = 0;
 				data.liftWaitTimer = 0;
+				
+				if (mapData.size() < lift_pos)
+				{
+					lift_pos = i - 1;
+					search_vector = -1;
+				}
 				//ÉSÅ[Éãà íuÇäiî[
-				for (int lift_pos = i + 1; lift_pos >= 0 && lift_pos < mapData.size(); lift_pos += search_vector) {
+				for (lift_pos; lift_pos >= 0 && lift_pos < mapData.size(); lift_pos += search_vector) {
 					if (mapData.at(lift_pos).at(j) == 53) {
 						data.leftGoalX = static_cast<float>((j * MAP_CEllSIZE));
 						data.leftGoalY = static_cast<float>((lift_pos * MAP_CEllSIZE));
 						break;
 					}
-					else if (mapData.at(lift_pos).at(j) > 0 && (mapData.at(lift_pos).at(j) < 21 || mapData.at(lift_pos).at(j) > 24)) {
+					else if (mapData.at(lift_pos).at(j) > 0 && (mapData.at(i).at(lift_pos) < 21 || 32 < mapData.at(i).at(lift_pos) && mapData.at(i).at(lift_pos) != 71 && mapData.at(i).at(lift_pos) != 72 && mapData.at(i).at(lift_pos) < 91 && 93 < mapData.at(i).at(lift_pos)))
+					{
 						if (search_vector < 0) { break; }
 						lift_pos = i - 1;
 						search_vector = -1;
-						continue;
+					}
+					else if (mapData.size() <= lift_pos + 1)
+					{
+						lift_pos = i - 1;
+						search_vector = -1;
 					}
 				}
 				data.type = 1;
@@ -286,6 +299,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 	acidrainPuddlesAniTimer = 0;
 
 	hookFlag = false;
+	isInUnder = false;
 
 	//SE
 	ChangeVolumeSoundMem(Option::GetSEVolume(), doorCloseSe);
@@ -619,7 +633,7 @@ void ELEMENT::Door(STAGE* stage) {
 			stage->SetMapData(y - 1, x, 65);
 		}
 
-		if (door[i].flag==true&&(playerMapX >= door[i].x + MAP_CEllSIZE) && (playerMapX <= door[i].x + MAP_CEllSIZE + 5) && (playerMapY >= door[i].y - MAP_CEllSIZE *1.5) && (playerMapY <= door[i].y + MAP_CEllSIZE / 2)) {
+		if (door[i].flag==true&&(playerMapX >= door[i].x + MAP_CEllSIZE) && (playerMapX <= door[i].x + MAP_CEllSIZE + 10) && (playerMapY >= door[i].y - MAP_CEllSIZE *1.5) && (playerMapY <= door[i].y + MAP_CEllSIZE / 2)) {
 			int x = floor(door[i].x / MAP_CEllSIZE);
 			int y = floor(door[i].y / MAP_CEllSIZE);
 			stage->SetMapData(y, x, 66);
@@ -643,8 +657,8 @@ void ELEMENT::Lift(PLAYER* player, STAGE* stage) {
 
 		if (lift[i].flag == false)
 		{
-			if (lift[i].x - MAP_CEllSIZE <= pX &&
-				lift[i].y - MAP_CEllSIZE * 2 <= pY && pY <= lift[i].y + MAP_CEllSIZE * 2)
+			if (lift[i].x - MAP_CEllSIZE / 2 <= pX &&
+				lift[i].y - MAP_CEllSIZE / 2 <= pY && pY <= lift[i].y + MAP_CEllSIZE)
 			{
 				lift[i].flag = true;
 			}
@@ -786,7 +800,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 			}
 
 			else if ((manhole[i].flag == true) && (playerMapX >= manhole[i].x - MAP_CEllSIZE * 4) && (playerMapX <= manhole[i].x + MAP_CEllSIZE * 5) && (playerMapY > manhole[i].y + MAP_CEllSIZE)) {
-				if (underGroundEffects < 120) {
+				if (underGroundEffects < 100) {
 					underGroundEffects += 2;
 				}
 
@@ -835,6 +849,11 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 			if ((playerMapX >= manhole[i].x) && (playerMapX <= manhole[i].x + MAP_CEllSIZE) && (playerMapY <= manhole_down_y + MAP_CEllSIZE) && (playerMapY >= manhole_down_y)) {
 				player->SetVisible(true);
 				player->SetGravity(true);
+				//îwåiÇï`âÊÇµÇ»Ç¢
+				if (isInUnder == false)
+				{
+					isInUnder = true;
+				}
 			}
 		}
 
@@ -867,6 +886,12 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 					if (player->GetPlayerY() + -stage->GetScrollY() > manhole[i].y) {
 						stage->SetScrollY(stage->GetScrollY() + speed);
 						player->SetPlayerY((player->GetPlayerY() - stage->GetScrollY()) - speed);
+					}
+
+					//îwåiÇï`âÊÇ∑ÇÈ
+					if (isInUnder == true)
+					{
+						isInUnder = false;
 					}
 
 					if (underGroundEffects > 0) {
@@ -961,7 +986,7 @@ void ELEMENT::Acidrain_puddles(PLAYER* player) {
 				if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
 			}
 			//é_ó≠Ç‹ÇËÇ…Ç¬Ç©Ç¡ÇΩÉvÉåÉCÉÑÅ[ÇÉâÉCÉtÇÇOÇ…Ç∑ÇÈ
-			if (acidrainPuddles[i].y + 40.0f <= playerMapY)
+			if (acidrainPuddles[i].y + 40.0f <= playerMapY && playerMapY <= acidrainPuddles[i].y + 160.0f)
 			{
 				player->SetLife(0);
 			}
