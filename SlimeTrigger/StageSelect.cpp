@@ -410,7 +410,7 @@ void STAGE_SELECT::Draw() const
 		DrawStringToHandle(start_x + 12, start_y + 3 + y, "ESC", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
 		std::vector<guideElement> keyboardGuides = {
-			guideElement({"W", "A", "S", "D"}, "移動", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
+			guideElement({ "A", "D"}, "移動", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
 			             buttonGuidFont),
 			//GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),	
 			guideElement({Option::GetInputMode() ? "Z" : "SPACE"}, "ジャンプ", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
@@ -420,7 +420,7 @@ void STAGE_SELECT::Draw() const
 			guideElement({"Q"}, "[ゲーム中]ポーズ", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, guid_color, START_COLOR,
 			             guid_color),
 		};
-		DrawGuides(keyboardGuides, 200.0f, 668.0f, 5.0f, 60.0f);
+		DrawGuides(keyboardGuides, 220.0f, 668.0f, 5.0f, 60.0f);
 	}
 	
 
