@@ -17,7 +17,7 @@ private:
 
 	int okSe;
 	//フォント
-	int guidFont, buttonGuidFont, stageNameFont, moveToTitleFont;
+	int guidFont, keyboardGuidFont, buttonGuidFont, stageNameFont, moveToTitleFont;
 	int guidTimer;		//ガイド表示タイマー
 	bool effectDelta;
 	int effectTimer[2];	//[0:出現エフェクト, 1:ステージポータルエフェクト]
@@ -89,5 +89,10 @@ public:
 	/// <param name="secont_margin_y">2番目に表示する文字Y位置を誤差修正 (デフォルトは25 : 0にするとstage_nameと重なる)</param>
 	void DrawStageGuid(const char* stageName, const float x, const float y, const int stageNameFont, const int text_color, const int textback_color = -1,
 		const int text_margin_x = 0, const int text_margin_y = 0, const int backcolor = -1, const char* second_title = "", const int secont_margin_x = 0, const int secont_margin_y = 25) const;
+
+	/// <summary>
+	/// エレメント用のガイド表示
+	/// </summary>
+	void DrawGuide(float baseX, float baseY, STAGE* stage) const;
 };
 

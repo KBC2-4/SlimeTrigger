@@ -316,6 +316,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 /// </summary>
 ELEMENT::~ELEMENT() {
 	DeleteFontToHandle(guidFont);
+	DeleteFontToHandle(keyboardGuidFont);
 	DeleteSoundMem(doorCloseSe);
 	DeleteSoundMem(pressTheButtonSe);
 	DeleteSoundMem(switchSe);
