@@ -873,7 +873,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 			}
 
 			//マンホールの出口の左端から右端までのx座標かつマンホールの出口よりも下にいる場合
-			if ((playerMapX >= manhole[i].x - MAP_CEllSIZE / 2) && (playerMapX <= manhole[i].x + MAP_CEllSIZE / 2) && (playerMapY > manhole[i].y)) {
+			if ((playerMapX >= manhole[i].x - MAP_CEllSIZE / 2) && (playerMapX <= manhole[i].x + MAP_CEllSIZE / 2) && (playerMapY > manhole[i].y) && (playerMapY < manhole[i].leftInitY * MAP_CEllSIZE + MAP_CEllSIZE * 3)) {
 				if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { manhole[i].flag = true; }
 
 
@@ -881,9 +881,10 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 				if (manhole[i].flag == true) {
 					//player->SetGravity(false);
 					//player->SetVisible(true);
-					const int speed = manhole[i].liftWaitTimer * 4;
+					const int speed = manhole[i].liftWaitTimer * 5;
 
 					if (player->GetPlayerY() + -stage->GetScrollY() > manhole[i].y) {
+
 						stage->SetScrollY(stage->GetScrollY() + speed);
 						player->SetPlayerY((player->GetPlayerY() - stage->GetScrollY()) - speed);
 					}
