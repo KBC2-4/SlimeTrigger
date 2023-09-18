@@ -30,6 +30,7 @@ public:
 	
 private:
 	int guidFont,guidTimer;
+	int keyboardGuidFont;
 	std::vector<ELEMENT_DATA> hook;			//フック
 	std::vector<ELEMENT_DATA> button;		//ボタン
 	std::vector<ELEMENT_DATA> door;			//ドア
@@ -78,6 +79,10 @@ public:
 	/// 更新
 	/// </summary>
 	void Update(PLAYER* player,STAGE*stage);
+	/// <summary>
+	/// エレメント用のガイド表示
+	/// </summary>
+	void DrawGuide(float elementX, float elementY, STAGE* stage, int offsetX = 0, int offsetY = 0) const;
 	/// <summary>
 	/// 3種類のボタンの処理
 	/// </summary>
