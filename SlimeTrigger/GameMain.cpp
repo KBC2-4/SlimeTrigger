@@ -343,11 +343,18 @@ AbstractScene* GAMEMAIN::Update()
 					lemoner[i]->Update();
 					if (lemoner[i]->GetDeleteFlag())
 					{
-						itemRand = GetRand(5);
-						//アイテムを生成
-						if (itemRand == 0)
+						int x = lemoner[i]->GetX() / 80;
+						int y = lemoner[i]->GetY() / 80;
+						int mapData = stage->GetMapData(y, x);
+						//即死地点以外であればアイテムを生成する
+						if (mapData != -1 && mapData != 76)
 						{
-							item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+							itemRand = GetRand(5);
+							//アイテムを生成
+							if (itemRand == 0)
+							{
+								item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+							}
 						}
 						delete lemoner[i];
 						lemoner[i] = nullptr;
@@ -362,11 +369,18 @@ AbstractScene* GAMEMAIN::Update()
 			{
 				if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg())
 				{
-					itemRand = GetRand(5);
-					//アイテムを生成
-					if (itemRand == 0)
+					int x = gurepon[i]->GetX() / 80;
+					int y = gurepon[i]->GetY() / 80;
+					int mapData = stage->GetMapData(y, x);
+					//即死地点以外であればアイテムを生成する
+					if (mapData != -1 && mapData != 76)
 					{
-						item[itemNum++] = new ITEMBALL(gurepon[i]->GetX(), gurepon[i]->GetY(), gurepon[i]->GetSpawnMapX(), gurepon[i]->GetSpawnMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+						itemRand = GetRand(5);
+						//アイテムを生成
+						if (itemRand == 0)
+						{
+							item[itemNum++] = new ITEMBALL(gurepon[i]->GetX(), gurepon[i]->GetY(), gurepon[i]->GetSpawnMapX(), gurepon[i]->GetSpawnMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+						}
 					}
 					delete gurepon[i];
 					gurepon[i] = nullptr;
