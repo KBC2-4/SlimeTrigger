@@ -8,6 +8,7 @@
 ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 
 	guidFont = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	keyboardGuidFont = CreateFontToHandle("メイリオ", 9, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
 	if ((doorCloseSe = LoadSoundMem("Resource/Sounds/SE/Stage/door_close.wav")) == -1) {
 		throw "Resource/Sounds/SE/Stage/door_close.wav";
@@ -315,6 +316,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 /// </summary>
 ELEMENT::~ELEMENT() {
 	DeleteFontToHandle(guidFont);
+	DeleteFontToHandle(keyboardGuidFont);
 	DeleteSoundMem(doorCloseSe);
 	DeleteSoundMem(pressTheButtonSe);
 	DeleteSoundMem(switchSe);
@@ -343,17 +345,13 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 
 
 	//フックのガイド表示
-	for (int i = 0; i < hook.size(); i++) {
-		if (hook[i].flag == true) {
-			if (playerState != static_cast<int>(PLAYER_MOVE_STATE::HOOK)) {
-				if (guidTimer < 50) {
-					DrawCircleAA(hook[i].x + stage->GetScrollX(), hook[i].y + stage->GetScrollY(), 15, 20, 0xFFFFFF, 1);
-					DrawStringToHandle(static_cast<int>(hook[i].x + stage->GetScrollX()) - 7, static_cast<int>(hook[i].y + stage->GetScrollY()) - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
-				else {
-					DrawCircleAA(hook[i].x + stage->GetScrollX(), hook[i].y + stage->GetScrollY(), 15, 20, 0xFFCB33, 1);
-					DrawStringToHandle(static_cast<int>(hook[i].x + stage->GetScrollX()) - 7, static_cast<int>(hook[i].y + stage->GetScrollY()) - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
+	for (int i = 0; i < hook.size(); i++)
+	{
+		if (hook[i].flag == true)
+		{
+			if (playerState != static_cast<int>(PLAYER_MOVE_STATE::HOOK))
+			{
+				DrawGuide(hook[i].x, hook[i].y, stage);
 			}
 		}
 	}
@@ -398,31 +396,33 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 	for (int i = 0; i < manhole.size(); i++) {
 
 		if (manhole[i].type == 1) {
-			if (manhole[i].flag == true) {
-
-				if (manhole[i].animTimer < 20) {
-					DrawModiGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
-						manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE, manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
-						manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE, manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
-						manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
-						blockImage1[67], TRUE);
+			if (manhole[i].flag == true)
+			{
+				if (manhole[i].animTimer < 20)
+				{
+					DrawModiGraphF(manhole[i].x + stage->GetScrollX(),
+					               manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
+					               manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE,
+					               manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
+					               manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE,
+					               manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
+					               manhole[i].x + stage->GetScrollX(),
+					               manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
+					               blockImage1[67], TRUE);
 				}
-				else {
-					DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[97], TRUE);
+				else
+				{
+					DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[97],
+					           TRUE);
 				}
 			}
-			else {
-				DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[67], TRUE);
+			else
+			{
+				DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[67],
+				           TRUE);
 
 				//マンホールのガイド表示
-				if (guidTimer < 50) {
-					DrawCircleAA(manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE / 2, manhole[i].y + MAP_CEllSIZE - 20 + stage->GetScrollY(), 15, 20, 0xFFFFFF, 1);
-					DrawStringToHandle(static_cast<int>(manhole[i].x + stage->GetScrollX()) - 7 + MAP_CEllSIZE / 2, static_cast<int>(manhole[i].y + MAP_CEllSIZE + stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
-				else {
-					DrawCircleAA(manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE / 2, manhole[i].y + MAP_CEllSIZE - 20 + stage->GetScrollY(), 15, 20, 0xFFCB33, 1);
-					DrawStringToHandle(static_cast<int>(manhole[i].x + stage->GetScrollX()) - 7 + MAP_CEllSIZE / 2, static_cast<int>(manhole[i].y + MAP_CEllSIZE + stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
+				DrawGuide(manhole[i].x + MAP_CEllSIZE / 2, manhole[i].y + MAP_CEllSIZE - 20, stage);
 			}
 		}
 
@@ -437,15 +437,7 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 
 			int x = static_cast<int>(manhole[i].leftInitX) * MAP_CEllSIZE + MAP_CEllSIZE / 2;
 			int y = static_cast<int>(manhole[i].leftInitY) * MAP_CEllSIZE + MAP_CEllSIZE / 2;
-
-			if (guidTimer < 50) {
-				DrawCircleAA(x + stage->GetScrollX(), y - 20 + stage->GetScrollY(), 15, 20, 0xFFFFFF, 1);
-				DrawStringToHandle(x + static_cast<int>(stage->GetScrollX()) - 7, y + static_cast<int>(stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-			}
-			else {
-				DrawCircleAA(x + stage->GetScrollX(), y - 20 + stage->GetScrollY(), 15, 20, 0xFFCB33, 1);
-				DrawStringToHandle(x + static_cast<int>(stage->GetScrollX()) - 7, y + static_cast<int>(stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-			}
+			DrawGuide(x, y - 20, stage);
 		}
 	}
 
@@ -537,6 +529,48 @@ void ELEMENT::Update(PLAYER* player, STAGE* stage) {
 	else { guidTimer = 0; }
 
 	Hook_Distance(player, stage);	//フックのガイド表示用距離計算
+}
+
+void ELEMENT::DrawGuide(const float elementX, const float elementY, STAGE* stage, const int offsetX, const int offsetY) const
+{
+	float x1 = elementX + offsetX + stage->GetScrollX();
+	float y1 = elementY + offsetY + stage->GetScrollY();
+	const int currentInputMode = PAD_INPUT::GetInputMode();
+
+	if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) ||
+		currentInputMode == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD))
+	{
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawCircleAA(x1, y1, 15, 20, color, 1);
+
+		std::string buttonText = Option::GetInputMode() ? "B" : "A";
+		int textColor = Option::GetInputMode() ? B_COLOR : A_COLOR;
+		DrawStringToHandle(static_cast<int>(x1) - 7, static_cast<int>(y1) - 12, buttonText.c_str(), textColor, guidFont, 0xFFFFFF);
+	}
+	else if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+	{
+		float width = 20;
+		float height = 0;
+
+		if (!Option::GetInputMode())
+		{
+			x1 += 6;
+			width = 10;
+			height = 10;
+		}
+
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawBoxAA(x1 - 20, y1 - 20, x1 + width, y1 + height, color, 1);
+
+		if (Option::GetInputMode())
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 20, static_cast<int>(y1) - 15, "SPACE", B_COLOR, keyboardGuidFont, 0xFFFFFF);
+		}
+		else
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 12, static_cast<int>(y1) - 17, "Z", A_COLOR, guidFont, 0xFFFFFF);
+		}
+	}
 }
 
 /// <summary>

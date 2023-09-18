@@ -21,6 +21,7 @@ STAGE_SELECT::STAGE_SELECT(short lastStageNum)
 	}
 
 	guidFont = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	keyboardGuidFont = CreateFontToHandle("メイリオ", 9, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	buttonGuidFont = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	moveToTitleFont = CreateFontToHandle("メイリオ", 18, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	stageNameFont = CreateFontToHandle("メイリオ", 31, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8, -1, 4);
@@ -186,6 +187,7 @@ STAGE_SELECT::STAGE_SELECT(short lastStageNum)
 STAGE_SELECT::~STAGE_SELECT()
 {
 	DeleteFontToHandle(guidFont);
+	DeleteFontToHandle(keyboardGuidFont);
 	DeleteFontToHandle(buttonGuidFont);
 	DeleteFontToHandle(moveToTitleFont);
 	DeleteFontToHandle(stageNameFont);
@@ -408,7 +410,7 @@ void STAGE_SELECT::Draw() const
 		DrawStringToHandle(start_x + 12, start_y + 3 + y, "ESC", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
 		std::vector<guideElement> keyboardGuides = {
-			guideElement({"W", "A", "S", "D"}, "移動", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
+			guideElement({ "A", "D"}, "移動", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
 			             buttonGuidFont),
 			//GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),	
 			guideElement({Option::GetInputMode() ? "Z" : "SPACE"}, "ジャンプ", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
@@ -418,7 +420,7 @@ void STAGE_SELECT::Draw() const
 			guideElement({"Q"}, "[ゲーム中]ポーズ", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, guid_color, START_COLOR,
 			             guid_color),
 		};
-		DrawGuides(keyboardGuides, 200.0f, 668.0f, 5.0f, 60.0f);
+		DrawGuides(keyboardGuides, 220.0f, 668.0f, 5.0f, 60.0f);
 	}
 	
 
@@ -545,7 +547,50 @@ void STAGE_SELECT::DrawStageGuid(const char* stageName, const float x, const flo
 	DrawStringToHandle(x + stage->GetScrollX() - 55 + text_margin_x, y - MAP_CEllSIZE - 10 + stage->GetScrollY() + text_margin_y, stageName, text_color, stageNameFont, textback_color);
 	if (second_title != "") { DrawStringToHandle(x + stage->GetScrollX() - 55 + secont_margin_x, y - MAP_CEllSIZE - 10 + stage->GetScrollY() + secont_margin_y, second_title, text_color, stageNameFont, textback_color); }
 
-	DrawCircleAA(x + stage->GetScrollX(), y + stage->GetScrollY(), 15, 20, guidTimer < 50 ? 0xFFFFFF : 0xFFCB33, 1);
-	DrawStringToHandle(x + stage->GetScrollX() - 7, y + stage->GetScrollY() - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
+	// DrawCircleAA(x + stage->GetScrollX(), y + stage->GetScrollY(), 15, 20, guidTimer < 50 ? 0xFFFFFF : 0xFFCB33, 1);
+	// DrawStringToHandle(x + stage->GetScrollX() - 7, y + stage->GetScrollY() - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
+	DrawGuide(x, y, stage);
 
+}
+
+void STAGE_SELECT::DrawGuide(float baseX, float baseY, STAGE* stage) const
+{
+	float x1 = baseX + stage->GetScrollX();
+	float y1 = baseY + stage->GetScrollY();
+	const int currentInputMode = PAD_INPUT::GetInputMode();
+
+	if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) ||
+		currentInputMode == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD))
+	{
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawCircleAA(x1, y1, 15, 20, color, 1);
+
+		std::string buttonText = Option::GetInputMode() ? "B" : "A";
+		int textColor = Option::GetInputMode() ? B_COLOR : A_COLOR;
+		DrawStringToHandle(static_cast<int>(x1) - 7, static_cast<int>(y1) - 12, buttonText.c_str(), textColor, buttonGuidFont, 0xFFFFFF);
+	}
+	else if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+	{
+		float width = 20;
+		float height = 0;
+
+		if (!Option::GetInputMode())
+		{
+			x1 += 6;
+			width = 10;
+			height = 10;
+		}
+
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawBoxAA(x1 - 20, y1 - 20, x1 + width, y1 + height, color, 1);
+
+		if (Option::GetInputMode())
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 20, static_cast<int>(y1) - 15, "SPACE", B_COLOR, keyboardGuidFont, 0xFFFFFF);
+		}
+		else
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 12, static_cast<int>(y1) - 17, "Z", A_COLOR, buttonGuidFont, 0xFFFFFF);
+		}
+	}
 }
