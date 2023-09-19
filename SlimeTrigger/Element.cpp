@@ -3,11 +3,12 @@
 #include "Option.h"
 
 /// <summary>
-/// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+/// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 /// </summary>
 ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 
-	guidFont = CreateFontToHandle("ƒƒCƒŠƒI", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	guidFont = CreateFontToHandle("ãƒ¡ã‚¤ãƒªã‚ª", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	keyboardGuidFont = CreateFontToHandle("ãƒ¡ã‚¤ãƒªã‚ª", 9, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
 	if ((doorCloseSe = LoadSoundMem("Resource/Sounds/SE/Stage/door_close.wav")) == -1) {
 		throw "Resource/Sounds/SE/Stage/door_close.wav";
@@ -29,9 +30,15 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 		throw "Resource/Sounds/SE/Stage/manhole_opened.wav";
 	}
 
+	//é…¸æºœã¾ã‚Šã®ç”»åƒèª­ã¿è¾¼ã¿
 	LoadDivGraph("Resource/Images/Stage/acid.png",12,12,1,80,80,acidImage);
-
+	//æ³¡ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæœŸåŒ–
 	foamAnimation = 4;
+
+	//å‹•ãåºŠã®ç”»åƒèª­ã¿è¾¼ã¿
+	LoadDivGraph("Resource/Images/Stage/MoveFloor.png", 3, 3, 1, 80, 80, moveFloorImage);
+	//æ³¡ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆæœŸåŒ–
+	moveFloorAnimation = 0;
 
 	ELEMENT_DATA data;
 	for (int i = 0; i < mapData.size(); i++)
@@ -39,12 +46,14 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 		for (int j = 0; j < mapData.at(0).size(); j++)
 		{
 			int search_vector = 1;
+			//æ¢ç´¢åº§æ¨™
+			int lift_pos = i + 1;
 			int button_num_1 = 0;
 			int button_num_2 = 0;
 			int door_num = 0;
 			switch (mapData.at(i).at(j))
 			{
-				//ƒ{ƒ^ƒ“‰¡
+				//ãƒœã‚¿ãƒ³æ¨ª
 			case 61:
 				data.x = static_cast<float>((j * MAP_CEllSIZE + MAP_CEllSIZE / 2) + 25);
 				data.y = static_cast<float>(i * MAP_CEllSIZE + MAP_CEllSIZE / 2);
@@ -52,7 +61,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.flag = false;
 				data.animTimer = 0;
 
-				//ƒ{ƒ^ƒ“‚ÆƒhƒA‚Ì˜AŒg”Ô†‚ğŠi”[
+				//ãƒœã‚¿ãƒ³ã¨ãƒ‰ã‚¢ã®é€£æºç•ªå·ã‚’æ ¼ç´
 				while (button_num_1 < buttonInfo.size()) {
 					if (buttonInfo.at(button_num_1).at(0) == i && buttonInfo.at(button_num_1).at(1) == j) {
 						data.pairNum = buttonInfo.at(button_num_1).at(2);
@@ -64,7 +73,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				button.push_back(data);
 				break;
 
-				//ƒ{ƒ^ƒ“(‰º)
+				//ãƒœã‚¿ãƒ³(ä¸‹)
 			case 62:
 				data.x = static_cast<float>((j * MAP_CEllSIZE + MAP_CEllSIZE / 2));
 				data.y = static_cast<float>((i * MAP_CEllSIZE + MAP_CEllSIZE / 2));
@@ -72,7 +81,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.flag = false;
 				data.animTimer = 0;
 
-				//ƒ{ƒ^ƒ“‚ÆƒhƒA‚Ì˜AŒg”Ô†‚ğŠi”[
+				//ãƒœã‚¿ãƒ³ã¨ãƒ‰ã‚¢ã®é€£æºç•ªå·ã‚’æ ¼ç´
 				while (button_num_2 < buttonInfo.size()) {
 					if (buttonInfo.at(button_num_2).at(0) == i && buttonInfo.at(button_num_2).at(1) == j) {
 						data.pairNum = buttonInfo.at(button_num_2).at(2);
@@ -86,7 +95,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				break;
 
 
-				//ƒ{ƒ^ƒ“(ones)‰º
+				//ãƒœã‚¿ãƒ³(ones)ä¸‹
 			case 63:
 				data.x = static_cast<float>((j * MAP_CEllSIZE + MAP_CEllSIZE / 2));
 				data.y = static_cast<float>((i * MAP_CEllSIZE + MAP_CEllSIZE / 2) + 25);
@@ -96,7 +105,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				button.push_back(data);
 				break;
 
-				//•Â‚Ü‚Á‚Ä‚¢‚éƒhƒA‚Ì‰º
+				//é–‰ã¾ã£ã¦ã„ã‚‹ãƒ‰ã‚¢ã®ä¸‹
 			case 66:
 				data.x = static_cast<float>((j * MAP_CEllSIZE + MAP_CEllSIZE / 2));
 				data.y = static_cast<float>((i * MAP_CEllSIZE + MAP_CEllSIZE / 2));
@@ -104,7 +113,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.flag = false;
 				data.animTimer = 0;
 
-				//ƒ{ƒ^ƒ“‚ÆƒhƒA‚Ì˜AŒg”Ô†‚ğŠi”[
+				//ãƒœã‚¿ãƒ³ã¨ãƒ‰ã‚¢ã®é€£æºç•ªå·ã‚’æ ¼ç´
 				while (door_num < doorInfo.size()) {
 					if (doorInfo.at(door_num).at(0) == i && doorInfo.at(door_num).at(1) == j) {
 						data.pairNum = doorInfo.at(door_num).at(2);
@@ -116,48 +125,48 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				door.push_back(data);
 				break;
 
-				//ƒ}ƒ“ƒz[ƒ‹‚ÌŠW
+				//ãƒãƒ³ãƒ›ãƒ¼ãƒ«ã®è“‹
 			case 68:
 				data.x = static_cast<float>((j * MAP_CEllSIZE));
 				data.y = static_cast<float>((i * MAP_CEllSIZE));
-				data.leftInitX = j;		//”z—ñƒf[ƒ^
-				data.leftInitY = i;		//”z—ñƒf[ƒ^
-				data.pairNum = 0;			//‰‰ZŠ®—¹ƒtƒ‰ƒO
-				data.liftWaitTimer = 0;	//’†ŠÔ’n“_‚Ì”ƒJƒEƒ“ƒg—p
+				data.leftInitX = j;		//é…åˆ—ãƒ‡ãƒ¼ã‚¿
+				data.leftInitY = i;		//é…åˆ—ãƒ‡ãƒ¼ã‚¿
+				data.pairNum = 0;			//æ¼”ç®—å®Œäº†ãƒ•ãƒ©ã‚°
+				data.liftWaitTimer = 0;	//ä¸­é–“åœ°ç‚¹ã®æ•°ã‚«ã‚¦ãƒ³ãƒˆç”¨
 				data.type = 1;
 				data.flag = false;
 				data.animTimer = 0;
-				data.liftWaitTimer = 0;	//ˆÃˆÅƒGƒtƒFƒNƒg
+				data.liftWaitTimer = 0;	//æš—é—‡ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
 				manhole.push_back(data);
 				break;
 
-				//ƒ}ƒ“ƒz[ƒ‹(’†ŠÔ)
+				//ãƒãƒ³ãƒ›ãƒ¼ãƒ«(ä¸­é–“)
 			case 69:
 				data.x = static_cast<float>((j * MAP_CEllSIZE));
 				data.y = static_cast<float>((i * MAP_CEllSIZE));
-				data.leftInitX = j;		//”z—ñƒf[ƒ^
-				data.leftInitY = i;		//”z—ñƒf[ƒ^
-				data.pairNum = 0;			//‰‰ZŠ®—¹ƒtƒ‰ƒO
+				data.leftInitX = j;		//é…åˆ—ãƒ‡ãƒ¼ã‚¿
+				data.leftInitY = i;		//é…åˆ—ãƒ‡ãƒ¼ã‚¿
+				data.pairNum = 0;			//æ¼”ç®—å®Œäº†ãƒ•ãƒ©ã‚°
 				data.type = 2;
 				data.flag = false;
 				data.animTimer = 0;
 				manhole.push_back(data);
 				break;
 
-				//ƒ}ƒ“ƒz[ƒ‹(oŒû)
+				//ãƒãƒ³ãƒ›ãƒ¼ãƒ«(å‡ºå£)
 			case 97:
 				data.x = static_cast<float>((j * MAP_CEllSIZE + MAP_CEllSIZE / 2));
 				data.y = static_cast<float>((i * MAP_CEllSIZE + MAP_CEllSIZE / 2));
-				data.leftInitX = j;		//”z—ñƒf[ƒ^
-				data.leftInitY = i;		//”z—ñƒf[ƒ^
-				data.liftWaitTimer = 0;	//’†ŠÔ’n“_‚Ì”ƒJƒEƒ“ƒg—p
+				data.leftInitX = j;		//é…åˆ—ãƒ‡ãƒ¼ã‚¿
+				data.leftInitY = i;		//é…åˆ—ãƒ‡ãƒ¼ã‚¿
+				data.liftWaitTimer = 0;	//ä¸­é–“åœ°ç‚¹ã®æ•°ã‚«ã‚¦ãƒ³ãƒˆç”¨
 				data.type = 3;
 				data.flag = false;
 				data.animTimer = 0;
 				manhole.push_back(data);
 				break;
 
-				//_«‰J‚Ì…‚½‚Ü‚è(¶’[)
+				//é…¸æ€§é›¨ã®æ°´ãŸã¾ã‚Š(å·¦ç«¯)
 			case 74:
 			case 75:
 				data.x = static_cast<float>((j * MAP_CEllSIZE));
@@ -168,7 +177,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				acidrainPuddles.push_back(data);
 				break;
 
-				//_«‰J‚Ì…‚½‚Ü‚è(’†‰›)
+				//é…¸æ€§é›¨ã®æ°´ãŸã¾ã‚Š(ä¸­å¤®)
 			case 76:
 			case 77:
 				data.x = static_cast<float>((j * MAP_CEllSIZE));
@@ -180,7 +189,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				acidrainPuddles.push_back(data);
 				break;
 
-				//_«‰J‚Ì…‚½‚Ü‚è(‰E’[)
+				//é…¸æ€§é›¨ã®æ°´ãŸã¾ã‚Š(å³ç«¯)
 			case 78:
 			case 79:
 				data.x = static_cast<float>((j * MAP_CEllSIZE));
@@ -191,14 +200,14 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				acidrainPuddles.push_back(data);
 				break;
 
-				//ƒtƒbƒN
+				//ãƒ•ãƒƒã‚¯
 			case 72:
 				data.x = static_cast<float>((j * MAP_CEllSIZE + MAP_CEllSIZE / 2));
 				data.y = static_cast<float>((i * MAP_CEllSIZE + MAP_CEllSIZE / 2));
 				hook.push_back(data);
 				break;
 
-				//“®‚­°(cˆÚ“®)
+				//å‹•ãåºŠ(ç¸¦ç§»å‹•)
 			case 51:
 				data.x = static_cast<float>((j * MAP_CEllSIZE));
 				data.y = static_cast<float>((i * MAP_CEllSIZE));
@@ -207,26 +216,38 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.leftVectorX = 0;
 				data.leftVectorY = 0;
 				data.liftWaitTimer = 0;
-				//ƒS[ƒ‹ˆÊ’u‚ğŠi”[
-				for (int lift_pos = i + 1; lift_pos >= 0 && lift_pos < mapData.size(); lift_pos += search_vector) {
+				
+				if (mapData.size() < lift_pos)
+				{
+					lift_pos = i - 1;
+					search_vector = -1;
+				}
+				//ã‚´ãƒ¼ãƒ«ä½ç½®ã‚’æ ¼ç´
+				for (lift_pos; lift_pos >= 0 && lift_pos < mapData.size(); lift_pos += search_vector) {
 					if (mapData.at(lift_pos).at(j) == 53) {
 						data.leftGoalX = static_cast<float>((j * MAP_CEllSIZE));
 						data.leftGoalY = static_cast<float>((lift_pos * MAP_CEllSIZE));
 						break;
 					}
-					else if (mapData.at(lift_pos).at(j) > 0 && (mapData.at(lift_pos).at(j) < 21 || mapData.at(lift_pos).at(j) > 24)) {
+					else if (mapData.at(lift_pos).at(j) > 0 && (mapData.at(i).at(lift_pos) < 21 || 32 < mapData.at(i).at(lift_pos) && mapData.at(i).at(lift_pos) != 71 && mapData.at(i).at(lift_pos) != 72 && mapData.at(i).at(lift_pos) < 91 && 93 < mapData.at(i).at(lift_pos)))
+					{
 						if (search_vector < 0) { break; }
 						lift_pos = i - 1;
 						search_vector = -1;
-						continue;
+					}
+					else if (mapData.size() <= lift_pos + 1)
+					{
+						lift_pos = i - 1;
+						search_vector = -1;
 					}
 				}
 				data.type = 1;
-				data.flag = true;
+				data.flag = false;
 				data.animTimer = 0;
+				data.image = 0;
 				lift.push_back(data);
 				break;
-				//“®‚­°(‰¡ˆÚ“®)
+				//å‹•ãåºŠ(æ¨ªç§»å‹•)
 			case 52:
 				data.x = static_cast<float>((j * MAP_CEllSIZE));
 				data.y = static_cast<float>((i * MAP_CEllSIZE));
@@ -235,23 +256,24 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 				data.leftVectorX = 0;
 				data.leftVectorY = 0;
 				data.liftWaitTimer = 0;
-				//ƒS[ƒ‹ˆÊ’u‚ğŠi”[
+				//ã‚´ãƒ¼ãƒ«ä½ç½®ã‚’æ ¼ç´
 				for (int lift_pos = j + 1; lift_pos >= 0 && lift_pos < mapData.at(0).size(); lift_pos += search_vector) {
 					if (mapData.at(i).at(lift_pos) == 54) {
 						data.leftGoalX = static_cast<float>((lift_pos * MAP_CEllSIZE));
 						data.leftGoalY = static_cast<float>((i * MAP_CEllSIZE));
 						break;
-					}
-					if (mapData.at(i).at(lift_pos) > 0 && (mapData.at(i).at(lift_pos) < 21 || mapData.at(i).at(lift_pos) > 24)) {
+					}//é€²è·¯æ–¹å‘ã«éšœå®³ç‰©ãŒã‚ã‚Œã°ã‚´ãƒ¼ãƒ«æ¢ç´¢ä½ç½®ã‚’é€†ã«ã™ã‚‹
+					if (0 < mapData.at(i).at(lift_pos) && (mapData.at(i).at(lift_pos) < 21 || 32 < mapData.at(i).at(lift_pos) && mapData.at(i).at(lift_pos) != 71 && mapData.at(i).at(lift_pos) != 72 && mapData.at(i).at(lift_pos) < 91 && 93 < mapData.at(i).at(lift_pos))) {
 						if (search_vector < 0) { break; }
 						lift_pos = j - 1;
-						search_vector = -1;
+						search_vector *= -1;
 						continue;
 					}
 				}
 				data.type = 2;
-				data.flag = true;
+				data.flag = false;
 				data.animTimer = 0;
+				data.image = 0;
 				lift.push_back(data);
 				break;
 
@@ -278,6 +300,7 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 	acidrainPuddlesAniTimer = 0;
 
 	hookFlag = false;
+	isInUnder = false;
 
 	//SE
 	ChangeVolumeSoundMem(Option::GetSEVolume(), doorCloseSe);
@@ -289,17 +312,18 @@ ELEMENT::ELEMENT(const char* stageName) : STAGE(stageName) {
 }
 
 /// <summary>
-/// ƒfƒXƒgƒ‰ƒNƒ^
+/// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 /// </summary>
 ELEMENT::~ELEMENT() {
 	DeleteFontToHandle(guidFont);
+	DeleteFontToHandle(keyboardGuidFont);
 	DeleteSoundMem(doorCloseSe);
 	DeleteSoundMem(pressTheButtonSe);
 	DeleteSoundMem(switchSe);
 	DeleteSoundMem(walkPuddleSe);
 	DeleteSoundMem(manholeOpenedSe);
 
-	//‹t‚É1MB’öƒƒ‚ƒŠ‹ò‚¤‚Ì‚Å‚â‚ç‚È‚¢–
+	//é€†ã«1MBç¨‹ãƒ¡ãƒ¢ãƒªå–°ã†ã®ã§ã‚„ã‚‰ãªã„äº‹
 	/*hook.clear();
 	hook.shrink_to_fit();*/
 
@@ -307,7 +331,7 @@ ELEMENT::~ELEMENT() {
 }
 
 /// <summary>
-/// •`‰æ
+/// æç”»
 /// </summary>
 void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 	//DrawFormatString(100, 50, 0xffffff, "%2f %2f", scrollX, scrollY);
@@ -316,27 +340,23 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 	//printfDx("%d", animTimer);
 	//DrawFormatString(200, 100, 0xFFFFFF, "acidrainPuddles.x%f\acidrainPuddles.y%f", acidrainPuddles[1].x, acidrainPuddles[1].y);
 	//DrawFormatString(200, 200, 0xFFFFFF, "x%f\nY%f", playerMapX, playerMapY);
-	//ƒfƒoƒbƒO—p
+	//ãƒ‡ãƒãƒƒã‚°ç”¨
 
 
 
-	//ƒtƒbƒN‚ÌƒKƒCƒh•\¦
-	for (int i = 0; i < hook.size(); i++) {
-		if (hook[i].flag == true) {
-			if (playerState != static_cast<int>(PLAYER_MOVE_STATE::HOOK)) {
-				if (guidTimer < 50) {
-					DrawCircleAA(hook[i].x + stage->GetScrollX(), hook[i].y + stage->GetScrollY(), 15, 20, 0xFFFFFF, 1);
-					DrawStringToHandle(static_cast<int>(hook[i].x + stage->GetScrollX()) - 7, static_cast<int>(hook[i].y + stage->GetScrollY()) - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
-				else {
-					DrawCircleAA(hook[i].x + stage->GetScrollX(), hook[i].y + stage->GetScrollY(), 15, 20, 0xFFCB33, 1);
-					DrawStringToHandle(static_cast<int>(hook[i].x + stage->GetScrollX()) - 7, static_cast<int>(hook[i].y + stage->GetScrollY()) - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
+	//ãƒ•ãƒƒã‚¯ã®ã‚¬ã‚¤ãƒ‰è¡¨ç¤º
+	for (int i = 0; i < hook.size(); i++)
+	{
+		if (hook[i].flag == true)
+		{
+			if (playerState != static_cast<int>(PLAYER_MOVE_STATE::HOOK))
+			{
+				DrawGuide(hook[i].x, hook[i].y, stage);
 			}
 		}
 	}
 
-	//ƒ{ƒ^ƒ“
+	//ãƒœã‚¿ãƒ³
 	for (int i = 0; i < button.size(); i++) {
 
 		if (button[i].type == 2) {
@@ -354,16 +374,17 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 		}
 	}
 
-	//“®‚­°
+	//å‹•ãåºŠ
 	for (int i = 0; i < lift.size(); i++) {
 		//DrawFormatString(100+i*100, 400, 0xffffff, "%d", lift[i].leftVectorY);
 		//DrawFormatString(100 + i * 100, 400, 0xffffff, "%f", lift[i].x);
 		/*DrawFormatString(100+i*100, 400, 0xffffff, "%f", lift_goal_X[i].x);
 		DrawBox(lift_goal_X[i].x + stage->GetScrollX(), lift_goal_X[i].y + stage->GetScrollY(), lift_goal_X[i].x + MAP_CEllSIZE * 2 + stage->GetScrollX(), lift_goal_X[i].y + MAP_CEllSIZE / 2 + stage->GetScrollY(),0xff0000,FALSE);*/
-		DrawExtendGraphF(lift[i].x + stage->GetScrollX(), lift[i].y - 31 + stage->GetScrollY(), lift[i].x + LIFT_SIZE + stage->GetScrollX(), lift[i].y + 70 + stage->GetScrollY(), blockImage1[51], TRUE);
+		//DrawExtendGraphF(lift[i].x + stage->GetScrollX(), lift[i].y - 31 + stage->GetScrollY(), lift[i].x + LIFT_SIZE + stage->GetScrollX(), lift[i].y + 70 + stage->GetScrollY(), blockImage1[51], TRUE);
+		DrawExtendGraphF(lift[i].x + stage->GetScrollX(), lift[i].y - 50 + stage->GetScrollY(), lift[i].x + LIFT_SIZE + stage->GetScrollX(), lift[i].y + 70 + stage->GetScrollY(), moveFloorImage[lift[i].image], TRUE);
 	}
 
-	//ƒhƒA
+	//ãƒ‰ã‚¢
 	for (int i = 0; i < door.size(); i++) {
 		//if (button[i].type == 2 && button[i].flag == false)DrawOvalAA(button[i].x + scrollX, button[i].y + scrollY + 30, 25, 10, 20, 0xbfcb4e, TRUE, 1.0f);
 		if (door[i].flag == true) {
@@ -371,35 +392,37 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 		}
 	}
 
-	//ƒ}ƒ“ƒz[ƒ‹
+	//ãƒãƒ³ãƒ›ãƒ¼ãƒ«
 	for (int i = 0; i < manhole.size(); i++) {
 
 		if (manhole[i].type == 1) {
-			if (manhole[i].flag == true) {
-
-				if (manhole[i].animTimer < 20) {
-					DrawModiGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
-						manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE, manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
-						manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE, manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
-						manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
-						blockImage1[67], TRUE);
+			if (manhole[i].flag == true)
+			{
+				if (manhole[i].animTimer < 20)
+				{
+					DrawModiGraphF(manhole[i].x + stage->GetScrollX(),
+					               manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
+					               manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE,
+					               manhole[i].y + stage->GetScrollY() - manhole[i].animTimer * (288 / 20),
+					               manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE,
+					               manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
+					               manhole[i].x + stage->GetScrollX(),
+					               manhole[i].y + stage->GetScrollY() + MAP_CEllSIZE,
+					               blockImage1[67], TRUE);
 				}
-				else {
-					DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[97], TRUE);
+				else
+				{
+					DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[97],
+					           TRUE);
 				}
 			}
-			else {
-				DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[67], TRUE);
+			else
+			{
+				DrawGraphF(manhole[i].x + stage->GetScrollX(), manhole[i].y + stage->GetScrollY(), blockImage1[67],
+				           TRUE);
 
-				//ƒ}ƒ“ƒz[ƒ‹‚ÌƒKƒCƒh•\¦
-				if (guidTimer < 50) {
-					DrawCircleAA(manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE / 2, manhole[i].y + MAP_CEllSIZE - 20 + stage->GetScrollY(), 15, 20, 0xFFFFFF, 1);
-					DrawStringToHandle(static_cast<int>(manhole[i].x + stage->GetScrollX()) - 7 + MAP_CEllSIZE / 2, static_cast<int>(manhole[i].y + MAP_CEllSIZE + stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
-				else {
-					DrawCircleAA(manhole[i].x + stage->GetScrollX() + MAP_CEllSIZE / 2, manhole[i].y + MAP_CEllSIZE - 20 + stage->GetScrollY(), 15, 20, 0xFFCB33, 1);
-					DrawStringToHandle(static_cast<int>(manhole[i].x + stage->GetScrollX()) - 7 + MAP_CEllSIZE / 2, static_cast<int>(manhole[i].y + MAP_CEllSIZE + stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				}
+				//ãƒãƒ³ãƒ›ãƒ¼ãƒ«ã®ã‚¬ã‚¤ãƒ‰è¡¨ç¤º
+				DrawGuide(manhole[i].x + MAP_CEllSIZE / 2, manhole[i].y + MAP_CEllSIZE - 20, stage);
 			}
 		}
 
@@ -410,24 +433,16 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 			else {
 				DrawGraphF(manhole[i].x + stage->GetScrollX() - MAP_CEllSIZE / 2, manhole[i].y + stage->GetScrollY() - MAP_CEllSIZE / 2, blockImage1[67], TRUE);
 			}
-			//ƒ}ƒ“ƒz[ƒ‹‚ÌƒKƒCƒh•\¦
+			//ãƒãƒ³ãƒ›ãƒ¼ãƒ«ã®ã‚¬ã‚¤ãƒ‰è¡¨ç¤º
 
 			int x = static_cast<int>(manhole[i].leftInitX) * MAP_CEllSIZE + MAP_CEllSIZE / 2;
 			int y = static_cast<int>(manhole[i].leftInitY) * MAP_CEllSIZE + MAP_CEllSIZE / 2;
-
-			if (guidTimer < 50) {
-				DrawCircleAA(x + stage->GetScrollX(), y - 20 + stage->GetScrollY(), 15, 20, 0xFFFFFF, 1);
-				DrawStringToHandle(x + static_cast<int>(stage->GetScrollX()) - 7, y + static_cast<int>(stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-			}
-			else {
-				DrawCircleAA(x + stage->GetScrollX(), y - 20 + stage->GetScrollY(), 15, 20, 0xFFCB33, 1);
-				DrawStringToHandle(x + static_cast<int>(stage->GetScrollX()) - 7, y + static_cast<int>(stage->GetScrollY()) - 20 - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-			}
+			DrawGuide(x, y - 20, stage);
 		}
 	}
 
 
-	//_«‰J‚Ì…‚½‚Ü‚è
+	//é…¸æ€§é›¨ã®æ°´ãŸã¾ã‚Š
 	for (int i = 0; i < acidrainPuddles.size(); i++) {
 
 		/*if (stageName == "Stage02") { DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[7], TRUE); }
@@ -442,7 +457,7 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 
 		switch (acidrainPuddles[i].type)
 		{
-		//case 1:		//¶’[
+		//case 1:		//å·¦ç«¯
 		//	if (acidrainPuddlesAniTimer > 5) {
 		//		DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[74], TRUE);
 		//	}
@@ -451,7 +466,7 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 		//	}
 		//	break;
 
-		case 2:		//’†‰›
+		case 2:		//ä¸­å¤®
 			/*if (acidrainPuddlesAniTimer > 5) {
 				DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[76], TRUE);
 			}
@@ -466,7 +481,7 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 			//DrawGraphF(acidrain_puddles[i].x + stage->GetScrollX(), acidrain_puddles[i].y + stage->GetScrollY(), acid, TRUE);
 			break;
 
-		//case 3:		//‰E’[
+		//case 3:		//å³ç«¯
 		//	if (acidrainPuddlesAniTimer > 5) {
 		//		DrawGraphF(acidrainPuddles[i].x + stage->GetScrollX(), acidrainPuddles[i].y + stage->GetScrollY(), blockImage1[78], TRUE);
 		//	}
@@ -480,7 +495,7 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 	}
 
 
-	//’n‰ºƒGƒtƒFƒNƒg
+	//åœ°ä¸‹ã‚¨ãƒ•ã‚§ã‚¯ãƒˆ
 	if (underGroundEffects != 0) {
 		DrawCircleAA(player->GetPlayerX(), player->GetPlayerY(), 1200.0F - underGroundEffects * 3, 32, 0x000000, FALSE, 1200.0F);
 
@@ -489,7 +504,7 @@ void ELEMENT::Draw(STAGE* stage, PLAYER* player) {
 }
 
 /// <summary>
-/// XV
+/// æ›´æ–°
 /// </summary>
 void ELEMENT::Update(PLAYER* player, STAGE* stage) {
 
@@ -500,7 +515,7 @@ void ELEMENT::Update(PLAYER* player, STAGE* stage) {
 	ChangeVolumeSoundMem(Option::GetSEVolume(), manholeOpenedSe);
 
 	playerState = static_cast<int>(player->GetPlayerMoveState());
-	//ƒvƒŒƒCƒ„[‚Ìƒ}ƒbƒv“àÀ•W‚ğİ’è
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ãƒãƒƒãƒ—å†…åº§æ¨™ã‚’è¨­å®š
 	playerMapX = roundf(player->GetPlayerX() - stage->GetScrollX());
 	playerMapY = floorf(player->GetPlayerY() - stage->GetScrollY());
 
@@ -513,11 +528,53 @@ void ELEMENT::Update(PLAYER* player, STAGE* stage) {
 	if (guidTimer < 100) { guidTimer++; }
 	else { guidTimer = 0; }
 
-	Hook_Distance(player, stage);	//ƒtƒbƒN‚ÌƒKƒCƒh•\¦—p‹——£ŒvZ
+	Hook_Distance(player, stage);	//ãƒ•ãƒƒã‚¯ã®ã‚¬ã‚¤ãƒ‰è¡¨ç¤ºç”¨è·é›¢è¨ˆç®—
+}
+
+void ELEMENT::DrawGuide(const float elementX, const float elementY, STAGE* stage, const int offsetX, const int offsetY) const
+{
+	float x1 = elementX + offsetX + stage->GetScrollX();
+	float y1 = elementY + offsetY + stage->GetScrollY();
+	const int currentInputMode = PAD_INPUT::GetInputMode();
+
+	if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) ||
+		currentInputMode == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD))
+	{
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawCircleAA(x1, y1, 15, 20, color, 1);
+
+		std::string buttonText = Option::GetInputMode() ? "B" : "A";
+		int textColor = Option::GetInputMode() ? B_COLOR : A_COLOR;
+		DrawStringToHandle(static_cast<int>(x1) - 7, static_cast<int>(y1) - 12, buttonText.c_str(), textColor, guidFont, 0xFFFFFF);
+	}
+	else if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+	{
+		float width = 20;
+		float height = 0;
+
+		if (!Option::GetInputMode())
+		{
+			x1 += 6;
+			width = 10;
+			height = 10;
+		}
+
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawBoxAA(x1 - 20, y1 - 20, x1 + width, y1 + height, color, 1);
+
+		if (Option::GetInputMode())
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 20, static_cast<int>(y1) - 15, "SPACE", B_COLOR, keyboardGuidFont, 0xFFFFFF);
+		}
+		else
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 12, static_cast<int>(y1) - 17, "Z", A_COLOR, guidFont, 0xFFFFFF);
+		}
+	}
 }
 
 /// <summary>
-/// 3í—Ş‚Ìƒ{ƒ^ƒ“‚Ìˆ—
+/// 3ç¨®é¡ã®ãƒœã‚¿ãƒ³ã®å‡¦ç†
 /// </summary>
 void ELEMENT::Button(PLAYER* player) {
 
@@ -529,12 +586,12 @@ void ELEMENT::Button(PLAYER* player) {
 			button[i].flag = false;
 		}
 
-		if (button[i].type == 1) {		//‰¡ƒ{ƒ^ƒ“
+		if (button[i].type == 1) {		//æ¨ªãƒœã‚¿ãƒ³
 			int max_ball_num = player->GetThrowCnt();
 			for (int ball_num = 0; ball_num < max_ball_num; ball_num++) {
 				if ((player->GetThrowSlime(ball_num).GetThrowX() >= button[i].x - MAP_CEllSIZE / 2 + 33) && (player->GetThrowSlime(ball_num).GetThrowX() <= button[i].x + MAP_CEllSIZE / 2 - 30) && (player->GetThrowSlime(ball_num).GetThrowY() >= button[i].y - MAP_CEllSIZE / 2) && (player->GetThrowSlime(ball_num).GetThrowY() <= button[i].y + MAP_CEllSIZE / 2)) {
-					//ƒfƒoƒbƒO
-					//printfDx("1”Ô‚É“ü‚Á‚Ä‚é‚æI");
+					//ãƒ‡ãƒãƒƒã‚°
+					//printfDx("1ç•ªã«å…¥ã£ã¦ã‚‹ã‚ˆï¼");
 					if (CheckSoundMem(pressTheButtonSe) == FALSE)PlaySoundMem(pressTheButtonSe, DX_PLAYTYPE_BACK, TRUE);
 					/*if (i < door.size() && i >= 0) {
 						int j = i + 1;
@@ -552,8 +609,8 @@ void ELEMENT::Button(PLAYER* player) {
 				}
 			}
 		}
-		if (button[i].type == 2) {	//ƒ{ƒ^ƒ“
-			bool ball_flg = false;	//ƒ{[ƒ‹‚Ì“–‚½‚è”»’èƒtƒ‰ƒO
+		if (button[i].type == 2) {	//ãƒœã‚¿ãƒ³
+			bool ball_flg = false;	//ãƒœãƒ¼ãƒ«ã®å½“ãŸã‚Šåˆ¤å®šãƒ•ãƒ©ã‚°
 			for (int ball_num = 0; ball_num < player->GetThrowCnt(); ball_num++) {
 				if ((player->GetThrowSlime(ball_num).GetThrowX() >= button[i].x - MAP_CEllSIZE / 2 + 10) && (player->GetThrowSlime(ball_num).GetThrowX() <= button[i].x + MAP_CEllSIZE / 2 - 10) && (player->GetThrowSlime(ball_num).GetThrowY() >= button[i].y - MAP_CEllSIZE / 2) && (player->GetThrowSlime(ball_num).GetThrowY() <= button[i].y + MAP_CEllSIZE / 2)) {
 					ball_flg = true;
@@ -562,15 +619,15 @@ void ELEMENT::Button(PLAYER* player) {
 			}
 
 			if ((ball_flg == true) || ((playerMapX >= button[i].x - MAP_CEllSIZE + 25) && (playerMapX <= button[i].x + MAP_CEllSIZE - 25) && (playerMapY >= button[i].y - MAP_CEllSIZE / 2) && (playerMapY <= button[i].y + MAP_CEllSIZE / 2))) {
-				//ƒfƒoƒbƒO
-				//printfDx("2”Ô‚É“ü‚Á‚Ä‚é‚æI");
-				// “–‚½‚è”»’èƒoƒO‚éˆ×ˆê’â~
+				//ãƒ‡ãƒãƒƒã‚°
+				//printfDx("2ç•ªã«å…¥ã£ã¦ã‚‹ã‚ˆï¼");
+				// å½“ãŸã‚Šåˆ¤å®šãƒã‚°ã‚‹ç‚ºä¸€æ™‚åœæ­¢
 				//if(ball_flg == false)player->SetPlayerY(button[i].y - 6.0f);
 				if (button[i].flag == false) {
 					if (CheckSoundMem(switchSe) == FALSE)PlaySoundMem(switchSe, DX_PLAYTYPE_BACK, TRUE);
 				}
-				keepPushing = true; //‰Ÿ‚µ‘±‚¯‚Ä‚¢‚é
-				button[i].flag = true;		//ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½
+				keepPushing = true; //æŠ¼ã—ç¶šã‘ã¦ã„ã‚‹
+				button[i].flag = true;		//ãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸ
 
 				/*if (i < door.size() && i >= 0) {
 					int j = i - 1;
@@ -588,18 +645,18 @@ void ELEMENT::Button(PLAYER* player) {
 			else { keepPushing = false; }
 		}
 
-		//ˆê‰ñŒÀ‚è
-		if (button[i].type == 3) {	//Onecƒ{ƒ^ƒ“
+		//ä¸€å›é™ã‚Š
+		if (button[i].type == 3) {	//Onecãƒœã‚¿ãƒ³
 			if ((playerMapX >= button[i].x - MAP_CEllSIZE / 2) && (playerMapX <= button[i].x + MAP_CEllSIZE / 2) && (playerMapY >= button[i].y - MAP_CEllSIZE / 2) && (playerMapY <= button[i].y + MAP_CEllSIZE / 2)) {
-				//ƒfƒoƒbƒO
-				//printfDx("3”Ô‚É“ü‚Á‚Ä‚é‚æI");
+				//ãƒ‡ãƒãƒƒã‚°
+				//printfDx("3ç•ªã«å…¥ã£ã¦ã‚‹ã‚ˆï¼");
 			}
 		}
 	}
 }
 
 /// <summary>
-/// ƒhƒA‚Ìˆ—
+/// ãƒ‰ã‚¢ã®å‡¦ç†
 /// </summary>
 void ELEMENT::Door(STAGE* stage) {
 	for (int i = 0; i < door.size(); i++) {
@@ -610,7 +667,7 @@ void ELEMENT::Door(STAGE* stage) {
 			stage->SetMapData(y - 1, x, 65);
 		}
 
-		if (door[i].flag==true&&(playerMapX >= door[i].x + MAP_CEllSIZE) && (playerMapX <= door[i].x + MAP_CEllSIZE + 5) && (playerMapY >= door[i].y - MAP_CEllSIZE *1.5) && (playerMapY <= door[i].y + MAP_CEllSIZE / 2)) {
+		if (door[i].flag==true&&(playerMapX >= door[i].x + MAP_CEllSIZE) && (playerMapX <= door[i].x + MAP_CEllSIZE + 10) && (playerMapY >= door[i].y - MAP_CEllSIZE *1.5) && (playerMapY <= door[i].y + MAP_CEllSIZE / 2)) {
 			int x = floor(door[i].x / MAP_CEllSIZE);
 			int y = floor(door[i].y / MAP_CEllSIZE);
 			stage->SetMapData(y, x, 66);
@@ -622,22 +679,41 @@ void ELEMENT::Door(STAGE* stage) {
 }
 
 /// <summary>
-/// “®‚­°‚Ìˆ—
+/// å‹•ãåºŠã®å‡¦ç†
 /// </summary>
 void ELEMENT::Lift(PLAYER* player, STAGE* stage) {
+
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åº§æ¨™å–å¾—
+	float pX = player->GetPlayerX() - stage->GetScrollX();
+	float pY = player->GetPlayerY() - stage->GetScrollY();
+
 	for (int i = 0; i < lift.size(); i++) {
-		if (lift[i].flag) {
-			//“®‚­°(c)‚Ì“®‚«
+
+		if (lift[i].flag == false)
+		{
+			if (lift[i].x - MAP_CEllSIZE / 2 <= pX &&
+				lift[i].y - MAP_CEllSIZE / 2 <= pY && pY <= lift[i].y + MAP_CEllSIZE)
+			{
+				lift[i].flag = true;
+			}
+		}
+		else
+		{
+			//ç§»å‹•å‡¦ç†
+
+			//å‹•ãåºŠ(ç¸¦)ã®å‹•ã
 			if (lift[i].type == 1) {
 				if (lift[i].y < lift[i].leftGoalY) { lift[i].leftVectorY = 1; }
 				else if (lift[i].y > lift[i].leftGoalY) { lift[i].leftVectorY = -1; }
 				else { lift[i].leftVectorY = 0; }
-				if (lift[i].y != lift[i].leftGoalY) {
+				if (lift[i].y != lift[i].leftGoalY) 
+				{
 					lift[i].y += lift[i].leftVectorY * 4;
 				}
-				else {
+				else 
+				{
 					lift[i].liftWaitTimer++;
-					if (lift[i].liftWaitTimer == 60) {
+					if (lift[i].liftWaitTimer == 90) {
 						float work = lift[i].leftGoalY;
 						lift[i].leftGoalY = lift[i].leftInitY;
 						lift[i].leftInitY = work;
@@ -645,32 +721,56 @@ void ELEMENT::Lift(PLAYER* player, STAGE* stage) {
 					}
 				}
 			}
-			//“®‚­°(‰¡)‚Ì“®‚«
-			else if (lift[i].type == 2) {
+			//å‹•ãåºŠ(æ¨ª)ã®å‹•ã
+			else if (lift[i].type == 2) 
+			{
 				if (lift[i].x < lift[i].leftGoalX) { lift[i].leftVectorX = 1; }
 				else if (lift[i].x > lift[i].leftGoalX) { lift[i].leftVectorX = -1; }
 				else { lift[i].leftVectorX = 0; }
 
-				if (lift[i].x != lift[i].leftGoalX) {
-					lift[i].x += lift[i].leftVectorX * 4;
-				}
-				else {
+				if (lift[i].liftWaitTimer != 60)
+				{
 					lift[i].liftWaitTimer++;
-					if (lift[i].liftWaitTimer == 60) {
+				}
+				else
+				{
+					if (lift[i].x != lift[i].leftGoalX)
+					{
+						lift[i].x += lift[i].leftVectorX * 4;
+					}
+					else
+					{
+						lift[i].liftWaitTimer = 0;
 						float work = lift[i].leftGoalX;
 						lift[i].leftGoalX = lift[i].leftInitX;
 						lift[i].leftInitX = work;
-						lift[i].liftWaitTimer = 0;
 					}
 				}
 			}
 		}
-	}
+		//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å‡¦ç†
+		if (lift[i].animTimer < 8)
+		{
+			lift[i].animTimer++;
+		}
+		else
+		{
+			if (lift[i].image < 2)
+			{
+				lift[i].image++;
+			}
+			else
+			{
+				lift[i].image = 0;
+			}
 
+			lift[i].animTimer = 0;
+		}
+	}
 }
 
 /// <summary>
-/// “®‚­°‚Ì“–‚½‚è”»’è
+/// å‹•ãåºŠã®å½“ãŸã‚Šåˆ¤å®š
 /// </summary>
 bool ELEMENT::HitLift(PLAYER* player) {
 	for (int i = 0; i < lift.size(); i++) {
@@ -690,7 +790,7 @@ bool ELEMENT::HitLift(PLAYER* player) {
 
 
 /// <summary>
-/// ƒ}ƒ“ƒz[ƒ‹‚Ìˆ—
+/// ãƒãƒ³ãƒ›ãƒ¼ãƒ«ã®å‡¦ç†
 /// </summary>
 void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 	for (int i = 0; i < manhole.size(); i++) {
@@ -703,19 +803,19 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 
 			int mapdata_down = stage->GetMapData(manhole[i].leftInitY + 1, manhole[i].leftInitX);
 
-			//’†ŠÔ’n“_‚ğ”²‚¯‚é‰º‚ÌÀ•W‚ğæ“¾‚·‚é
-			//’†ŠÔ’n“_‚Ì‚Éƒ‹[ƒv
+			//ä¸­é–“åœ°ç‚¹ã‚’æŠœã‘ã‚‹ä¸‹ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
+			//ä¸­é–“åœ°ç‚¹ã®æ™‚ã«ãƒ«ãƒ¼ãƒ—
 			while (mapdata_down == 69 && manhole[i].pairNum == 0)
 			{
 				manhole[i].leftInitY++;
 				mapdata_down = stage->GetMapData(manhole[i].leftInitY, manhole[i].leftInitY);
 			}
 
-			//‰‰ZŠ®—¹ƒtƒ‰ƒO
+			//æ¼”ç®—å®Œäº†ãƒ•ãƒ©ã‚°
 			manhole[i].pairNum = 1;
 
 			if ((playerMapX >= manhole[i].x) && (playerMapX <= manhole[i].x + MAP_CEllSIZE) && (playerMapY <= manhole[i].y + MAP_CEllSIZE) && (playerMapY >= manhole[i].y)) {
-				if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
+				if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
 					stage->SetTemporary_Hit(999);
 					manhole[i].flag = true;
 				}
@@ -734,7 +834,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 			}
 
 			else if ((manhole[i].flag == true) && (playerMapX >= manhole[i].x - MAP_CEllSIZE * 4) && (playerMapX <= manhole[i].x + MAP_CEllSIZE * 5) && (playerMapY > manhole[i].y + MAP_CEllSIZE)) {
-				if (underGroundEffects < 120) {
+				if (underGroundEffects < 100) {
 					underGroundEffects += 2;
 				}
 
@@ -744,16 +844,16 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 					player->SetGravity(false);
 					stage->SetScrollY(stage->GetScrollY() - speed);
 					player->SetPlayerY((player->GetPlayerY() - stage->GetScrollY()) + speed);
-					//printfDx("’x‚­‚µ‚Ä‚¢‚Ü‚·\n");
+					//printfDx("é…ãã—ã¦ã„ã¾ã™\n");
 				}
 			}
 
 		}
 
-		//’†ŠÔ’n“_
+		//ä¸­é–“åœ°ç‚¹
 		if (manhole[i].type == 2) {
 			if ((playerMapX >= manhole[i].x) && (playerMapX <= manhole[i].x + MAP_CEllSIZE) && (playerMapY <= manhole[i].y + MAP_CEllSIZE) && (playerMapY >= manhole[i].y)) {
-				//ƒvƒŒƒCƒ„[‚Ì—‰º‘¬“x‚ğ’x‚­‚·‚é
+				//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è½ä¸‹é€Ÿåº¦ã‚’é…ãã™ã‚‹
 				//player->SetPlayerY(player->GetPlayerY() - 3.0f);
 				//player->SetGravity(true);
 				player->SetVisible(false);
@@ -765,71 +865,87 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 
 			int mapdata_down = stage->GetMapData(manhole[i].leftInitY, manhole[i].leftInitX);
 
-			//’†ŠÔ’n“_‚ğ”²‚¯‚é‰º‚ÌÀ•W‚ğæ“¾‚·‚é
-			//’†ŠÔ’n“_‚Ì‚Éƒ‹[ƒv
+			//ä¸­é–“åœ°ç‚¹ã‚’æŠœã‘ã‚‹ä¸‹ã®åº§æ¨™ã‚’å–å¾—ã™ã‚‹
+			//ä¸­é–“åœ°ç‚¹ã®æ™‚ã«ãƒ«ãƒ¼ãƒ—
 			while (mapdata_down == 69 && manhole[i].pairNum == 0)
 			{
 				manhole[i].leftInitY++;
 				mapdata_down = stage->GetMapData(manhole[i].leftInitY, manhole[i].leftInitY);
 			}
 
-			//‰‰ZŠ®—¹ƒtƒ‰ƒO
+			//æ¼”ç®—å®Œäº†ãƒ•ãƒ©ã‚°
 			manhole[i].pairNum = 1;
 
 			int manhole_down_y;
 			manhole_down_y = manhole[i].leftInitY * MAP_CEllSIZE + MAP_CEllSIZE;
 
-			//’†ŠÔ’n“_‚Ìˆê”Ô‰º‚És‚Á‚½
+			//ä¸­é–“åœ°ç‚¹ã®ä¸€ç•ªä¸‹ã«è¡Œã£ãŸæ™‚
 			if ((playerMapX >= manhole[i].x) && (playerMapX <= manhole[i].x + MAP_CEllSIZE) && (playerMapY <= manhole_down_y + MAP_CEllSIZE) && (playerMapY >= manhole_down_y)) {
 				player->SetVisible(true);
 				player->SetGravity(true);
+				//èƒŒæ™¯ã‚’æç”»ã—ãªã„
+				if (isInUnder == false)
+				{
+					isInUnder = true;
+				}
 			}
 		}
 
-		//oŒû
+		//å‡ºå£
 		if (manhole[i].type == 3) {
 
 			int mapdata = stage->GetMapData(manhole[i].leftInitY + 1, manhole[i].leftInitX);
 
-			//’†ŠÔ’n“_‚Ì‚Éƒ‹[ƒv
+			//ä¸­é–“åœ°ç‚¹ã®æ™‚ã«ãƒ«ãƒ¼ãƒ—
 			while (mapdata == 69)
 			{
 				manhole[i].leftInitY++;
 				mapdata = stage->GetMapData(manhole[i].leftInitY, manhole[i].leftInitX);
 
-				//’†ŠÔ‚Ì”‚ğƒJƒEƒ“ƒg
+				//ä¸­é–“ã®æ•°ã‚’ã‚«ã‚¦ãƒ³ãƒˆ
 				manhole[i].liftWaitTimer++;
 			}
 
-			//ƒ}ƒ“ƒz[ƒ‹‚ÌoŒû‚Ì¶’[‚©‚ç‰E’[‚Ü‚Å‚ÌxÀ•W‚©‚Âƒ}ƒ“ƒz[ƒ‹‚ÌoŒû‚æ‚è‚à‰º‚É‚¢‚éê‡
-			if ((playerMapX >= manhole[i].x - MAP_CEllSIZE / 2) && (playerMapX <= manhole[i].x + MAP_CEllSIZE / 2) && (playerMapY > manhole[i].y)) {
-				if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { manhole[i].flag = true; }
+			//ãƒãƒ³ãƒ›ãƒ¼ãƒ«ã®å‡ºå£ã®å·¦ç«¯ã‹ã‚‰å³ç«¯ã¾ã§ã®xåº§æ¨™ã‹ã¤ãƒãƒ³ãƒ›ãƒ¼ãƒ«ã®å‡ºå£ã‚ˆã‚Šã‚‚ä¸‹ã«ã„ã‚‹å ´åˆ
+			if ((playerMapX >= manhole[i].x - MAP_CEllSIZE / 2) && (playerMapX <= manhole[i].x + MAP_CEllSIZE / 2) && (playerMapY > manhole[i].y) && (playerMapY < manhole[i].leftInitY * MAP_CEllSIZE + MAP_CEllSIZE * 3)) {
+				if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { manhole[i].flag = true; }
 
 
-				//Bƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Äflg‚ªtrue‚É‚È‚Á‚½
+				//Bãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ã¦flgãŒtrueã«ãªã£ãŸæ™‚
 				if (manhole[i].flag == true) {
 					//player->SetGravity(false);
 					//player->SetVisible(true);
-					const int speed = manhole[i].liftWaitTimer * 4;
+					const int speed = manhole[i].liftWaitTimer * 5;
 
 					if (player->GetPlayerY() + -stage->GetScrollY() > manhole[i].y) {
+
 						stage->SetScrollY(stage->GetScrollY() + speed);
 						player->SetPlayerY((player->GetPlayerY() - stage->GetScrollY()) - speed);
 					}
 
-					if (underGroundEffects > 0) {
-						underGroundEffects -= manhole[i].liftWaitTimer + 1;
+					//èƒŒæ™¯ã‚’æç”»ã™ã‚‹
+					if (isInUnder == true)
+					{
+						isInUnder = false;
 					}
-					//SetGravity‚ğ—LŒø‰»‚·‚é‚ÆGetter‚Ì’l‚ª•Ï‚í‚ç‚È‚¢
+
+					if (underGroundEffects > 0) {
+						underGroundEffects -= manhole[i].liftWaitTimer + 2;
+					}
+					//SetGravityã‚’æœ‰åŠ¹åŒ–ã™ã‚‹ã¨Getterã®å€¤ãŒå¤‰ã‚ã‚‰ãªã„
 					//printfDx("%f\n", player->GetPlayerY());
 					if ((player->GetPlayerY() + -stage->GetScrollY()) < manhole[i].y) {
 						if (!CheckSoundMem(manholeOpenedSe)) { PlaySoundMem(manholeOpenedSe, DX_PLAYTYPE_BACK, TRUE); }
 						//player->SetVisible(false);
-						//ˆê“I‚È“–‚½‚è”»’è‚ğ‚Â‚¯‚éB
+						//ä¸€æ™‚çš„ãªå½“ãŸã‚Šåˆ¤å®šã‚’ã¤ã‘ã‚‹ã€‚
 						stage->SetTemporary_Hit(69);
 						//player->SetGravity(true);
 						player->SetVisible(true);
 						manhole[i].flag = false;
+						if (underGroundEffects != 0)
+						{
+							underGroundEffects = 0;
+						}
 					}
 				}
 			}
@@ -838,7 +954,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 }
 
 /// <summary>
-/// _«‰J‚Ì…‚½‚Ü‚è‚Ìˆ—
+/// é…¸æ€§é›¨ã®æ°´ãŸã¾ã‚Šã®å‡¦ç†
 /// </summary>
 void ELEMENT::Acidrain_puddles(PLAYER* player) {
 	if (acidrainPuddlesAniTimer < 5) { acidrainPuddlesAniTimer++; }
@@ -897,30 +1013,31 @@ void ELEMENT::Acidrain_puddles(PLAYER* player) {
 			acidrainPuddles[0].animTimer = 0;
 			acidrainPuddles[i].flag = true;
 		}*/
-		//_«‰J‚Ì…‚½‚Ü‚è
+		//é…¸æ€§é›¨ã®æ°´ãŸã¾ã‚Š
 		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y - MAP_CEllSIZE / 2) && (playerMapY <= acidrainPuddles[i].y)) {
 			if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
-			acidrainPuddles[i].flag = true;				//‹­§“I‚Étrue‚É‚µ‚Ü‚µ‚½‚æ				
+			acidrainPuddles[i].flag = true;				//å¼·åˆ¶çš„ã«trueã«ã—ã¾ã—ãŸã‚ˆ				
 			if (acidrainPuddles[i].flag == true) {
 				player->SetLife(player->GetLife() - 1);
 				acidrainPuddles[i].flag = false;
+
 			}
 		}
 	}
 }
 
 /// <summary>
-/// ƒtƒbƒN‚ÌƒKƒCƒh•\¦—p‹——£ŒvZ
+/// ãƒ•ãƒƒã‚¯ã®ã‚¬ã‚¤ãƒ‰è¡¨ç¤ºç”¨è·é›¢è¨ˆç®—
 /// </summary>
 void ELEMENT::Hook_Distance(PLAYER* player, STAGE* stage) {
 	float min_distance = HOOK_MAX_DISTANCE + 80;
-	//ƒtƒbƒN‚ÌƒKƒCƒh•\¦—p
-	//ƒtƒbƒN‚Ü‚Å‚Ì‹——£ŒvZ
+	//ãƒ•ãƒƒã‚¯ã®ã‚¬ã‚¤ãƒ‰è¡¨ç¤ºç”¨
+	//ãƒ•ãƒƒã‚¯ã¾ã§ã®è·é›¢è¨ˆç®—
 	for (int i = 0; i < hook.size(); i++) {
 		float diff_x = hook[i].x - (player->GetPlayerX() - stage->GetScrollX());
 		float diff_y = hook[i].y - (player->GetPlayerY() - stage->GetScrollY());
 		float distance = sqrtf(diff_x * diff_x + diff_y * diff_y);
-		//‹——£‚ªÅ’Z‹——£‚æ‚è‹ß‚¢‚Æ‚«
+		//è·é›¢ãŒæœ€çŸ­è·é›¢ã‚ˆã‚Šè¿‘ã„ã¨ã
 		if (distance <= min_distance) { min_distance = distance; hook[i].flag = true; }
 		else { hook[i].flag = false; }
 	}

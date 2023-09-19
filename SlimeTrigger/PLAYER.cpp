@@ -183,6 +183,13 @@ PLAYER::~PLAYER() {
 /// </summary>
 void PLAYER::Update(ELEMENT* element, STAGE* stage, TOMATO** tomaton, int tomatonCount, bool is_stay) {
 
+	// キーボード入力の場合
+	if(PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+	{
+		//　右スティックの入力をプレイヤーの座標とマウスカーソルの座標の角度に変換
+		PAD_INPUT::ConvertStickInputToMouseCursorAngle(*this);
+	}
+
 	ChangeVolumeSoundMem(Option::GetSEVolume(), damageSE);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), jumpSE);
 	ChangeVolumeSoundMem(Option::GetSEVolume(), landingSE);
@@ -340,10 +347,10 @@ void PLAYER::Move()
 	//スティック入力の取得
 	int input_lx = PAD_INPUT::GetPadThumbLX();
 
-	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_LEFT)  {
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_LEFT))  {
 		input_lx = -20000;
 	}
-	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_RIGHT) {
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_RIGHT)) {
 		input_lx = 20000;
 	}
 
@@ -476,8 +483,15 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 	//スティック入力の取得
 	int input_lx = PAD_INPUT::GetPadThumbLX();
 
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_LEFT)) {
+		input_lx = -20000;
+	}
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_RIGHT)) {
+		input_lx = 20000;
+	}
+
 	//Bボタン押したとき
-	if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
+	if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
 		if (playerState != PLAYER_MOVE_STATE::HOOK) {
 			//フックまでの距離
 			float min_distance = HOOK_MAX_DISTANCE;
@@ -667,10 +681,10 @@ void PLAYER::HookMove(ELEMENT* element, STAGE* stage) {
 /// </summary>
 void PLAYER::JumpMove() {
 #ifdef _DEBUG
-	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_Y || CheckHitKey(KEY_INPUT_SPACE))return;		//デバッグ用
+	if (CheckHitKey(KEY_INPUT_G))return;		//デバッグ用
 #endif
 	//Aボタンを押したとき
-	if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B) || jumpRequest) {
+	if (PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B) || jumpRequest) {
 		//ジャンプ中じゃないとき
 		if ((playerState != PLAYER_MOVE_STATE::JUMP && playerState != PLAYER_MOVE_STATE::FALL && playerState != PLAYER_MOVE_STATE::HOOK && isGround
 			|| jumpRequest) && isGravity) {
@@ -723,13 +737,16 @@ void PLAYER::JumpMove() {
 				jumpVelocity = 0;
 				grabbedHookArray.clear();
 				playerState = PLAYER_MOVE_STATE::IDLE;
-				ChangeAnimation(PLAYER_ANIM_STATE::LANDING);
+				if (!PAD_INPUT::OnPressed(Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B) && !jumpRequest) {
+					ChangeAnimation(PLAYER_ANIM_STATE::LANDING);
+				}
 				PlaySoundMem(landingSE, DX_PLAYTYPE_BACK);
 			}
 			if (playerState == PLAYER_MOVE_STATE::HOOK || isHookMove) {
 				jumpVelocity = 0;
 			}
 		}
+		// 着地アニメーションが終わったら、アイドルアニメーションに変更する
 		if (animationState == PLAYER_ANIM_STATE::LANDING) {
 			if (animation[static_cast<int>(animationState)].endAnimation) {
 				ChangeAnimation(PLAYER_ANIM_STATE::IDLE);
@@ -805,7 +822,7 @@ void PLAYER::Throw(STAGE* stage) {
 	}
 
 	//投げるとき
-	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_RIGHT_SHOULDER && PAD_INPUT::GetPadState() == PAD_STATE::ON) {
+	if (PAD_INPUT::OnButton(XINPUT_BUTTON_RIGHT_SHOULDER)) {
 		//投げる処理
 		throwInterval = THROW_INTERVAL;
 		throwSlime.push_back(ThrowSlime(playerX, playerY, throwRad, stage));
@@ -886,7 +903,11 @@ void PLAYER::Hit(ELEMENT* element, STAGE* stage) {
 		}
 		if (hit_lift_num >= 0) {
 			playerY = (lift[hit_lift_num].y - MAP_CEllSIZE / 2 + lift[hit_lift_num].leftVectorY * 4);
-			playerX += lift[hit_lift_num].leftVectorX * 4;
+			//動く床が動いていればプレイヤーも動かす
+			if (lift[hit_lift_num].liftWaitTimer == 60)
+			{
+				playerX += lift[hit_lift_num].leftVectorX * 4;
+			}
 			isGround = true;
 		}
 	}

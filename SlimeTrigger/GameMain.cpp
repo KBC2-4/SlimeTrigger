@@ -15,19 +15,11 @@ GAMEMAIN::GAMEMAIN(bool reStart, int halfwayTime, const char* stageName)
 
 	if (stageName == "Stage01") {
 
-		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
-			throw "Resource/Images/Stage/BackImage1.png";
-		}
-
 		if ((backGraundMusic[0] = LoadSoundMem("Resource/Sounds/BGM/stage1.wav")) == -1) {
 			throw "Resource/Sounds/BGM/stage1.wav";
 		}
 	}
 	else if (stageName == "Stage02") {
-
-		if ((backGraundImage[1] = LoadGraph("Resource/Images/Stage/BackImage2.png")) == -1) {
-			throw "Resource/Images/Stage/BackImage2.png";
-		}
 
 		if ((backGraundMusic[1] = LoadSoundMem("Resource/Sounds/BGM/stage2.wav")) == -1) {
 			throw "Resource/Sounds/BGM/stage2.wav";
@@ -35,17 +27,8 @@ GAMEMAIN::GAMEMAIN(bool reStart, int halfwayTime, const char* stageName)
 	}
 	else if (stageName == "Stage03") {
 
-		if ((backGraundImage[2] = LoadGraph("Resource/Images/Stage/BackImage3.png")) == -1) {
-			throw "Resource/Images/Stage/BackImage2.png";
-		}
-
 		if ((backGraundMusic[2] = LoadSoundMem("Resource/Sounds/BGM/stage3.wav")) == -1) {
 			throw "Resource/Sounds/BGM/stage3.wav";
-		}
-	}
-	else {
-		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
-			throw "Resource/Images/Stage/BackImage1.png";
 		}
 	}
 
@@ -252,22 +235,16 @@ GAMEMAIN::~GAMEMAIN()
 	if (stageName == "Stage01") {
 		StopSoundMem(backGraundMusic[0]);
 		DeleteSoundMem(backGraundMusic[0]);
-		DeleteGraph(backGraundImage[0]);
 	}
 	else if (stageName == "Stage02") {
 		StopSoundMem(backGraundMusic[1]);
 		DeleteSoundMem(backGraundMusic[1]);
-		DeleteGraph(backGraundImage[1]);
 	}
 	else if (stageName == "Stage03") {
 		StopSoundMem(backGraundMusic[2]);
 		DeleteSoundMem(backGraundMusic[2]);
-		DeleteGraph(backGraundImage[2]);
 	}
-	else {
-		DeleteGraph(backGraundImage[0]);
-	}
-
+	
 	DeleteFontToHandle(startTimeFont);
 	DeleteFontToHandle(timeFont);
 
@@ -364,11 +341,18 @@ AbstractScene* GAMEMAIN::Update()
 					lemoner[i]->Update();
 					if (lemoner[i]->GetDeleteFlag())
 					{
-						itemRand = GetRand(5);
-						//アイテムを生成
-						if (itemRand == 0)
+						int x = lemoner[i]->GetX() / 80;
+						int y = lemoner[i]->GetY() / 80;
+						int mapData = stage->GetMapData(y, x);
+						//即死地点以外であればアイテムを生成する
+						if (mapData != -1 && mapData != 76)
 						{
-							item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+							itemRand = GetRand(5);
+							//アイテムを生成
+							if (itemRand == 0)
+							{
+								item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+							}
 						}
 						delete lemoner[i];
 						lemoner[i] = nullptr;
@@ -383,11 +367,18 @@ AbstractScene* GAMEMAIN::Update()
 			{
 				if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg())
 				{
-					itemRand = GetRand(5);
-					//アイテムを生成
-					if (itemRand == 0)
+					int x = gurepon[i]->GetX() / 80;
+					int y = gurepon[i]->GetY() / 80;
+					int mapData = stage->GetMapData(y, x);
+					//即死地点以外であればアイテムを生成する
+					if (mapData != -1 && mapData != 76)
 					{
-						item[itemNum++] = new ITEMBALL(gurepon[i]->GetX(), gurepon[i]->GetY(), gurepon[i]->GetSpawnMapX(), gurepon[i]->GetSpawnMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+						itemRand = GetRand(5);
+						//アイテムを生成
+						if (itemRand == 0)
+						{
+							item[itemNum++] = new ITEMBALL(gurepon[i]->GetX(), gurepon[i]->GetY(), gurepon[i]->GetSpawnMapX(), gurepon[i]->GetSpawnMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
+						}
 					}
 					delete gurepon[i];
 					gurepon[i] = nullptr;
@@ -445,7 +436,18 @@ AbstractScene* GAMEMAIN::Update()
 		}
 		else {	//ポーズ画面のセレクター
 
-			if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::STAGE_SELECT) { return new STAGE_SELECT(); }
+			if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::STAGE_SELECT)
+			{
+				//前回のステージ番号
+				short lastStageNum = 0;
+
+				if (stageName != "StageSelect")
+				{
+					lastStageNum = stageName[6] - '0';
+				}
+
+				return new STAGE_SELECT(lastStageNum); 
+			}
 			else if (static_cast<PAUSE::MENU>(pause->GetSelectMenu()) == PAUSE::MENU::RESTART) {
 				nowGraph = MakeGraph(1280, 720);
 				GetDrawScreenGraph(0, 0, 1280, 720, nowGraph);
@@ -535,49 +537,9 @@ AbstractScene* GAMEMAIN::Update()
 
 void GAMEMAIN::Draw() const
 {
-
-	//ステージ背景
-	if (stageName == "Stage01") {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-	}
-	else if (stageName == "Stage02") {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[1], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[1], FALSE);
-	}
-	else if (stageName == "Stage03") {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[2], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[2], FALSE);
-	}
-	else {
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-		DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-	}
-
-
-	//地下背景描画
-	if (stageName == "Stage01") {
-		//ステージ１
-		DrawBoxAA(stage->GetScrollX() + 6880, stage->GetScrollY() + 1380, stage->GetScrollX() + 10640, stage->GetScrollY() + 1900, 0x20251F, TRUE);
-	}
-	else if (stageName == "Stage03") {
-		//ステージ3
-		DrawBoxAA(0, stage->GetScrollY() + 1380, stage->GetScrollX() + 5120, stage->GetScrollY() + 4800, 0x20251F, TRUE);
-	}
-
-	/*if (stageName == "Stage03" && stage->GetScrollY() < -960) {
-		DrawBox(0, 0, 25600, 1280, 0x20251F, TRUE);
-	}*/
-
-	for (int i = 0; i < player->GetLife(); i++) {
-		DrawRotaGraph(30 + 50 * i, 20, 1, 0, hpImage, TRUE);
-	}
-
 	//ステージの描画
 	stage->Draw(element);
 	element->Draw(stage, player);
-
-
 
 	//プレイヤーの描画
 	player->Draw(stage);

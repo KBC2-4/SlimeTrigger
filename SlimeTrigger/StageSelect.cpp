@@ -8,7 +8,7 @@
 
 //#define DEBUG_STAGE
 
-STAGE_SELECT::STAGE_SELECT()
+STAGE_SELECT::STAGE_SELECT(short lastStageNum)
 {
 	//backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImpause_cash.bmp");
 	backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png");
@@ -21,6 +21,7 @@ STAGE_SELECT::STAGE_SELECT()
 	}
 
 	guidFont = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+	keyboardGuidFont = CreateFontToHandle("メイリオ", 9, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	buttonGuidFont = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	moveToTitleFont = CreateFontToHandle("メイリオ", 18, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	stageNameFont = CreateFontToHandle("メイリオ", 31, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8, -1, 4);
@@ -29,8 +30,70 @@ STAGE_SELECT::STAGE_SELECT()
 	element = new ELEMENT();
 	lemoner = nullptr;
 	lemonerCount = 0;
+	gurepon = nullptr;
+	gureponCount = 0;
+	tomaton = nullptr;
+	tomatonCount = 0;
 
 	std::vector<std::vector<int>> spawnPoint;
+
+	//とまトン生成する数を数える
+	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
+	{
+		for (int j = 0; j < stage->GetMapSize().y; j++)
+		{
+			if (stage->GetMapData(i, j) == 93)
+			{
+				tomatonCount++;
+				spawnPoint.push_back(std::vector<int>(2));
+				spawnPoint[point][0] = i;
+				spawnPoint[point][1] = j;
+				point++;
+			}
+		}
+	}
+	//とまトンの生成
+	if (tomatonCount > 0)
+	{
+		tomaton = new TOMATO * [tomatonCount];
+		for (int i = 0; i < tomatonCount; i++)
+		{
+			tomaton[i] = new TOMATO(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
+		}
+	}
+
+	//スポーンポイントを削除
+	spawnPoint.clear();
+
+	//グレポンを生成する数を数える
+	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
+	{
+		for (int j = 0; j < stage->GetMapSize().y; j++)
+		{
+			if (stage->GetMapData(i, j) == 92)
+			{
+				gureponCount++;
+				spawnPoint.push_back(std::vector<int>(2));
+				spawnPoint[point][0] = i;
+				spawnPoint[point][1] = j;
+				point++;
+			}
+		}
+	}
+
+	//グレポンの生成
+	if (gureponCount > 0)
+	{
+		gurepon = new GRAPEFRUIT * [gureponCount];
+		for (int i = 0; i < gureponCount; i++)
+		{
+			gurepon[i] = new GRAPEFRUIT(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
+		}
+	}
+
+	//スポーンポイントを削除
+	spawnPoint.clear();
+
 	//レモナー生成する数を数える
 	for (int i = 0, point = 0; i < stage->GetMapSize().x; i++)
 	{
@@ -46,7 +109,6 @@ STAGE_SELECT::STAGE_SELECT()
 			}
 		}
 	}
-
 	//レモナーの生成
 	if (lemonerCount > 0)
 	{
@@ -56,11 +118,6 @@ STAGE_SELECT::STAGE_SELECT()
 			lemoner[i] = new LEMON(player, stage, spawnPoint[i][0], spawnPoint[i][1]);
 		}
 	}
-
-	//スポーン地点をセット
-	stage->SetScrollX(-(stage->GetSpawnPoint().y - MAP_CEllSIZE));
-	stage->SetScrollY(-(stage->GetSpawnPoint().x - MAP_CEllSIZE * stage->GetMapSize().y));
-	player->SetPlayer_Screen(stage->GetSpawnPoint());
 
 	playerMapX = 0;
 	playerMapY = 0;
@@ -90,19 +147,35 @@ STAGE_SELECT::STAGE_SELECT()
 			case 103:
 				stageMove[1].x = j * MAP_CEllSIZE;
 				stageMove[1].y = i * MAP_CEllSIZE;
+				break;
 
 			case 104:
 			case 105:
 				stageMove[2].x = j * MAP_CEllSIZE;
 				stageMove[2].y = i * MAP_CEllSIZE;
+				break;
 
 			case 106:
 			case 107:
 				stageMove[3].x = j * MAP_CEllSIZE;
 				stageMove[3].y = i * MAP_CEllSIZE;
+				break;
 			}
 		}
 	}
+
+	//プレイヤーのスポーン地点をセット
+	POINT spawnPointPlayer = stage->GetSpawnPoint();
+
+	if (lastStageNum != 0)
+	{
+		spawnPointPlayer.x = stageMove[lastStageNum].y;
+		spawnPointPlayer.y = stageMove[lastStageNum].x - MAP_CEllSIZE;
+	}
+
+	stage->SetScrollX(-(spawnPointPlayer.y - MAP_CEllSIZE * 4));
+	stage->SetScrollY(-(spawnPointPlayer.x - MAP_CEllSIZE - 400.0f));
+	player->SetPlayer_Screen(spawnPointPlayer);
 
 	PlaySoundMem(backGraundMusic, DX_PLAYTYPE_LOOP);
 
@@ -114,6 +187,7 @@ STAGE_SELECT::STAGE_SELECT()
 STAGE_SELECT::~STAGE_SELECT()
 {
 	DeleteFontToHandle(guidFont);
+	DeleteFontToHandle(keyboardGuidFont);
 	DeleteFontToHandle(buttonGuidFont);
 	DeleteFontToHandle(moveToTitleFont);
 	DeleteFontToHandle(stageNameFont);
@@ -130,12 +204,25 @@ STAGE_SELECT::~STAGE_SELECT()
 		delete lemoner[i];
 	}
 	delete[] lemoner;
+
+	//とまトンの削除
+	for (int i = 0; i < tomatonCount; i++)
+	{
+		delete tomaton[i];
+	}
+	delete[] tomaton;
+	//グレポンの削除
+	for (int i = 0; i < gureponCount; i++) {
+		delete gurepon[i];
+
+	}
+	delete[] gurepon;
 }
 
 AbstractScene* STAGE_SELECT::Update()
 {
 	//BACKボタンでタイトルへ戻る
-	if ((PAD_INPUT::GetNowKey() == XINPUT_BUTTON_BACK) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+	if (PAD_INPUT::OnButton(XINPUT_BUTTON_BACK)) {
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(okSe)) {}
@@ -150,6 +237,7 @@ AbstractScene* STAGE_SELECT::Update()
 	//プレイヤーを死なせない。
 	if (player->GetLife() < 2) { player->SetLife(2); }
 
+	//レモナーUpdate
 	for (int i = 0; i < lemonerCount; i++)
 	{
 		if (lemoner[i] != nullptr)
@@ -157,59 +245,72 @@ AbstractScene* STAGE_SELECT::Update()
 			lemoner[i]->Update();
 			if (lemoner[i]->GetDeleteFlag())
 			{
-				//itemRand = GetRand(5);
-				//アイテムを生成
-				/*if (itemRand == 0)
-				{
-					item[itemNum++] = new ITEMBALL(lemoner[i]->GetX(), lemoner[i]->GetY(), lemoner[i]->GetMapX(), lemoner[i]->GetMapY(), player, stage, stage->GetScrollX(), stage->GetScrollY());
-				}*/
 				delete lemoner[i];
 				lemoner[i] = nullptr;
 			}
 		}
 	}
 
+	//とまとんUpdate
+	for (int i = 0; i < tomatonCount; i++)
+	{
+		tomaton[i]->Update();
+	}
+
+	//グレポンUpdate
+	for (int i = 0; i < gureponCount; i++)
+	{
+		if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg())
+		{
+			delete gurepon[i];
+			gurepon[i] = nullptr;
+		}
+		else if (gurepon[i] != nullptr && !gurepon[i]->GetDeleteFlg())
+		{
+			gurepon[i]->Update();
+		}
+	}
 
 	playerMapX = roundf(player->GetPlayerX() - stage->GetScrollX());
 	playerMapY = floorf(player->GetPlayerY());
 
 	//落ちたらリスタート
 	if (player->IsDeath() == true) {
-		return new STAGE_SELECT();
+		return new STAGE_SELECT(0);
 	}
 
 	//戻る
 	if ((playerMapX >= stageReturn.x - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new Title(); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new Title(); }
 	}
 
 	//ステージ1
 	if ((playerMapX >= stageMove[1].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[1].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage01"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage01"); }
 	}
 
 
 	//ステージ2
 	if ((playerMapX >= stageMove[2].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[2].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage02"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage02"); }
 	}
 
 
 	//ステージ3
 	if ((playerMapX >= stageMove[3].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[3].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage03"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage03"); }
 	}
 
 #ifdef DEBUG_STAGE
 	//旧ステージ1
 	if ((playerMapX >= 11 * MAP_CEllSIZE - MAP_CEllSIZE / 2) && (playerMapX <= 11 * MAP_CEllSIZE + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage04"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage04"); }
 	}
 
 
 	//デバッグステージ
 	if ((playerMapX >= 2 * MAP_CEllSIZE - MAP_CEllSIZE / 2) && (playerMapX <= 2 * MAP_CEllSIZE + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "DebugStage"); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "DebugStage"); }
 	}
 #endif // DEBUG_STAGE
 
@@ -240,14 +341,9 @@ AbstractScene* STAGE_SELECT::Update()
 
 void STAGE_SELECT::Draw() const
 {
-	//ステージ背景
-	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-	DrawGraph(static_cast<int>(stage->GetScrollX()) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
-
-
 	//ステージの描画
-	element->Draw(stage, player);
 	stage->Draw(element);
+	element->Draw(stage, player);
 
 	for (int i = 0; i < lemonerCount; i++)
 	{
@@ -258,74 +354,75 @@ void STAGE_SELECT::Draw() const
 		}
 	}
 
-	//DrawCircleAA(player->GetPlayerX(), player->GetPlayerY(), 900.0F, 32, 0x000000, FALSE, 1200.0F);
-
-	//if (effectTimer[0] < 100) {
-	//	DrawCircleAA(player->GetPlayerX(), player->GetPlayerY(), 60 + effectTimer[0] * 20, 28, 0x000000, FALSE, 80.0F + effectTimer[0] * 20);
-	//	SetDrawArea(player->GetPlayerX() - MAP_CEllSIZE / 2 - effectTimer[0] * 10, player->GetPlayerY() - MAP_CEllSIZE / 2 - effectTimer[0] * 10,
-	//		player->GetPlayerX() + MAP_CEllSIZE / 2 + effectTimer[0] * 10, player->GetPlayerY() + MAP_CEllSIZE / 2 + effectTimer[0] * 10);
-	//	
-	//}
+	//とまトンの描画
+	for (int i = 0; i < tomatonCount; i++)
+	{
+		tomaton[i]->Draw();
+	}
+	//グレポンの描画
+	for (int i = 0; i < gureponCount; i++)
+	{
+		if (gurepon[i] != nullptr && gurepon[i]->GetDeleteFlg() == false)
+		{
+			gurepon[i]->Draw();
+		}
+	}
 
 	//ガイド表示
 
 	const int guid_color = 0xFFFFFF;
 
 	const int guid_x = 600;
-	{//BACKボタン：タイトルへ戻る
+	//BACKボタン：タイトルへ戻る
 
 		const int start_x = guid_x - 600;
 		const int start_y = 665;
-
-		//{//大枠
-		//	const int x = 20;
-		//	const int y = 30;
-		//	DrawBoxAA(start_x - x, start_y - y, start_x + 55 + x, start_y + 30 + y, 0x99F000, TRUE, 1.0F);
-		//	DrawCircleAA(start_x + 65, start_y + 14.6, 15 + y, 20, 0x99F000, TRUE, 1.0F);	//右端
-		//}
 
 
 		const int y = 10;
 		DrawBoxAA(start_x, start_y + y, start_x + 70, start_y + 30 + y, 0xFFFFFF, TRUE, 1.0F);
 		DrawCircleAA(start_x + 5, start_y + 14.6 + y, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//左端
 		DrawCircleAA(start_x + 65, start_y + 14.6 + y, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//右端
-		DrawStringToHandle(start_x + 2, start_y + 3 + y, "BACK", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
 		DrawStringToHandle(start_x, start_y - 18, "タイトルへ", guid_color, moveToTitleFont, 0x000000);
 
+	// ガイド表示
+	if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
 
+		DrawStringToHandle(start_x + 2, start_y + 3 + y, "BACK", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
+
+
+		std::vector<guideElement> gamepadGuides = {
+					guideElement({"L"}, "移動", GUIDE_SHAPE_TYPE::JOYSTICK, buttonGuidFont, 0x000000,
+						 0xFFFFFF, 0xFFFFFF),
+						 //GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),
+						 guideElement({Option::GetInputMode() ? "A" : "B"}, "ジャンプ", GUIDE_SHAPE_TYPE::FIXED_CIRCLE, buttonGuidFont, guid_color,
+									  Option::GetInputMode() ? A_COLOR : B_COLOR, guid_color),
+						 guideElement({Option::GetInputMode() ? "B" : "A"}, "アクション", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE, buttonGuidFont, guid_color,
+									  Option::GetInputMode() ? B_COLOR : A_COLOR, guid_color),
+						 guideElement({"START"}, "[ゲーム中]ポーズ", GUIDE_SHAPE_TYPE::ROUNDED_BOX, buttonGuidFont, guid_color, START_COLOR,
+									  guid_color, 0x000000,10.f,30.f,30.f, 0, 2.f)
+		};
+		DrawGuides(gamepadGuides, 280.0f, 668.0f, 5.0f, 60.0f);
 	}
+	else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD)) {
 
-	{//ジョイスティック：移動
-		const int joystick_x = guid_x - 340;
-		const int joystick_y = 670;
+		DrawStringToHandle(start_x + 12, start_y + 3 + y, "ESC", BACK_COLOR, buttonGuidFont, 0xFFFFFF);
 
-		DrawOvalAA(joystick_x, joystick_y + 6, 18, 10, 20, 0x000000, TRUE);
-		//アニメーション有り
-		//DrawOval(joystick_x + joysAniTimer * 0.8, joystick_y + 6 + abs(joysAniTimer * 0.6), 18, 10, 0x000000, 1);
-		DrawBoxAA(joystick_x - 5, joystick_y, joystick_x + 7, joystick_y + 23, 0x000000, TRUE);
-		//アニメーション有り
-		//DrawQuadrangle(joystick_x - 5 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), joystick_x + 7 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), joystick_x + 7, joystick_y + 23, joystick_x - 5, joystick_y + 23, 0x000000, TRUE);
-		DrawOvalAA(joystick_x, joystick_y + 23, 22, 8, 20, 0x000000, TRUE);
-		DrawString(joystick_x - 2, joystick_y - 2, "L", 0xFFFFFF);
-		//アニメーション有り
-		//DrawString(joystick_x - 5 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), "L", 0xFFFFFF);
-		DrawStringToHandle(joystick_x + 30, 668, "移動", guid_color, buttonGuidFont, 0x000000);
+		std::vector<guideElement> keyboardGuides = {
+			guideElement({ "A", "D"}, "移動", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
+			             buttonGuidFont),
+			//GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),	
+			guideElement({Option::GetInputMode() ? "Z" : "SPACE"}, "ジャンプ", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
+			             Option::GetInputMode() ? A_COLOR : B_COLOR, guid_color),
+			guideElement({Option::GetInputMode() ? "SPACE" : "Z"}, "アクション", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
+			             Option::GetInputMode() ? B_COLOR : A_COLOR, guid_color),
+			guideElement({"Q"}, "[ゲーム中]ポーズ", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, guid_color, START_COLOR,
+			             guid_color),
+		};
+		DrawGuides(keyboardGuides, 220.0f, 668.0f, 5.0f, 60.0f);
 	}
-
-	DrawStringToHandle(guid_x + 250, 668, "[ゲーム中]ポーズ", guid_color, buttonGuidFont, 0x000000);
-	DrawBoxAA(guid_x + 160, 665, guid_x + 230, 695, 0xFFFFFF, TRUE, 1.0F);
-	DrawCircleAA(guid_x + 165, 679.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//左端
-	DrawCircleAA(guid_x + 225, 679.6, 15, 20, 0xFFFFFF, TRUE, 1.0F);	//右端
-	DrawStringToHandle(guid_x + 155, 668, "START", START_COLOR, buttonGuidFont, 0xFFFFFF);
-
-	DrawStringToHandle(guid_x - 10, 668, "アクション", guid_color, buttonGuidFont, 0x000000);
-	DrawCircleAA(guid_x - 30, 680, 15, 20, 0xFFFFFF, 1);
-	DrawStringToHandle(guid_x - 37, 668, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
-
-	DrawStringToHandle(guid_x - 190, 668, "ジャンプ", guid_color, buttonGuidFont, 0x000000);
-	DrawCircleAA(guid_x - 210, 680, 15, 20, 0xFFFFFF, 1);
-	DrawStringToHandle(guid_x - 217, 668, Option::GetInputMode() ? "A" : "B", Option::GetInputMode() ? A_COLOR : B_COLOR, buttonGuidFont, 0xFFFFFF);
+	
 
 	//戻る
 	if ((playerMapX >= (stageReturn.x) - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
@@ -345,7 +442,7 @@ void STAGE_SELECT::Draw() const
 	SetDrawBright(255, 255, 255);
 
 	//ステージ3 ポータル描画
-	SetDrawBright(255 - effectTimer[1], 255, 255);
+	//SetDrawBright(255 - effectTimer[1], 255, 255);
 	DrawGraph(stageMove[3].x + stage->GetScrollX(), stageMove[3].y + -MAP_CEllSIZE + stage->GetScrollY(), stage->GetMapImage(105), TRUE);
 	DrawGraph(stageMove[3].x + stage->GetScrollX(), stageMove[3].y + stage->GetScrollY(), stage->GetMapImage(106), TRUE);
 	SetDrawBright(255, 255, 255);
@@ -450,6 +547,50 @@ void STAGE_SELECT::DrawStageGuid(const char* stageName, const float x, const flo
 	DrawStringToHandle(x + stage->GetScrollX() - 55 + text_margin_x, y - MAP_CEllSIZE - 10 + stage->GetScrollY() + text_margin_y, stageName, text_color, stageNameFont, textback_color);
 	if (second_title != "") { DrawStringToHandle(x + stage->GetScrollX() - 55 + secont_margin_x, y - MAP_CEllSIZE - 10 + stage->GetScrollY() + secont_margin_y, second_title, text_color, stageNameFont, textback_color); }
 
-	DrawCircleAA(x + stage->GetScrollX(), y + stage->GetScrollY(), 15, 20, guidTimer < 50 ? 0xFFFFFF : 0xFFCB33, 1);
-	DrawStringToHandle(x + stage->GetScrollX() - 7, y + stage->GetScrollY() - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
+	// DrawCircleAA(x + stage->GetScrollX(), y + stage->GetScrollY(), 15, 20, guidTimer < 50 ? 0xFFFFFF : 0xFFCB33, 1);
+	// DrawStringToHandle(x + stage->GetScrollX() - 7, y + stage->GetScrollY() - 12, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, buttonGuidFont, 0xFFFFFF);
+	DrawGuide(x, y, stage);
+
+}
+
+void STAGE_SELECT::DrawGuide(float baseX, float baseY, STAGE* stage) const
+{
+	float x1 = baseX + stage->GetScrollX();
+	float y1 = baseY + stage->GetScrollY();
+	const int currentInputMode = PAD_INPUT::GetInputMode();
+
+	if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) ||
+		currentInputMode == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD))
+	{
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawCircleAA(x1, y1, 15, 20, color, 1);
+
+		std::string buttonText = Option::GetInputMode() ? "B" : "A";
+		int textColor = Option::GetInputMode() ? B_COLOR : A_COLOR;
+		DrawStringToHandle(static_cast<int>(x1) - 7, static_cast<int>(y1) - 12, buttonText.c_str(), textColor, buttonGuidFont, 0xFFFFFF);
+	}
+	else if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+	{
+		float width = 20;
+		float height = 0;
+
+		if (!Option::GetInputMode())
+		{
+			x1 += 6;
+			width = 10;
+			height = 10;
+		}
+
+		int color = (guidTimer < 50) ? 0xFFFFFF : 0xFFCB33;
+		DrawBoxAA(x1 - 20, y1 - 20, x1 + width, y1 + height, color, 1);
+
+		if (Option::GetInputMode())
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 20, static_cast<int>(y1) - 15, "SPACE", B_COLOR, keyboardGuidFont, 0xFFFFFF);
+		}
+		else
+		{
+			DrawStringToHandle(static_cast<int>(x1) - 12, static_cast<int>(y1) - 17, "Z", A_COLOR, buttonGuidFont, 0xFFFFFF);
+		}
+	}
 }

@@ -11,6 +11,8 @@
 #include "Player.h"
 #include "Result.h"
 #include "Option.h"
+//円周率
+#define PI    3.1415926535897932384626433832795f
 
 //#define _DEBUG
 
@@ -20,7 +22,6 @@
 STAGE::STAGE(const char* stageName, bool restert) {
 	//**mapData = 0;
 	*blockImage1 = 0;
-	*stageImage = 0;
 	scrollX = 0;
 	scrollY = 0;
 	scrollSpeedX = 5;
@@ -33,8 +34,33 @@ STAGE::STAGE(const char* stageName, bool restert) {
 	playerVectorY = 0;
 
 
-	if (LoadDivGraph("Resource/Images/Stage/map_chips.png", 110, 10, 11, 80, 80, blockImage1) == -1) {
-		throw "Resource/Images/Stage/map_chips.png";
+	//背景画像読み込み
+	if (stageName == "Stage01") {
+
+		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage1.png";
+		}
+	}
+	else if (stageName == "Stage02") {
+
+		if ((backGraundImage[1] = LoadGraph("Resource/Images/Stage/BackImage2.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage2.png";
+		}
+	}
+	else if (stageName == "Stage03") {
+
+		if ((backGraundImage[2] = LoadGraph("Resource/Images/Stage/BackImage3.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage2.png";
+		}
+	}
+	else {
+		if ((backGraundImage[0] = LoadGraph("Resource/Images/Stage/BackImage1.png")) == -1) {
+			throw "Resource/Images/Stage/BackImage1.png";
+		}
+	}
+
+	if (LoadDivGraph("Resource/Images/Stage/map_chips2.png", 110, 10, 11, 80, 80, blockImage1) == -1) {
+		throw "Resource/Images/Stage/map_chips2.png";
 	}
 
 	if ((halfWayPointSe = LoadSoundMem("Resource/Sounds/SE/Stage/halfwaypoint.wav")) == -1) {
@@ -85,6 +111,19 @@ STAGE::~STAGE() {
 		DeleteGraph(blockImage1[i]);
 	}
 	DeleteSoundMem(halfWayPointSe);
+
+	if (stageName == "Stage01") {
+		DeleteGraph(backGraundImage[0]);
+	}
+	else if (stageName == "Stage02") {
+		DeleteGraph(backGraundImage[1]);
+	}
+	else if (stageName == "Stage03") {
+		DeleteGraph(backGraundImage[2]);
+	}
+	else {
+		DeleteGraph(backGraundImage[0]);
+	}
 }
 
 /// <summary>
@@ -105,11 +144,44 @@ void STAGE::Update(PLAYER* player, ELEMENT* element) {
 /// </summary>
 void STAGE::Draw(ELEMENT* element)const {
 
+	//ステージ背景
+	if (element->GetIsInUnder() == false)
+	{
+		if (stageName == "Stage01") {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		}
+		else if (stageName == "Stage02") {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[1], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[1], FALSE);
+		}
+		else if (stageName == "Stage03") {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[2], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[2], FALSE);
+		}
+		else {
+			DrawGraph(static_cast<int>(scrollX) % 2560 + 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+			DrawGraph(static_cast<int>(scrollX) % 2560, /*scrollY*/0, backGraundImage[0], FALSE);
+		}
+	}
+
+	//地下背景描画
+	//if (stageName == "Stage03") 
+	//{
+	//	//ステージ3
+	//	DrawBoxAA(0, scrollY + 1380, scrollX + 5120, scrollY + 4800, 0x20251F, TRUE);
+	//}
+	//else if (stageName == "StageSelect")
+	//{
+	//	DrawBoxAA(scrollX + 3000, scrollY + 1280, scrollX + 8640, scrollY + 1800, 0x20251F, TRUE);
+	//}
+
+
 	for (int i = 0; i < mapData.size(); i++) {
 		for (int j = 0; j < mapData.at(0).size(); j++) {
 			//if (mapData.at(i).at(j) == 72)DrawFormatString(100 + j * 20, 50, 0xffffff, "%d %d", i, j);
 			//画面外は描画しない
-			if (j * MAP_CEllSIZE + scrollX >= -80 && j * MAP_CEllSIZE + scrollX <= 1280 && i * MAP_CEllSIZE + scrollY >= -80 && i * MAP_CEllSIZE + scrollY <= 720) {
+			if (j * MAP_CEllSIZE + scrollX >= -160 && j * MAP_CEllSIZE + scrollX <= 1360 && i * MAP_CEllSIZE + scrollY >= -160 && i * MAP_CEllSIZE + scrollY <= 800) {
 				if (
 					mapData.at(i).at(j) != 68		//マンホール(上)
 					&& mapData.at(i).at(j) != 62	 //ボタン
@@ -134,7 +206,49 @@ void STAGE::Draw(ELEMENT* element)const {
 						////89～90番台を描画しない
 						|| mapData.at(i).at(j) >= 100 && mapData.at(i).at(j) != 777)
 					) {
-					DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[mapData.at(i).at(j) - 1], TRUE);
+					
+					int chipNum = mapData.at(i).at(j);
+
+					//木の描画
+					if (22 <= chipNum && chipNum <= 32)
+					{
+						//左右に伸びる気の描画
+						if (chipNum != 24 && chipNum != 27 && chipNum != 30)
+						{
+							//調整距離
+							float shiftDistance = 0.0f;
+							//画像回転角度
+							float angle = PI / 180.0f * -90.0f;
+							//左側の設定
+							if (chipNum == 22 || chipNum == 25 || chipNum == 28 || chipNum == 31)
+							{
+								shiftDistance = 9.0f;
+							}//右側の設定
+							else
+							{
+								shiftDistance = -9.0f;
+							}
+
+							chipNum = 20 + (chipNum - 21) / 3;
+							DrawRotaGraphF(j * MAP_CEllSIZE + scrollX + MAP_CEllSIZE / 2 + shiftDistance, i * MAP_CEllSIZE + scrollY + MAP_CEllSIZE / 2, 1.0f, angle, blockImage1[chipNum], TRUE);
+						}
+						else
+						{
+							//垂直に伸びる気の描画
+							chipNum = 20 + (chipNum - 21) / 3;
+							DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[chipNum], TRUE);
+						}
+					}
+					else if (chipNum == 71 || chipNum == 72)
+					{
+						DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY - 9.0f, blockImage1[chipNum - 1], TRUE);
+					}
+					else
+					{
+						DrawGraphF(j * MAP_CEllSIZE + scrollX, i * MAP_CEllSIZE + scrollY, blockImage1[chipNum - 1], TRUE);
+					}
+
+
 				}
 			}
 			//レモナーとグレポンはツルだけ描画する
@@ -149,7 +263,6 @@ void STAGE::Draw(ELEMENT* element)const {
 		if (halfWayPoint == false) { DrawGraphF(halWayPointBox.x + scrollX, halWayPointBox.y + scrollY, blockImage1[88], TRUE); }
 		else { DrawGraphF(halWayPointBox.x + scrollX, halWayPointBox.y + scrollY, blockImage1[89], TRUE); }
 	}
-
 }
 
 /// <summary>
@@ -193,7 +306,7 @@ void STAGE::LoadMapData(const char* stageName) {
 		exit(1);
 	}
 
-	char str[642];		//一行の長さ
+	char str[3000];		//一行の長さ
 	char* context;
 	int i = 0, j = 0;
 
@@ -320,16 +433,15 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 	//for(unsigned int i=scrollY )
 
 	//スクロールY-720とプレイヤーY520の誤差が200になるまで
-
-
-
+	
 	if (player->GetPlayerY() >= 560 &&player->GetPlayerY()-scrollY<=mapData.size()*MAP_CEllSIZE&& GetMapData((player->GetPlayerY() - scrollY) / MAP_CEllSIZE + 3, (player->GetPlayerX() - scrollX) / MAP_CEllSIZE) != -1) {
 		if (player->GetPlayerMoveState() == PLAYER_MOVE_STATE::FALL) {
 			//プレイヤーの落下速度に応じてスクロールYを下げる
+			
 			if (player->GetJumpVelocity() > 0)scrollY -= player->GetJumpVelocity();
 		}
 		else {
-			scrollY -= 5;
+			scrollY -= 4.0f;
 		}
 	}
 	else if (player->GetPlayerY() <= 320) {
@@ -346,6 +458,20 @@ void STAGE::CameraWork(PLAYER* player, ELEMENT* element) {
 		playerYOld = player->GetPlayerY();
 	}
 	else playerVectorY = 0;
+
+
+	//カメラがステージ外へ行かないよう調整
+	if (0 < scrollY)
+	{
+		scrollY = 0;
+	}
+
+	float stageHeight = mapData.size() * MAP_CEllSIZE - 720;
+
+	if (scrollY < -stageHeight)
+	{
+		//scrollY = -stageHeight;
+	}
 }
 
 /// <summary>
@@ -365,18 +491,25 @@ bool STAGE::SetScrollPos(int moveDirection) {
 /// </summary>
 bool STAGE::HitMapDat(int y, int x) {
 #ifdef _DEBUG
-	if (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_Y || CheckHitKey(KEY_INPUT_Z))return false;		//デバッグ用
+	if (PAD_INPUT::OnPressed(XINPUT_BUTTON_Y) || CheckHitKey(KEY_INPUT_Z))return false;		//デバッグ用
 #endif
 	int block_type = GetMapData(y, x);
 	if (block_type == temporaryHit) { return true; }
 	if (
 		block_type == -1 //範囲外
-		|| block_type == 0	//水玉草
-		|| block_type == 21 //フロー木
-		|| block_type == 22 //アカシア木
-		|| block_type == 23 //オーク木
-		|| block_type == 24 //先生作木
-		|| block_type == 31 //葉っぱ
+		|| block_type == 0	//空
+		|| block_type == 21 //木1
+		|| block_type == 22 //木1(横左)
+		|| block_type == 23 //木1(横右)
+		|| block_type == 24 //木2
+		|| block_type == 25 //木2(横左)
+		|| block_type == 26 //木2(横右)
+		|| block_type == 27 //木3
+		|| block_type == 28 //木3(横左)
+		|| block_type == 29 //木3(横右)
+		|| block_type == 30 //木4
+		|| block_type == 31 //木4(横左)
+		|| block_type == 32 //木4(横右)
 		|| block_type == 51	//動く床(縦)
 		|| block_type == 52	//動く床(横)
 		|| block_type == 53	//動く床(ゴール縦)
@@ -389,6 +522,7 @@ bool STAGE::HitMapDat(int y, int x) {
 		|| block_type == 71	//ツル中間
 		|| block_type == 72	//ツル
 		|| block_type == 73	//ゴール
+		|| block_type == 76 //酸溜まり
 		|| block_type == 85	//クリア門
 		|| block_type == 86	//クリア門
 		|| block_type == 87	//クリア門

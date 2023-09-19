@@ -58,7 +58,7 @@ int PAUSE::Update(void) {
 	if (GetWindowActiveFlag() == FALSE || GetWindowMinSizeFlag() == TRUE) { pauseFlag = true; }
 
 	//STARTボタンでポーズ
-	if ((PAD_INPUT::GetNowKey() == XINPUT_BUTTON_START) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+	if (PAD_INPUT::OnButton(XINPUT_BUTTON_START)) {
 		
 		if (pauseFlag == true) {
 			PlaySoundMem(menuCloseSe, DX_PLAYTYPE_BACK, TRUE);
@@ -94,13 +94,13 @@ int PAUSE::Update(void) {
 			}
 			else {
 
-				if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP))
+				if ((PAD_INPUT::GetPadThumbLY() > 20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_UP))
 				{
 					selectMenu = (selectMenu + 3) % 4;
 					inputMargin = 0; PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1); 
 				}
-				if ((PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN))
+				if ((PAD_INPUT::GetPadThumbLY() < -20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_DOWN))
 				{
 					selectMenu = (selectMenu + 1) % 4;
 					inputMargin = 0;
@@ -108,7 +108,7 @@ int PAUSE::Update(void) {
 				}
 			}
 
-			if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+			if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) {
 				PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 				//ok_seが鳴り終わってから画面推移する。
 				while (CheckSoundMem(okSe)) {}
@@ -130,7 +130,7 @@ int PAUSE::Update(void) {
 			}
 
 			//Aボタンでもポーズを戻す
-			if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON)) {
+			if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_A : XINPUT_BUTTON_B)) {
 				//デリート処理
 				DeleteGraph(pauseGraph);
 				selectMenu = 0;

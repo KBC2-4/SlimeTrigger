@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "Stage.h"
 #include "Lemon.h"
+#include "GrapeFruit.h"
+#include "Tomato.h"
 
 class STAGE_SELECT :
 	public AbstractScene
@@ -15,7 +17,7 @@ private:
 
 	int okSe;
 	//フォント
-	int guidFont, buttonGuidFont, stageNameFont, moveToTitleFont;
+	int guidFont, keyboardGuidFont, buttonGuidFont, stageNameFont, moveToTitleFont;
 	int guidTimer;		//ガイド表示タイマー
 	bool effectDelta;
 	int effectTimer[2];	//[0:出現エフェクト, 1:ステージポータルエフェクト]
@@ -28,7 +30,16 @@ private:
 	STAGE* stage;	//ステージ
 	ELEMENT* element;	//ステージ内要素
 	LEMON** lemoner;	//レモナー
+	GRAPEFRUIT** gurepon;	//グレぽん
+	TOMATO** tomaton;	//とまトン
+
+	//レモナー数用の変数
 	int lemonerCount;
+	//とまとんの数用の変数
+	int tomatonCount;
+
+	//グレポンの数用の変数
+	int gureponCount;
 
 	float playerMapX, playerMapY;	//プレイヤーマップ内座標計算用
 	POINT stageReturn;		//タイトルへ戻る座標
@@ -38,7 +49,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	STAGE_SELECT();
+	STAGE_SELECT(short lastStageNum);
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -78,5 +89,10 @@ public:
 	/// <param name="secont_margin_y">2番目に表示する文字Y位置を誤差修正 (デフォルトは25 : 0にするとstage_nameと重なる)</param>
 	void DrawStageGuid(const char* stageName, const float x, const float y, const int stageNameFont, const int text_color, const int textback_color = -1,
 		const int text_margin_x = 0, const int text_margin_y = 0, const int backcolor = -1, const char* second_title = "", const int secont_margin_x = 0, const int secont_margin_y = 25) const;
+
+	/// <summary>
+	/// エレメント用のガイド表示
+	/// </summary>
+	void DrawGuide(float baseX, float baseY, STAGE* stage) const;
 };
 

@@ -16,9 +16,9 @@ ITEMBALL::ITEMBALL()
 
 ITEMBALL::ITEMBALL(float enemy_x, float enemy_y, int e_mapy, int e_mapx, PLAYER* r_player, STAGE* r_stage, float scroolx,float scrooly)
 {
-	if ((item = (LoadGraph("Resource/Images/Player/SlimeBullet2.png"))) == -1)
+	if ((item = (LoadGraph("Resource/Images/Player/HealItem.png"))) == -1)
 	{
-		throw "Resource/Images/Enemy/ThrowSlime.png";
+		throw "Resource/Images/Enemy/HealItem.png";
 	}
 	mapX = e_mapx;
 	mapY = e_mapy;
@@ -36,12 +36,22 @@ ITEMBALL::~ITEMBALL() {
 
 void ITEMBALL::Draw() const
 {
-	DrawRotaGraph((static_cast<int>(GetDrawX())), (static_cast<int>(GetDrawY())) + 30, 1, 0, item, TRUE);
+	DrawRotaGraph((static_cast<int>(GetDrawX())), (static_cast<int>(GetDrawY())) + 20, 0.03, 0, item, TRUE);
 }
 
 void ITEMBALL::Update()
 {
 	PlayerHit();
+
+	//mapDate== -1||mapDate== 76(‘¦Ž€’n“_)‚É“–‚½‚é‚ÆÁ–Å
+	int x = itemX / MAP_CEllSIZE;
+	int y = itemY / MAP_CEllSIZE;
+	int mapDate = stage->GetMapData(y, x);
+	
+	if (mapDate != 0)
+	{
+		deleteFlag = true;
+	}
 }
 
 void ITEMBALL::PlayerHit()

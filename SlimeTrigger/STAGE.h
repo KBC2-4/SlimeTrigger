@@ -11,7 +11,7 @@ class STAGE
 {
 private:
 	
-	int stageImage[5];			//ステージ背景画像
+	int backGraundImage[3];			//ステージ背景画像
 	int halfWayPointSe;		//中間地点SE
 	float mapX, mapY;			//マップ描画座標
 	POINT clearBox;		//クリアになるボックス状範囲の座標

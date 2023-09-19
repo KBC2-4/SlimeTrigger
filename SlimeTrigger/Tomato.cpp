@@ -11,7 +11,7 @@ TOMATO::TOMATO()
 
 	nowImage = 0;
 	
-	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, &images[0][0]) == -1)
+	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 5, 5, 1, 80, 80, &images[0][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/tomaton.png";
 	}
@@ -35,7 +35,7 @@ TOMATO::TOMATO(PLAYER* player, STAGE* stage, int spawn_y, int spawn_x)
 	images.resize(2);
 	images[0].resize(3);
 	images[1].resize(6);
-	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 3, 3, 1, 80, 80, &images[0][0]) == -1)
+	if (LoadDivGraph("Resource/Images/Enemy/tomaton.png", 5, 5, 1, 80, 80, &images[0][0]) == -1)
 	{
 		throw "Resource/Images/Enemy/tomaton.png";
 	}
@@ -181,7 +181,7 @@ void TOMATO::FallAnimation()
 	//アニメーション
 	if (animationTimer % ANIMATION_TIME == 0)
 	{
-		nowImage = images[0][(++animationType % 2) + 1];
+		nowImage = images[0][(++animationType % 4) + 1];
 	}
 }
 

@@ -71,21 +71,25 @@ RESULT::RESULT(bool issue, int clearTime, const char* stageName)
 
 	highScore = false;
 
+	lastStageNum = 0;
 	//ランキング登録
 	if (stageName == "Stage01")
 	{
 		if (clearTime < RANKING::GetBestTime(0)) { highScore = true; }
 		RANKING::Insert(this->clearTime, 1);
+		lastStageNum = 1;
 	}
 	else if (stageName == "Stage02")
 	{
 		if (clearTime < RANKING::GetBestTime(1)) { highScore = true; }
 		RANKING::Insert(this->clearTime, 2);
+		lastStageNum = 2;
 	}
 	else if (stageName == "Stage03")
 	{
 		if (clearTime < RANKING::GetBestTime(2)) { highScore = true; }
 		RANKING::Insert(this->clearTime, 3);
+		lastStageNum = 3;
 	}
 	else {}
 }
@@ -108,7 +112,7 @@ AbstractScene* RESULT::Update()
 {
 	if (timer <= 5 * 60) { if (CheckSoundMem(countSe) == FALSE)PlaySoundMem(countSe, DX_PLAYTYPE_BACK, FALSE); }
 
-	if (timer <= 60) { return new STAGE_SELECT(); }
+	if (timer <= 60) { return new STAGE_SELECT(lastStageNum); }
 	else { --timer; }
 
 	//ガイド点滅表示
@@ -123,13 +127,14 @@ AbstractScene* RESULT::Update()
 		guideTimer = 0;
 	}
 
-	if (PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A) && PAD_INPUT::GetPadState() == PAD_STATE::ON)
+	if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A))
 	{
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
-		return new STAGE_SELECT();
+
+		return new STAGE_SELECT(lastStageNum);
 	}
 
 	if (effectTimer[0] < 180) { effectTimer[0]++; }

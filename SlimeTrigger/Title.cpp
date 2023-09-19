@@ -7,6 +7,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "Guide.h"
 
 //タイトルアニメーションを初回起動時のみ有効化するためのフラグ
 static bool animation_flg = false;
@@ -114,7 +115,7 @@ AbstractScene* Title::Update()
 
 
 			if (titleAniTimer[1] <= 0) {
-				if ((PAD_INPUT::GetPadThumbLY() > 20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_UP))
+				if ((PAD_INPUT::GetPadThumbLY() > 20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_UP))
 				{
 
 					selectMenu = (selectMenu + 3) % 4;
@@ -122,7 +123,7 @@ AbstractScene* Title::Update()
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 
-				if ((PAD_INPUT::GetPadThumbLY() < -20000) || (PAD_INPUT::GetNowKey() == XINPUT_BUTTON_DPAD_DOWN))
+				if ((PAD_INPUT::GetPadThumbLY() < -20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_DOWN))
 				{
 
 					selectMenu = (selectMenu + 1) % 4; inputMargin = 0;
@@ -132,7 +133,7 @@ AbstractScene* Title::Update()
 			}
 		}
 
-		if ((PAD_INPUT::GetNowKey() == (Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) && (PAD_INPUT::GetPadState() == PAD_STATE::ON))
+		if ((PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)))
 		{
 
 			if (titleAniTimer[1] <= 0) {
@@ -145,7 +146,7 @@ AbstractScene* Title::Update()
 				{
 
 				case MENU::GAME_SELECT:
-					return new STAGE_SELECT();
+					return new STAGE_SELECT(0);
 					break;
 
 				case MENU::RANKING:
@@ -219,16 +220,35 @@ void Title::Draw()const
 		if (timer % 120 < 60)
 		{
 
-			if (GetJoypadNum() == 0) {
-				DrawStringToHandle(GetDrawCenterX("コントローラーを接続してください", guidFont), 280, "コントローラーを接続してください", 0xFF5446, guidFont, 0xF53E27);
-			}
-			else {
+				if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
+					const std::vector<guideElement> gamepadGuides = {
+						guideElement({Option::GetInputMode() ? "B" : "A"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE, guidFont, 0xFFFFFF, Option::GetInputMode() ? B_COLOR : A_COLOR,
+						 0xEBA05E, 0xFFFFFF ,10, 200.0f,30.0f,20.0f, 5.0f),
+						};
+					DrawGuides(gamepadGuides, 505.0f, 280.0f, 5.0f, 60.0f);
+				}
+				else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+				{
+					if (Option::GetInputMode())
+					{
+						const std::vector<guideElement> keyboardGuidesSpace = {
+							guideElement({"SPACE"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, guidFont, 0xFFFFFF,
+							             B_COLOR,
+							             0xEBA05E, 0xFFFFFF, 200.0f, 30.0f, 20.0f, 20.0f, 2.5f),
+						};
+						DrawGuides(keyboardGuidesSpace, 450.0f, 280.0f, 5.0f, 60.0f);
+					}
+					else
+					{
+						const std::vector<guideElement> keyboardGuidesSpaceZ = {
+							guideElement({"Z"}, "で決定", GUIDE_SHAPE_TYPE::FIXED_BOX,
+							             guidFont, 0xFFFFFF, A_COLOR,
+							             0xEBA05E, 0xFFFFFF, 200.0f, 60.0f, 60.0f, 20.0f, 2.5f),
+						};
 
-				DrawCircleAA(530.0f, 311.0f, 30, 20, 0xFFFFFF, 1);
-
-				DrawStringToHandle(510, 283, Option::GetInputMode() ? "B" : "A", Option::GetInputMode() ? B_COLOR : A_COLOR, guidFont, 0xFFFFFF);
-				DrawStringToHandle(570, 280, "で決定", 0xEBA05E, guidFont, 0xFFFFFF);
-			}
+						DrawGuides(keyboardGuidesSpaceZ, 510.0f, 280.0f, 5.0f, 60.0f);
+					}
+				}
 		}
 	}
 }

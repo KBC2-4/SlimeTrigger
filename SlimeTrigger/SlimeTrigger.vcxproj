@@ -165,6 +165,7 @@
     <ClCompile Include="GameMainRestart.cpp" />
     <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="GrapeFruit.cpp" />
+    <ClCompile Include="Guide.cpp" />
     <ClCompile Include="ItemBall.cpp" />
     <ClCompile Include="Lemon.cpp" />
     <ClCompile Include="main.cpp">
@@ -173,6 +174,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\PG\dxlib</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\PG\dxlib</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="MenuSelectScene.cpp" />
     <ClCompile Include="Option.cpp" />
     <ClCompile Include="PadInput.cpp" />
     <ClCompile Include="Pause.cpp" />
@@ -196,8 +198,10 @@
     <ClInclude Include="GameMainRestart.h" />
     <ClInclude Include="GameOver.h" />
     <ClInclude Include="GrapeFruit.h" />
+    <ClInclude Include="Guide.h" />
     <ClInclude Include="ItemBall.h" />
     <ClInclude Include="Lemon.h" />
+    <ClInclude Include="MenuSelectScene.h" />
     <ClInclude Include="Option.h" />
     <ClInclude Include="PadInput.h" />
     <ClInclude Include="Pause.h" />

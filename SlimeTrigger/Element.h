@@ -30,6 +30,7 @@ public:
 	
 private:
 	int guidFont,guidTimer;
+	int keyboardGuidFont;
 	std::vector<ELEMENT_DATA> hook;			//フック
 	std::vector<ELEMENT_DATA> button;		//ボタン
 	std::vector<ELEMENT_DATA> door;			//ドア
@@ -46,9 +47,20 @@ private:
 	int acidrainPuddlesAniTimer;		//酸性雨の水たまりの切り替えアニメーション用タイマー
 	int underGroundEffects;			//地下エフェクト用タイマー
 
+	//酸溜まりの画像
 	int acidImage[12];
+	//酸溜まりの液体のアニメーション
 	int acidAnimation;
+	//酸溜まりの泡のアニメーション
 	int foamAnimation;
+
+	//動く床の画像
+	int moveFloorImage[3];
+	//動く床のアニメーション
+	int moveFloorAnimation;
+
+	//プレイヤーが地下にいるかどうか
+	bool isInUnder;
 
 public:
 	/// <summary>
@@ -67,6 +79,10 @@ public:
 	/// 更新
 	/// </summary>
 	void Update(PLAYER* player,STAGE*stage);
+	/// <summary>
+	/// エレメント用のガイド表示
+	/// </summary>
+	void DrawGuide(float elementX, float elementY, STAGE* stage, int offsetX = 0, int offsetY = 0) const;
 	/// <summary>
 	/// 3種類のボタンの処理
 	/// </summary>
@@ -121,5 +137,7 @@ public:
 	/// 酸性雨の水たまり構造体のGetter
 	/// </summary>
 	std::vector<ELEMENT_DATA>GetAcidrain_puddles() { return acidrainPuddles; }
+
+	bool GetIsInUnder() { return isInUnder; }
 };
 
