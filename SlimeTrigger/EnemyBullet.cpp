@@ -62,7 +62,7 @@ ENEMY_BULLET::ENEMY_BULLET(PLAYER* argu_player, STAGE* aug_stage, int x, int y, 
 		throw "Resource/Sounds/SE/Enemy/bullet.wav";
 	}
 	player = argu_player;
-	if (player->GetMoveX() > 0)
+	if (player->GetmoveDirection() > 0)
 	{
 		playerX = player->GetPlayerX();
 	}

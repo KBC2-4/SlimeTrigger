@@ -55,14 +55,18 @@ private:
 	float playerX, playerY;
 	float oldPlayerX, oldPlayerY;
 	int mapX, mapY;
-	float jumpMoveX;
+	float jumpmoveDirection;
 	bool isGround;		//地面についてるかどうか
 	bool hitCeil;
 	float playerSpeed;
 
 	int life;
 	int moveType;			//左か右の移動(反転用)
-	float moveX;
+	float moveDirection;	//移動方向
+
+	bool hasFinishedInertiaMove;	//慣性移動(減速)が終了したかどうか
+	float InertiaCount;				//慣性移動用のカウント
+	float amountOfDeceleration;		//減速移動量
 
 	//Jump
 	int jumpMode;			//停止ジャンプ(1)か移動ジャンプ(2)か
@@ -75,7 +79,7 @@ private:
 	//hook
 	bool isHookMove;
 	bool isHookPendulumMove; //フックまでの移動終了判定
-	float hookMoveX, hookMoveY;
+	float hookmoveDirection, hookMoveY;
 	float hookAngle;
 	float hookDistance;
 	float hookMoveDistance;
@@ -217,7 +221,7 @@ public:
 	/// プレイヤーの移動方向のGetter
 	/// </summary>
 	/// <returns>float型：-1.0 or 1.0</returns>
-	float GetMoveX() { return moveX; }
+	float GetmoveDirection() { return moveDirection; }
 
 	/// <summary>
 	/// プレイヤーのサイズの倍率のGetter

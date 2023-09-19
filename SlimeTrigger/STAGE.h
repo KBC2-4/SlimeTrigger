@@ -104,7 +104,7 @@ public:
 	/// <summary>
 	/// 画面スクロール座標XのSetter
 	/// </summary>
-	bool SetScrollPos(int moveX);
+	bool SetScrollPos(int moveDirection);
 	/// <summary>
 	/// 画面スクロール座標XのGetter
 	/// </summary>
