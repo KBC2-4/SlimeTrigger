@@ -1015,6 +1015,7 @@ void ELEMENT::Acidrain_puddles(PLAYER* player) {
 			acidrainPuddles[i].flag = true;
 		}*/
 		//酸性雨の水たまり
+		//プレイヤーが触れると即死させる
 		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y) && (playerMapY <= acidrainPuddles[i].y + MAP_CEllSIZE / 2)) {
 			if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
 			acidrainPuddles[i].flag = true;				//強制的にtrueにしましたよ				
