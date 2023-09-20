@@ -8,20 +8,28 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Guide.h"
+#include "MenuSelectScene.h"
+
 
 //タイトルアニメーションを初回起動時のみ有効化するためのフラグ
 static bool animation_flg = false;
 
 
 Title::Title()
+	: titleLogoAnimationY(100), titleAnimationFrame(0)
 {
-
 	if ((backGraundImage = LoadGraph("Resource/Images/Stage/TitleBackImage.png")) == -1)
 	{
 		throw "Resource/Images/Stage/TitleBackImage.png";
 	}
 
-	if ((backGraundMusic = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1) {
+	if ((titleLogo = LoadGraph("Resource/Images/Scene/title/title_logo.png")) == -1)
+	{
+		throw "Resource/Images/Scene/title/title_logo.png";
+	}
+
+	if ((backGraundMusic = LoadSoundMem("Resource/Sounds/BGM/title.wav")) == -1)
+	{
 		throw "Resource/Sounds/BGM/title.wav";
 	}
 
@@ -35,19 +43,21 @@ Title::Title()
 		throw "Resource/Sounds/SE/ok.wav";
 	}
 
+	LoadDivGraph("Resource/Images/Scene/title/title_logo_animation.png", 8, 2, 4, 960, 668, titleLogoAnimationImage);
+
 	int se_random = GetRand(1);
 	char dis_exit_se[30];
 	sprintf_s(dis_exit_se, sizeof(dis_exit_se), "Resource/Sounds/SE/exit0%d.wav", se_random + 1);
 
-	if ((exitSe = LoadSoundMem(dis_exit_se)) == -1) {
+	if ((exitSe = LoadSoundMem(dis_exit_se)) == -1)
+	{
 		throw dis_exit_se;
 	}
 
 	titleFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 120, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8, -1, 8);
 	menuFont = CreateFontToHandle("UD デジタル 教科書体 N-B", 80, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 	guidFont = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
-
-	selectMenu = 0;
+	
 	inputMargin = 0;
 	timer = 0;
 	exitFlag = false;
@@ -55,15 +65,19 @@ Title::Title()
 	titleAniTimer[0] = 0;
 
 	//タイトルアニメーションを初回起動時のみ有効化
-	if (animation_flg == false) {
+	if (animation_flg == false)
+	{
 		titleAniTimer[1] = 180;
 		animation_flg = true;
 	}
 	else { titleAniTimer[1] = 0; }
 
+	// タイマーを初期化
+	stateStartTime = std::chrono::steady_clock::now();
 	option = new Option();
 
-	
+	animationState = AnimationState::PLAYING;
+	scaleFactor = 1.0;
 
 	//BGM
 	ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic);
@@ -79,6 +93,11 @@ Title::~Title()
 	delete option;
 
 	DeleteGraph(backGraundImage);
+	DeleteGraph(titleLogo);
+	for (int i = 0; i < MAX_ANIMATION_FRAMES; ++i)
+	{
+		DeleteGraph(titleLogoAnimationImage[i]);
+	}
 	StopSoundMem(backGraundMusic);
 	DeleteSoundMem(backGraundMusic);
 	DeleteSoundMem(cursorMoveSe);
@@ -91,18 +110,7 @@ Title::~Title()
 
 AbstractScene* Title::Update()
 {
-	if (option->GetOptionFlg() == true) {
-		option->Update();
-		//BGM
-		ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic);
-
-		//SE
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.6, cursorMoveSe);
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.2, okSe);
-		ChangeVolumeSoundMem(Option::GetSEVolume() * 1.3, exitSe);
-	}
-	else {
-
+	{
 		if (inputMargin < 20) {
 			inputMargin++;
 		}
@@ -117,16 +125,14 @@ AbstractScene* Title::Update()
 			if (titleAniTimer[1] <= 0) {
 				if ((PAD_INPUT::GetPadThumbLY() > 20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_UP))
 				{
-
-					selectMenu = (selectMenu + 3) % 4;
-					inputMargin = 0; PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
+					inputMargin = 0;
+					PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 
 				if ((PAD_INPUT::GetPadThumbLY() < -20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_DOWN))
 				{
-
-					selectMenu = (selectMenu + 1) % 4; inputMargin = 0;
+					inputMargin = 0;
 					PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
 					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
@@ -141,114 +147,131 @@ AbstractScene* Title::Update()
 				//ok_seが鳴り終わってから画面推移する。
 				while (CheckSoundMem(okSe)) {}
 				StartJoypadVibration(DX_INPUT_PAD1,  OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
-
-				switch (static_cast<MENU>(selectMenu))
-				{
-
-				case MENU::GAME_SELECT:
-					return new STAGE_SELECT(0);
-					break;
-
-				case MENU::RANKING:
-					return new DRAW_RANKING();
-					break;
-
-				case MENU::OPTION:
-					option->ChangeOptionFlg();
-					break;
-
-				case MENU::END:
-					exitFlag = true;
-					PlaySoundMem(exitSe, DX_PLAYTYPE_BACK, FALSE);
-					break;
-
-				default:
-					break;
-				}
+				return new MenuSelectScene();
+				
 
 			}
-			else { titleAniTimer[1] = 0; }
+			else { titleAniTimer[1] = 0; titleAnimationFrame = MAX_ANIMATION_FRAMES - 1;}
 		}
 		timer++;
 
+
+		// プログラム終了
 		if (exitFlag == true && !CheckSoundMem(exitSe)) { return nullptr; }
 
 		//合計フレーム
 		if (titleAniTimer[1] > 0) { titleAniTimer[1]--; }
 
-		//回転
-		if (titleAniTimer[0] < 180 && titleAniTimer[1] > 0) { titleAniTimer[0]++; }
-		else { titleAniTimer[0] = 0; }
+		// 現在の経過時間
+		const auto currentTime = std::chrono::high_resolution_clock::now();
+		
+		auto now = std::chrono::steady_clock::now();
+		double elapsedSeconds = std::chrono::duration_cast<std::chrono::milliseconds>(now - stateStartTime).count() / 1000.0;
+
+		switch (animationState) {
+			// アニメーションフレームを更新し、最大フレームに達したら次の状態に移行する 
+		case AnimationState::PLAYING:
+			if (titleAnimationFrame < MAX_ANIMATION_FRAMES - 1) {
+				titleAnimationFrame = static_cast<int>(elapsedSeconds / 0.1) % MAX_ANIMATION_FRAMES;
+			} else {
+				TransitState(AnimationState::MOVING_UP, now);
+			}
+			break;
+
+		case AnimationState::MOVING_UP:
+			{
+				constexpr double MOVE_UP_DURATION = 2.0;
+				if (elapsedSeconds <= MOVE_UP_DURATION) {
+					titleLogoAnimationY = 100 - static_cast<int>(300 * elapsedSeconds / MOVE_UP_DURATION);
+				} else {
+					TransitState(AnimationState::SHRINKING, now);
+				}
+			}
+			break;
+
+		case AnimationState::SHRINKING:
+			{
+				constexpr double SHRINK_DURATION = 0.8;
+				
+				if (elapsedSeconds <= SHRINK_DURATION) {
+					constexpr double SHRINK_FACTOR = 0.7;
+						scaleFactor = 1.0 - (SHRINK_FACTOR * elapsedSeconds / SHRINK_DURATION);
+					} else {
+					TransitState(AnimationState::GROWING, now);
+				}
+			}
+			break;
+
+		case AnimationState::GROWING:
+			{
+				constexpr double GROW_DURATION = 1.0;
+				constexpr double GROW_FACTOR = 1.0;
+
+				if (elapsedSeconds <= GROW_DURATION) {
+					scaleFactor = GROW_FACTOR + (1.0 - GROW_FACTOR) * (elapsedSeconds / GROW_DURATION);
+				} else {
+					TransitState(AnimationState::DONE, now);
+				}
+			}
+			break;
+
+		case AnimationState::DONE:
+			break;
+		}
+		
 	}
 
 	return this;
 }
 
-void Title::Draw()const
+void Title::Draw() const
 {
-
 	DrawGraph(0, 0, backGraundImage, false);
 
-	//オプション画面へ入る
-	if (option->GetOptionFlg() == true) {
-		option->Draw();
+	// タイトルロゴを描画
+	DrawRotaGraph(660, titleLogoAnimationY + 360, scaleFactor, 0, titleLogoAnimationImage[titleAnimationFrame], TRUE);
+
+	if (titleAniTimer[1] > 0) { return; }
+	if (titleAnimationFrame < MAX_ANIMATION_FRAMES - 1)
+	{
+		return;
 	}
-	else {
-
-		DrawRotaStringToHandle(GetDrawCenterX("スライムトリガー", titleFont, 600 - titleAniTimer[1] * 3), 200 + titleAniTimer[1] * 3, 1.0 - titleAniTimer[1] * 0.01, 1.0 - titleAniTimer[1] * 0.01, 600, 100, 10 * titleAniTimer[0] * (M_PI / 180), 0x56F590, titleFont, 0xFFFFFF, FALSE, "スライムトリガー");
-		//DrawStringToHandle(GetDrawCenterX("スライムアクション",titleFont), 100, "スライムアクション", 0x56F590, titleFont, 0xFFFFFF);
-
-		//ボックス
-		//SetDrawBlendMode(DX_BLENDMODE_ALPHA,100);
-		//DrawBoxAA(400.0f, 300.0f, 800.0f, 680.0f, 0xF3F589, TRUE, 5.0f);
-		//SetDrawBlendMode(DX_BLENDGRAPHTYPE_NORMAL,0);
-
-		//矢印
-		//DrawCircleAA(475.0f, 398.0f + selectMenu * 90, 20, 3, 0xffffff, TRUE, 3.0f);
-
-		if (titleAniTimer[1] > 0) { return; }
-
-		//選択メニュー
-		DrawStringToHandle(GetDrawCenterX("プレイ", menuFont), 360, "プレイ", selectMenu == 0 ? 0xB3E0F5 : 0xEB8F63, menuFont, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("ランキング", menuFont), 450, "ランキング", selectMenu == 1 ? 0xF5E6B3 : 0xEB8F63, menuFont, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("オプション", menuFont), 540, "オプション", selectMenu == 2 ? 0x5FEBB6 : 0xEB8F63, menuFont, 0xFFFFFF);
-		DrawStringToHandle(GetDrawCenterX("終了", menuFont, 8), 630, "終了", selectMenu == 3 ? 0xEBABDC : 0xEB8F63, menuFont, 0xFFFFFF);
 
 
-
-		//操作案内
-		if (timer % 120 < 60)
+	//操作案内
+	if (timer % 120 < 60)
+	{
+		if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) ||
+			PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD))
 		{
+			const std::vector<guideElement> gamepadGuides = {
+				guideElement({Option::GetInputMode() ? "B" : "A"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE,
+				             guidFont, 0xFFFFFF, Option::GetInputMode() ? B_COLOR : A_COLOR,
+				             0xEBA05E, 0xFFFFFF, 10, 200.0f, 30.0f, 20.0f, 5.0f),
+			};
+			DrawGuides(gamepadGuides, 505.0f, 480.0f, 5.0f, 60.0f);
+		}
+		else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
+		{
+			if (Option::GetInputMode())
+			{
+				const std::vector<guideElement> keyboardGuidesSpace = {
+					guideElement({"SPACE"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, guidFont, 0xFFFFFF,
+					             B_COLOR,
+					             0xEBA05E, 0xFFFFFF, 200.0f, 30.0f, 20.0f, 20.0f, 2.5f),
+				};
+				DrawGuides(keyboardGuidesSpace, 450.0f, 480.0f, 5.0f, 60.0f);
+			}
+			else
+			{
+				const std::vector<guideElement> keyboardGuidesSpaceZ = {
+					guideElement({"Z"}, "で決定", GUIDE_SHAPE_TYPE::FIXED_BOX,
+					             guidFont, 0xFFFFFF, A_COLOR,
+					             0xEBA05E, 0xFFFFFF, 200.0f, 60.0f, 60.0f, 20.0f, 2.5f),
+				};
 
-				if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
-					const std::vector<guideElement> gamepadGuides = {
-						guideElement({Option::GetInputMode() ? "B" : "A"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE, guidFont, 0xFFFFFF, Option::GetInputMode() ? B_COLOR : A_COLOR,
-						 0xEBA05E, 0xFFFFFF ,10, 200.0f,30.0f,20.0f, 5.0f),
-						};
-					DrawGuides(gamepadGuides, 505.0f, 280.0f, 5.0f, 60.0f);
-				}
-				else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
-				{
-					if (Option::GetInputMode())
-					{
-						const std::vector<guideElement> keyboardGuidesSpace = {
-							guideElement({"SPACE"}, "で決定", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, guidFont, 0xFFFFFF,
-							             B_COLOR,
-							             0xEBA05E, 0xFFFFFF, 200.0f, 30.0f, 20.0f, 20.0f, 2.5f),
-						};
-						DrawGuides(keyboardGuidesSpace, 450.0f, 280.0f, 5.0f, 60.0f);
-					}
-					else
-					{
-						const std::vector<guideElement> keyboardGuidesSpaceZ = {
-							guideElement({"Z"}, "で決定", GUIDE_SHAPE_TYPE::FIXED_BOX,
-							             guidFont, 0xFFFFFF, A_COLOR,
-							             0xEBA05E, 0xFFFFFF, 200.0f, 60.0f, 60.0f, 20.0f, 2.5f),
-						};
-
-						DrawGuides(keyboardGuidesSpaceZ, 510.0f, 280.0f, 5.0f, 60.0f);
-					}
-				}
+				DrawGuides(keyboardGuidesSpaceZ, 510.0f, 480.0f, 5.0f, 60.0f);
+			}
 		}
 	}
 }

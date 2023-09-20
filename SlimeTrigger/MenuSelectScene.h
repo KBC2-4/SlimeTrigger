@@ -27,16 +27,19 @@ private:
     int cursorMoveSe;
     int okSe;
     int exitSe;
-    
+
     //フォント
     int guidFont, buttonGuidFont;
+    int menuFont;
+    int MenuBigFont;
+
     //ガイド表示タイマー
     int guidTimer;
 
     Option* option;
-    
+
     // タイマー
-    std::chrono::time_point <std::chrono::high_resolution_clock> startTime;
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 
     enum class MENU
     {
@@ -45,21 +48,20 @@ private:
         OPTION,
         EXIT
     };
-    
+
     struct MenuItem
     {
         int x, y;
         const char* name;
         MENU menu;
-        int index;
     };
 
     // メニュー項目の定義
     MenuItem menuItems[4] = {
-        {300, 300, "あそぶ", MENU::PLAY,0},
-        {780, 200, "ランキング", MENU::RANKING,1},
-        {660, 480, "せってい", MENU::OPTION,2},
-        {960, 480, "おわる", MENU::EXIT,3}
+        {350, 400, "あそぶ", MENU::PLAY},
+        {830, 260, "ランキング", MENU::RANKING},
+        {690, 480, "せってい", MENU::OPTION},
+        {980, 480, "おわる", MENU::EXIT}
     };
 
     // 現在選択されているメニュー項目
@@ -67,7 +69,7 @@ private:
 
     // 最も近いメニュー要素
     int closestIndex;
-    
+
     //操作間隔時間
     int inputMargin;
 

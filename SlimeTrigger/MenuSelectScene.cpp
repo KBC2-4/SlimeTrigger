@@ -1,5 +1,4 @@
 #include "MenuSelectScene.h"
-
 #include "DrawRanking.h"
 #include "Title.h"
 #include "GameMain.h"
@@ -7,6 +6,9 @@
 #include "Option.h"
 #include "PadInput.h"
 #include "StageSelect.h"
+#include <corecrt_math_defines.h>
+#include <limits>
+#undef max
 
 MenuSelectScene::MenuSelectScene()
     :selected(0), closestIndex(0), inputMargin(0)
@@ -55,6 +57,8 @@ MenuSelectScene::MenuSelectScene()
     }
 
     guidFont = CreateFontToHandle("メイリオ", 60, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
+    menuFont = LoadFontDataToHandle("Resource/Fonts/x12y12pxMaruMinya_Menu.dft", 4);
+    MenuBigFont = LoadFontDataToHandle("Resource/Fonts/x12y12pxMaruMinya_Big_Menu.dft", 4);
     buttonGuidFont = CreateFontToHandle("メイリオ", 23, 1, DX_FONTTYPE_ANTIALIASING_EDGE_8X8);
 
     // タイマーを初期化
@@ -67,13 +71,18 @@ MenuSelectScene::MenuSelectScene()
     //BGM
     ChangeVolumeSoundMem(Option::GetBGMVolume(), backGraundMusic);
     ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.2), okSe);
+    ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.6), cursorMoveSe);
+    ChangeVolumeSoundMem(static_cast<int>(Option::GetSEVolume() * 1.3), exitSe);
 
     option = new Option();
 }
 
 MenuSelectScene::~MenuSelectScene()
 {
+    delete option;
     DeleteFontToHandle(guidFont);
+    DeleteFontToHandle(menuFont);
+    DeleteFontToHandle(MenuBigFont);
     DeleteFontToHandle(buttonGuidFont);
     StopSoundMem(backGraundMusic);
     DeleteSoundMem(backGraundMusic);
@@ -163,7 +172,7 @@ AbstractScene* MenuSelectScene::Update()
         }
     
 
-        if ((PAD_INPUT::OnRelease(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)))
+        if ((PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)))
         {
             PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
             //ok_seが鳴り終わってから画面推移する。
@@ -185,15 +194,15 @@ AbstractScene* MenuSelectScene::Update()
                 option->ChangeOptionFlg();
                 break;
             case MENU::EXIT:
+                option->SaveData();
                 return new Title();
                 break;
             default:
                 break;
             }
-        }
-
-        return this;
+        };
     }
+    return this;
 }
 
 void MenuSelectScene::Draw() const
@@ -259,29 +268,34 @@ void MenuSelectScene::Draw() const
         }
 
         // メニュー項目の描画
-
-        for (int i = 0; i < 4; ++i)
-        {
-        }
-
         for (int i = 0; i < sizeof(menuItems) / sizeof(MenuItem); ++i)
         {
-            const int stringWidth = GetDrawStringWidthToHandle(menuItems[i].name, strlen(menuItems[i].name), guidFont);
+            int font = menuFont;
+
+            // 0番目のメニュー(あそぶ)の場合のみフォントハンドルを変更
+            if(i == 0)
+            {
+                font = MenuBigFont;
+            }
+            
+            const int stringWidth = GetDrawStringWidthToHandle(menuItems[i].name, strlen(menuItems[i].name), font);
+            const int stringHeight = GetFontSizeToHandle(font);
             const int centerX = menuItems[i].x - stringWidth / 2;
+            const int centerY = menuItems[i].y - stringHeight / 2;
         
             if (i == selected)
             {
 
                 DrawRotaGraph(menuItems[i].x, menuItems[i].y, 1.0, 0.0, menuImages[i], TRUE);
                 DrawStringToHandle(centerX,
-                                   menuItems[i].y, menuItems[i].name, 0xEB7415, guidFont, 0xFFFFFF);
+                                   centerY, menuItems[i].name, 0xEB7415, font, 0xFFFFFF);
             }
             else
             {
                 SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
                 DrawRotaGraph(menuItems[i].x, menuItems[i].y, 1.0, 0.0, menuImages[i], TRUE);
                 DrawStringToHandle(centerX,
-                                   menuItems[i].y, menuItems[i].name, 0xFFFFFF, guidFont, 0xFFFFFF);
+                                   centerY, menuItems[i].name, 0x000000, font, 0xFFFFFF);
                 SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
             }
         }
@@ -299,7 +313,10 @@ void MenuSelectScene::UpdateMenuSelection(int& closestIndex, int& selected, doub
         const int currentY = menuItems[selected].y;
     
         // 初期値として最大の角度（360度）を設定
-        double minAngleDiff = 3.14159 * 2;
+        double minAngleDiff = M_PI * 2;
+
+        // 初期値として最大の距離を設定
+        double minDistance = std::numeric_limits<double>::max();
 
         // 許容誤差（角度のマージン）
 
@@ -313,23 +330,20 @@ void MenuSelectScene::UpdateMenuSelection(int& closestIndex, int& selected, doub
             const double relativeX = menuItems[i].x - currentX;
             const double relativeY = menuItems[i].y - currentY;
             const double itemAngle = std::atan2(relativeY, relativeX);
+            const double distance = std::sqrt(relativeX * relativeX + relativeY * relativeY);  // 距離の計算
 
             double angleDiff = std::abs(stickAngle - itemAngle);
-            angleDiff = min(angleDiff, 2 * 3.14159 - angleDiff);  // 角度の差を最小化
+            angleDiff = min(angleDiff, 2 * M_PI - angleDiff);  // 角度の差を最小化
 
             // 角度の許容誤差
-            constexpr double margin = 1.2;
-            if (angleDiff < margin)
-            {
-                // 許容誤差内で一番最初に見つかった項目を選択
-                closestIndex = i;
-                break;
-            }
-        
+            constexpr double margin = 0.2;
+            
             // 最も近いメニュー項目を更新
-            if (angleDiff < minAngleDiff) {
+            // 許容誤差内かつ最小距離の項目を選択
+            if (angleDiff < minAngleDiff + margin && distance < minDistance) {
                 closestIndex = i;
                 minAngleDiff = angleDiff;
+                minDistance = distance;  // 最小距離を更新
             }
 
         }

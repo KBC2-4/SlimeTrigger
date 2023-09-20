@@ -2,6 +2,7 @@
 #include "Ranking.h"
 #include "PadInput.h"
 #include "Title.h"
+#include "Option.h"
 
 DRAW_RANKING::DRAW_RANKING()
 {
