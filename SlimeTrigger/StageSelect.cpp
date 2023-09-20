@@ -503,7 +503,6 @@ void STAGE_SELECT::Draw() const
 			const int joystick_y = stageMove[1].y - MAP_CEllSIZE + stage->GetScrollY() - 10;
 			const int joystick_size = 15;
 
-
 			DrawOvalAA(joystick_x + joysAniTimer * 0.8, joystick_y + 6 + abs(joysAniTimer * 0.6), joystick_size + 8, 20, joystick_size, 0x000000, TRUE);
 			//DrawBox(joystick_x - 5, joystick_y, joystick_x + 7, joystick_y + 23, 0x000000, 1);
 			DrawQuadrangle(joystick_x - 5 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), joystick_x + 7 + joysAniTimer, joystick_y + abs(joysAniTimer * 0.5), joystick_x + 7, joystick_y + 23, joystick_x - 5, joystick_y + 23, 0x000000, TRUE);
