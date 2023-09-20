@@ -1015,11 +1015,11 @@ void ELEMENT::Acidrain_puddles(PLAYER* player) {
 			acidrainPuddles[i].flag = true;
 		}*/
 		//酸性雨の水たまり
-		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y - MAP_CEllSIZE / 2) && (playerMapY <= acidrainPuddles[i].y)) {
+		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y) && (playerMapY <= acidrainPuddles[i].y + MAP_CEllSIZE / 2)) {
 			if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
 			acidrainPuddles[i].flag = true;				//強制的にtrueにしましたよ				
 			if (acidrainPuddles[i].flag == true) {
-				player->SetLife(player->GetLife() - 1);
+				player->SetLife(0);
 				acidrainPuddles[i].flag = false;
 
 			}
