@@ -42,6 +42,16 @@ void ITEMBALL::Draw() const
 void ITEMBALL::Update()
 {
 	PlayerHit();
+
+	//mapDate== -1||mapDate== 76(‘¦Ž€’n“_)‚É“–‚½‚é‚ÆÁ–Å
+	int x = itemX / MAP_CEllSIZE;
+	int y = itemY / MAP_CEllSIZE;
+	int mapDate = stage->GetMapData(y, x);
+	
+	if (mapDate != 0)
+	{
+		deleteFlag = true;
+	}
 }
 
 void ITEMBALL::PlayerHit()
