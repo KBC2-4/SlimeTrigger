@@ -4,6 +4,7 @@
 #include <vector>
 #include "Option.h"
 #include "StageSelect.h"
+#include "GameOver.h"
 
 //#define DEBUG_PV
 
