@@ -859,6 +859,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 				player->SetVisible(false);
 			}
 			else {
+				player->SetVisible(true);
 				//player->SetGravity(true);
 			}
 
@@ -940,7 +941,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 						//一時的な当たり判定をつける。
 						stage->SetTemporary_Hit(69);
 						//player->SetGravity(true);
-						player->SetVisible(true);
+						//player->SetVisible(true);
 						manhole[i].flag = false;
 						if (underGroundEffects != 0)
 						{
