@@ -3,6 +3,7 @@
 #include "PadInput.h"
 #include "Title.h"
 #include "Option.h"
+#include "Guide.h"
 
 PAUSE::PAUSE() {
 	if ((cursorMoveSe = LoadSoundMem("Resource/Sounds/SE/cursor_move.wav")) == -1) {
@@ -181,9 +182,40 @@ void PAUSE::Draw() {
 		DrawStringToHandle(GetDrawCenterX("ステージ選択へ", menuFont), 540, "ステージ選択へ", static_cast<MENU>(selectMenu) == MENU::STAGE_SELECT ? 0xF5E6B3 : 0xEB8F63, menuFont, 0xFFFFFF);
 
 		//ガイド表示
-		DrawStringToHandle(580, 668, "ゲームへ戻る", 0xFFA15C, buttonGuidFont, 0x000000);
-		DrawCircleAA(560, 680, 15, 20, 0xFFFFFF, 1);
-		DrawStringToHandle(553, 668, Option::GetInputMode() ? "A" : "B", Option::GetInputMode() ? A_COLOR : B_COLOR, buttonGuidFont, 0xFFFFFF);
+		Guide guide;
+		
+		// DrawStringToHandle(580, 668, "ゲームへ戻る", 0xFFA15C, buttonGuidFont, 0x000000);
+		// DrawCircleAA(560, 680, 15, 20, 0xFFFFFF, 1);
+		// DrawStringToHandle(553, 668, Option::GetInputMode() ? "A" : "B", Option::GetInputMode() ? A_COLOR : B_COLOR, buttonGuidFont, 0xFFFFFF);
+
+		// ガイド表示
+		constexpr unsigned int guid_color = 0xFFFFFF;
+	if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::XINPUT_GAMEPAD) || PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::DIRECTINPUT_GAMEPAD)) {
+
+		std::vector<guideElement> gamepadGuides = {
+					guideElement({"L"}, "移動", GUIDE_SHAPE_TYPE::JOYSTICK, buttonGuidFont, 0x000000,
+						 0xFFFFFF, 0xFFFFFF),
+						 //GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),
+						 guideElement({Option::GetInputMode() ? "A" : "B"}, "ゲームへ戻る", GUIDE_SHAPE_TYPE::FIXED_CIRCLE, buttonGuidFont, guid_color,
+									  Option::GetInputMode() ? A_COLOR : B_COLOR, guid_color),
+						 guideElement({Option::GetInputMode() ? "B" : "A"}, "決定", GUIDE_SHAPE_TYPE::DYNAMIC_CIRCLE, buttonGuidFont, guid_color,
+									  Option::GetInputMode() ? B_COLOR : A_COLOR, guid_color),
+		};
+		guide.DrawGuides(gamepadGuides, 400.0f, 668.0f, 5.0f, 60.0f);
+	}
+	else if (PAD_INPUT::GetInputMode() == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD)) {
+
+		std::vector<guideElement> keyboardGuides = {
+			guideElement({ "W", "S"}, "移動", GUIDE_SHAPE_TYPE::FIXED_BOX, buttonGuidFont, 0xFFFFFF,
+			             buttonGuidFont),
+			//GuideElement({"X"},"説明",GUIDE_SHAPE_TYPE::DYNAMIC_BOX),	
+			guideElement({Option::GetInputMode() ? "Z" : "SPACE"}, "ゲームへ戻る", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
+			             Option::GetInputMode() ? A_COLOR : B_COLOR, guid_color),
+			guideElement({Option::GetInputMode() ? "SPACE" : "Z"}, "決定", GUIDE_SHAPE_TYPE::DYNAMIC_BOX, buttonGuidFont, guid_color,
+			             Option::GetInputMode() ? B_COLOR : A_COLOR, guid_color),
+		};
+		guide.DrawGuides(keyboardGuides, 340.0f, 668.0f, 5.0f, 60.0f);
+	}
 	}
 }
 
