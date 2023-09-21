@@ -173,7 +173,16 @@ STAGE_SELECT::STAGE_SELECT(short lastStageNum)
 		spawnPointPlayer.y = stageMove[lastStageNum].x - MAP_CEllSIZE;
 	}
 
-	stage->SetScrollX(-(spawnPointPlayer.y - MAP_CEllSIZE * 4));
+	stage->SetScrollX(-(spawnPointPlayer.y - MAP_CEllSIZE*7));
+	if (0 < stage->GetScrollX())
+	{
+		stage->SetScrollX(0.0f);
+	}
+	else if (stage->GetScrollX() < -(stage->GetMapSize().y * MAP_CEllSIZE - 1280.0f))
+	{
+		stage->SetScrollX(-(stage->GetMapSize().y * MAP_CEllSIZE - 1280.0f));
+	}
+
 	stage->SetScrollY(-(spawnPointPlayer.x - MAP_CEllSIZE - 400.0f));
 	player->SetPlayer_Screen(spawnPointPlayer);
 
@@ -221,6 +230,8 @@ STAGE_SELECT::~STAGE_SELECT()
 
 AbstractScene* STAGE_SELECT::Update()
 {
+	
+
 	//BACKボタンでタイトルへ戻る
 	if (PAD_INPUT::OnButton(XINPUT_BUTTON_BACK)) {
 		PlaySoundMem(okSe, DX_PLAYTYPE_BACK, TRUE);
@@ -283,23 +294,31 @@ AbstractScene* STAGE_SELECT::Update()
 	if ((playerMapX >= stageReturn.x - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
 		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new Title(); }
 	}
-
-	//ステージ1
-	if ((playerMapX >= stageMove[1].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[1].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage01"); }
-	}
-
-
-	//ステージ2
-	if ((playerMapX >= stageMove[2].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[2].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage02"); }
-	}
+	
+		//ステージ1
+		if ((playerMapX >= stageMove[1].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[1].x + (MAP_CEllSIZE * 3) / 2)) {
+			if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage01"); }
+		}
 
 
-	//ステージ3
-	if ((playerMapX >= stageMove[3].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[3].x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage03"); }
-	}
+		//ステージ2
+		if ((playerMapX >= stageMove[2].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[2].x + (MAP_CEllSIZE * 3) / 2)) {
+			if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new GAMEMAIN(false, 0, "Stage02"); }
+		}
+
+
+		//ステージ3
+		if ((playerMapX >= stageMove[3].x - MAP_CEllSIZE / 2) && (playerMapX <= stageMove[3].x + (MAP_CEllSIZE * 3) / 2)) {
+			if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) 
+			{ 
+				//フックに詰まるときは移動しない
+				if (player->GetPlayerMoveState() != PLAYER_MOVE_STATE::GROW_HOOK)
+				{
+					StageIn();
+					return new GAMEMAIN(false, 0, "Stage03");
+				}
+			}
+		}
 
 #ifdef DEBUG_STAGE
 	//旧ステージ1
@@ -334,7 +353,6 @@ AbstractScene* STAGE_SELECT::Update()
 		if (joyStickDelta) { joysAniTimer--; }
 		else if (!joyStickDelta) { joysAniTimer++; }
 	}
-
 
 	return this;
 }

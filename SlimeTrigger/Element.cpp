@@ -859,6 +859,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 				player->SetVisible(false);
 			}
 			else {
+				player->SetVisible(true);
 				//player->SetGravity(true);
 			}
 
@@ -940,7 +941,7 @@ void ELEMENT::Manhole(PLAYER* player, STAGE* stage) {
 						//一時的な当たり判定をつける。
 						stage->SetTemporary_Hit(69);
 						//player->SetGravity(true);
-						player->SetVisible(true);
+						//player->SetVisible(true);
 						manhole[i].flag = false;
 						if (underGroundEffects != 0)
 						{
@@ -1014,11 +1015,12 @@ void ELEMENT::Acidrain_puddles(PLAYER* player) {
 			acidrainPuddles[i].flag = true;
 		}*/
 		//酸性雨の水たまり
-		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y - MAP_CEllSIZE / 2) && (playerMapY <= acidrainPuddles[i].y)) {
+		//プレイヤーが触れると即死させる
+		if ((playerMapX >= acidrainPuddles[i].x) && (playerMapX <= acidrainPuddles[i].x + MAP_CEllSIZE) && (playerMapY >= acidrainPuddles[i].y) && (playerMapY <= acidrainPuddles[i].y + MAP_CEllSIZE / 2)) {
 			if (CheckSoundMem(walkPuddleSe) == FALSE && acidrainPuddles[0].animTimer % 90 == 0)PlaySoundMem(walkPuddleSe, DX_PLAYTYPE_BACK, TRUE);
 			acidrainPuddles[i].flag = true;				//強制的にtrueにしましたよ				
 			if (acidrainPuddles[i].flag == true) {
-				player->SetLife(player->GetLife() - 1);
+				player->SetLife(0);
 				acidrainPuddles[i].flag = false;
 
 			}

@@ -135,7 +135,7 @@ void TOMATO::Hit()
 	py1 = player->GetPlayerY() + (20 * (2 - player->GetPlayerScale()));
 	py2 = py1 + (25 * (player->GetPlayerScale()));
 
-	bx1 = x - IMAGE_SIZE / 2;
+	bx1 = x - IMAGE_SIZE / 2 + stage->GetScrollX();
 	bx2 = bx1 + IMAGE_SIZE;
 	by1 = y + stage->GetScrollY() - IMAGE_SIZE / 2.5;
 	by2 = by1 + IMAGE_SIZE / 2;
@@ -213,5 +213,4 @@ void TOMATO::Draw()const
 	{
 		DrawRotaGraphF(x + stage->GetScrollX(), y + stage->GetScrollY(), imageRate, 0, nowImage, TRUE);
 	}
-
 }
