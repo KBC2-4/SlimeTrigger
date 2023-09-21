@@ -160,17 +160,17 @@ void AbstractScene::DrawGuideElement(const guideElement& guide, float& currentX,
 				// ¶‘¤‚Ì‰~‚ÌŠO˜g‚ğ•`‰æ
 				DrawCircleAA(circleLeftCenterX, circleLeftCenterY, radius, 20, borderColor, FALSE, borderWidth);
 				
-				DrawCircleAA(circleLeftCenterX, circleLeftCenterY, radius, 20, guide.color, TRUE);
+				DrawCircleAA(circleLeftCenterX, circleLeftCenterY, radius, 20, guide.buttonColor, TRUE);
 
 				// ‰E‘¤‚Ì‰~‚ğ•`‰æ
 				float circleRightCenterX = rectRight;
 				float circleRightCenterY = rectY + radius;
 				// ‰E‘¤‚Ì‰~‚ÌŠO˜g‚ğ•`‰æ
 				DrawCircleAA(circleRightCenterX, circleRightCenterY, radius, 20, borderColor, FALSE, borderWidth);
-				DrawCircleAA(circleRightCenterX, circleRightCenterY, radius, 20, guide.color, TRUE);
+				DrawCircleAA(circleRightCenterX, circleRightCenterY, radius, 20, guide.buttonColor, TRUE);
 				
 				// ‹éŒ`‚ğ•`‰æ
-				DrawBoxAA(rectLeft, rectTop, rectRight, rectBottom, guide.color, TRUE);
+				DrawBoxAA(rectLeft, rectTop, rectRight, rectBottom, guide.buttonColor, TRUE);
 
 				float stringY = rectY + dynamicHeight / 2 - (textHeight / 2) + guide.offsetButtonStringY;
 				// ƒeƒLƒXƒg‚ğ•`‰æ
