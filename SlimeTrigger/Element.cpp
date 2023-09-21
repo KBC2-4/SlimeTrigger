@@ -564,7 +564,7 @@ void ELEMENT::DrawGuide(const float elementX, const float elementY, STAGE* stage
 
 		if (Option::GetInputMode())
 		{
-			DrawStringToHandle(static_cast<int>(x1) - 20, static_cast<int>(y1) - 15, "SPACE", B_COLOR, keyboardGuidFont, 0xFFFFFF);
+			DrawStringToHandle(static_cast<int>(x1) - 15, static_cast<int>(y1) - 15, "SPACE", B_COLOR, keyboardGuidFont, 0xFFFFFF);
 		}
 		else
 		{
