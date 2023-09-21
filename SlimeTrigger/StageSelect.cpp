@@ -1,7 +1,7 @@
 #include "StageSelect.h"
-#include "Title.h"
 #include "GameMain.h"
 #include "DxLib.h"
+#include "MenuSelectScene.h"
 #include "Option.h"
 
 #define callout_backcolor 0xFFFFFF
@@ -238,7 +238,7 @@ AbstractScene* STAGE_SELECT::Update()
 		//ok_seが鳴り終わってから画面推移する。
 		while (CheckSoundMem(okSe)) {}
 		StartJoypadVibration(DX_INPUT_PAD1, OK_VIBRATION_POWER, OK_VIBRATION_TIME, -1);
-		return new Title();
+		return new MenuSelectScene();
 	}
 
 	player->Update(element, stage, nullptr, 0);
@@ -292,7 +292,7 @@ AbstractScene* STAGE_SELECT::Update()
 
 	//戻る
 	if ((playerMapX >= stageReturn.x - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
-		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new Title(); }
+		if (PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)) { StageIn(); return new MenuSelectScene(); }
 	}
 	
 		//ステージ1
@@ -444,7 +444,7 @@ void STAGE_SELECT::Draw() const
 
 	//戻る
 	if ((playerMapX >= (stageReturn.x) - (MAP_CEllSIZE * 3) / 2) && (playerMapX <= stageReturn.x + (MAP_CEllSIZE * 3) / 2)) {
-		DrawStageGuid("タイトルへ", stageReturn.x - MAP_CEllSIZE / 2, stageReturn.y - 30, stageNameFont, 0x1FCF6E, callout_backcolor, 0, -10, -1, "戻る", 55, 30);
+		DrawStageGuid("メニューへ", stageReturn.x - MAP_CEllSIZE / 2, stageReturn.y - 30, stageNameFont, 0x1FCF6E, callout_backcolor, 0, -10, -1, "戻る", 55, 30);
 	}
 
 	//ステージ1 ポータル描画
