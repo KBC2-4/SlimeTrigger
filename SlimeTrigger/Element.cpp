@@ -546,7 +546,7 @@ void ELEMENT::DrawGuide(const float elementX, const float elementY, STAGE* stage
 		std::string buttonText = Option::GetInputMode() ? "B" : "A";
 		int textColor = Option::GetInputMode() ? B_COLOR : A_COLOR;
 		DrawStringToHandle(static_cast<int>(x1) - 5, static_cast<int>(y1) - 12, buttonText.c_str(), textColor, guidFont, 0xFFFFFF);
-	}　　
+	}
 	else if (currentInputMode == static_cast<int>(PAD_INPUT::InputMode::KEYBOARD))
 	{
 		float width = 20;

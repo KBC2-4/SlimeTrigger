@@ -1,14 +1,11 @@
 #include "Title.h"
-#include "GameMain.h"
-#include "StageSelect.h"
-#include "DrawRanking.h"
+#include "MenuSelectScene.h"
 #include "DxLib.h"
 #include "Option.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Guide.h"
-#include "MenuSelectScene.h"
 
 
 //タイトルアニメーションを初回起動時のみ有効化するためのフラグ
@@ -125,19 +122,14 @@ AbstractScene* Title::Update()
 				if ((PAD_INPUT::GetPadThumbLY() > 20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_UP))
 				{
 					inputMargin = 0;
-					PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
-					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 
 				if ((PAD_INPUT::GetPadThumbLY() < -20000) || PAD_INPUT::OnPressed(XINPUT_BUTTON_DPAD_DOWN))
 				{
 					inputMargin = 0;
-					PlaySoundMem(cursorMoveSe, DX_PLAYTYPE_BACK, TRUE);
-					StartJoypadVibration(DX_INPUT_PAD1, 100, 160, -1);
 				}
 		}
 
-		// メニュー選択画面へ推移
 		if ((PAD_INPUT::OnButton(Option::GetInputMode() ? XINPUT_BUTTON_B : XINPUT_BUTTON_A)))
 		{
 			if(animationState == AnimationState::DONE) {
@@ -149,18 +141,9 @@ AbstractScene* Title::Update()
 				
 
 			}
-			else
-			{
-				animationState = AnimationState::DONE;
-				titleAnimationFrame = MAX_ANIMATION_FRAMES - 1;
-			}
-		}
-
-		// ゲーム終了
-		if(PAD_INPUT::OnButton(XINPUT_BUTTON_BACK))
+			else { animationState = AnimationState::DONE; titleAnimationFrame = MAX_ANIMATION_FRAMES - 1;}
+		}else if(PAD_INPUT::OnButton(XINPUT_BUTTON_BACK))
 		{
-			animationState = AnimationState::DONE;
-			titleAnimationFrame = MAX_ANIMATION_FRAMES - 1;
 			exitFlag = true;
 			PlaySoundMem(exitSe, DX_PLAYTYPE_BACK, FALSE);
 		}
